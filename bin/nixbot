@@ -29,7 +29,7 @@ from nixbot import Commands, Main, command, inits, md5sum
 from nixbot import mods, modules, parse, scan, settable
 
 
-Main.name = sys.argv[0].split(os.sep, maxsplit=2)[-1].lower()
+Main.name = sys.argv[0].split(os.sep)[-1].lower()
 
 
 class CLI(Client):
