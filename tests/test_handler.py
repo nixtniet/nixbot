@@ -8,7 +8,7 @@ import unittest
 
 
 from nixt.handler import Event, Handler
-from nixt.modules import command
+from nixbot       import command
 
 
 hdl = Handler()

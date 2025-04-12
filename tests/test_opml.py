@@ -7,7 +7,7 @@
 import unittest
 
 
-from nixt.modules.rss import OPML
+from nixbot.rss import OPML
 
 
 TXT = """<opml version="1.0">
