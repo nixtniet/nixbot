@@ -1,12 +1,12 @@
-N I X T
-=======
+N I X B O T
+===========
 
 
 **NAME**
 
 
 |
-| ``nixt`` - NIXT
+| ``nixbot`` - NIXBOT
 |
 
 
@@ -14,36 +14,36 @@ N I X T
 
 
 |
-| ``nixt <cmd> [key=val] [key==val]``
-| ``nixt -cvaw [init=mod1,mod2]``
-| ``nixt -d`` 
-| ``nixt -s``
+| ``nixbot <cmd> [key=val] [key==val]``
+| ``nixbot -cvw [init=mod1,mod2]``
+| ``nixbot -d`` 
+| ``nixbot -s``
 |
 
 **DESCRIPTION**
 
 
-``NIXT`` has all you need to program a unix cli program, such as disk
+``NIXBOT`` has all you need to program a unix cli program, such as disk
 perisistence for configuration files, event handler to handle the
 client/server connection, deferred exception handling to not crash
 on an error, etc.
 
-``NIXT`` contains python3 code to program objects in a functional way.
+``NIXBOT`` contains python3 code to program objects in a functional way.
 It provides a base Object class that has only dunder methods, methods
 are factored out into functions with the objects as the first argument.
 It is called Object Programming (OP), OOP without the oriented.
 
-``NIXT`` contains python3 code to program objects in a functional way.
+``NIXBOT`` contains python3 code to program objects in a functional way.
 it provides an "clean namespace" Object class that only has dunder
 methods, so the namespace is not cluttered with method names. This
 makes storing and reading to/from json possible.
 
-``NIXT`` has a demo bot, it can connect to IRC, fetch and display RSS
+``NIXBOT`` has a demo bot, it can connect to IRC, fetch and display RSS
 feeds, take todo notes, keep a shopping list and log text. You can
 run it under systemd for 24/7 presence in a IRC channel.
 
 
-``NIXT`` is Public Domain.
+``NIXBOT`` is Public Domain.
 
 
 **INSTALL**
@@ -52,33 +52,33 @@ run it under systemd for 24/7 presence in a IRC channel.
 installation is done with pipx
 
 |
-| ``$ pipx install nixt``
+| ``$ pipx install nixbot``
 | ``$ pipx ensurepath``
 |
 | <new terminal>
 |
-| ``$ nixt srv > nixt.service``
-| ``$ sudo mv nixt.service /etc/systemd/system/``
-| ``$ sudo systemctl enable nixt --now``
+| ``$ nixbot srv > nixbot.service``
+| ``$ sudo mv nixbot.service /etc/systemd/system/``
+| ``$ sudo systemctl enable nixbot --now``
 |
-| joins ``#nixt`` on localhost
+| joins ``#nixbot`` on localhost
 |
 
 
 **USAGE**
 
 
-use ``nixt`` to control the program, default it does nothing
+use ``nixbot`` to control the program, default it does nothing
 
 |
-| ``$ nixt``
+| ``$ nixbot``
 | ``$``
 |
 
 see list of commands
 
 |
-| ``$ nixt cmd``
+| ``$ nixbot cmd``
 | ``cfg,cmd,dne,dpl,err,exp,imp,log,mod,mre,nme,``
 | ``pwd,rem,req,res,rss,srv,syn,tdo,thr,upt``
 |
@@ -86,19 +86,19 @@ see list of commands
 start console
 
 |
-| ``$ nixt -c``
+| ``$ nixbot -c``
 |
 
 start console and run irc and rss clients
 
 |
-| ``$ nixt -c init=irc,rss``
+| ``$ nixbot -c init=irc,rss``
 |
 
 list available modules
 
 |
-| ``$ nixt mod``
+| ``$ nixbot mod``
 | ``err,flt,fnd,irc,llm,log,mbx,mdl,mod,req,rss,``
 | ``rst,slg,tdo,thr,tmr,udp,upt``
 |
@@ -106,14 +106,14 @@ list available modules
 start daemon
 
 |
-| ``$ nixt -d``
+| ``$ nixbot -d``
 | ``$``
 |
 
 start service
 
 |
-| ``$ nixt -s``
+| ``$ nixbot -s``
 | ``<runs until ctrl-c>``
 |
 
@@ -149,39 +149,39 @@ here is a list of available commands
 irc
 
 |
-| ``$ nixt cfg server=<server>``
-| ``$ nixt cfg channel=<channel>``
-| ``$ nixt cfg nick=<nick>``
+| ``$ nixbot cfg server=<server>``
+| ``$ nixbot cfg channel=<channel>``
+| ``$ nixbot cfg nick=<nick>``
 |
 
 sasl
 
 |
-| ``$ nixt pwd <nsnick> <nspass>``
-| ``$ nixt cfg password=<frompwd>``
+| ``$ nixbot pwd <nsnick> <nspass>``
+| ``$ nixbot cfg password=<frompwd>``
 |
 
 rss
 
 |
-| ``$ nixt rss <url>``
-| ``$ nixt dpl <url> <item1,item2>``
-| ``$ nixt rem <url>``
-| ``$ nixt nme <url> <name>``
+| ``$ nixbot rss <url>``
+| ``$ nixbot dpl <url> <item1,item2>``
+| ``$ nixbot rem <url>``
+| ``$ nixbot nme <url> <name>``
 |
 
 opml
 
 |
-| ``$ nixt exp``
-| ``$ nixt imp <filename>``
+| ``$ nixbot exp``
+| ``$ nixbot imp <filename>``
 |
 
 
 **PROGRAMMING**
 
 
-``nixt`` has it's modules in the package, so edit a file in nixt/modules/<name>.py
+``nixbot`` has it's modules in the package, so edit a file in nixbot/modules/<name>.py
 and add the following for ``hello world``
 
 ::
@@ -193,27 +193,27 @@ and add the following for ``hello world``
 Save this and recreate the dispatch table
 
 |
-| ``$ nixt tbl > nixt/modules/tbl.py``
+| ``$ nixbot tbl > nixbot/modules/tbl.py``
 |
 
-``nixt`` can execute the ``hello`` command now.
+``nixbot`` can execute the ``hello`` command now.
 
 |
-| ``$ nixt hello``
+| ``$ nixbot hello``
 | ``hello world !!``
 |
 
 Commands run in their own thread and the program borks on exit, output gets
 flushed on print so exceptions appear in the systemd logs. Modules can contain
-your own written python3 code, see the nixt/modules directory for examples.
+your own written python3 code, see the nixbot/modules directory for examples.
 
 
 **FILES**
 
 |
-| ``~/.nixt``
-| ``~/.local/bin/nixt``
-| ``~/.local/pipx/venvs/nixt/*``
+| ``~/.nixbot``
+| ``~/.local/bin/nixbot``
+| ``~/.local/pipx/venvs/nixbot/*``
 |
 
 **AUTHOR**
@@ -225,6 +225,5 @@ your own written python3 code, see the nixt/modules directory for examples.
 **COPYRIGHT**
 
 |
-| ``NIXT`` is Public Domain.
+| ``NIXBOT`` is Public Domain.
 |
-
