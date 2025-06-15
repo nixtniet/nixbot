@@ -15,10 +15,6 @@ authors = [
 description = "NIXBOT"
 readme = "README.rst"
 license = { text="Public Domain"}
-dependencies = [
-    'nixt',
-    'nixts'
-]
 classifiers=[
     'Development Status :: 3 - Alpha',
     'License :: Public Domain',
@@ -28,6 +24,10 @@ classifiers=[
 ]
 
 
+[project.scripts]
+"nixbot" = "nixbot.__main__:main"
+
+
 [project.urls]
 "home" = "https://pypi.org/project/nixbot"
 "bugs" = "https://github.com/nixtniet/nixbot/issues"
@@ -35,9 +35,6 @@ classifiers=[
 
 
 [tool.setuptools]
-script-files = [
-    'bin/nixbot',
-]
 packages = [
     'nixbot',
     'nixbot.modules'
