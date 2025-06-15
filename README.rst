@@ -15,7 +15,7 @@ N I X B O T
 
 |
 | ``nixbot <cmd> [key=val] [key==val]``
-| ``nixbot -cvw [init=mod1,mod2]``
+| ``nixbot -cvaw [init=mod1,mod2]``
 | ``nixbot -d`` 
 | ``nixbot -s``
 |
@@ -23,24 +23,19 @@ N I X B O T
 **DESCRIPTION**
 
 
-``NIXBOT`` has all you need to program a unix cli program, such as disk
+``NIXT`` has all you need to program a unix cli program, such as disk
 perisistence for configuration files, event handler to handle the
 client/server connection, deferred exception handling to not crash
 on an error, etc.
 
-``NIXBOT`` contains python3 code to program objects in a functional way.
-It provides a base Object class that has only dunder methods, methods
-are factored out into functions with the objects as the first argument.
-It is called Object Programming (OP), OOP without the oriented.
-
-``NIXBOT`` contains python3 code to program objects in a functional way.
+``NIXT`` contains python3 code to program objects in a functional way.
 it provides an "clean namespace" Object class that only has dunder
 methods, so the namespace is not cluttered with method names. This
 makes storing and reading to/from json possible.
 
-``NIXBOT`` has a demo bot, it can connect to IRC, fetch and display RSS
-feeds, take todo notes, keep a shopping list and log text. You can
-run it under systemd for 24/7 presence in a IRC channel.
+``NIXBOT`` is a python3 IRC bot, it can connect to IRC, fetch and
+display RSS feeds, take todo notes, keep a shopping list and log
+text. You can run it under systemd for 24/7 presence in a IRC channel.
 
 
 ``NIXBOT`` is Public Domain.
