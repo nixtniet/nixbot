@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nixbot"
-version = "3"
+version = "101"
 authors = [
     {name = "Bart Thate", email = "nixtniet@gmail.com" },
 ]
@@ -40,5 +40,5 @@ script-files = [
 ]
 packages = [
     'nixbot',
-    'nixtbot.modules'
+    'nixbot.modules'
 ]
