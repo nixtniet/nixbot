@@ -1,4 +1,4 @@
 # This file is placed in the Public Domain.
 
 
-"NIXBOT"
+__doc__ = __name__.upper()

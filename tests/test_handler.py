@@ -7,8 +7,8 @@
 import unittest
 
 
-from nixt.handler import Event, Handler
-from nixbot       import command
+from nixbot.handler import Event, Handler
+from nixbot.modules import command
 
 
 hdl = Handler()

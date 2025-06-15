@@ -7,7 +7,7 @@
 import unittest
 
 
-from nixbot.rss import Parser
+from nixbot.modules.rss import Parser
 
 
 class TestAtom(unittest.TestCase):

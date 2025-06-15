@@ -10,27 +10,36 @@ import sys
 import unittest
 
 
-import nixt
-import nixt.client
-import nixt.disk
-import nixt.handler
-import nixt.json
-import nixt.object
-import nixt.store
-import nixt.thread
+import nixbot
+import nixbot.client
+import nixbot.errors
+import nixbot.event
+import nixbot.find
+import nixbot.fleet
+import nixbot.handler
+import nixbot.json
+import nixbot.object
+import nixbot.path
+import nixbot.persist
+import nixbot.thread
+import nixbot.timer
 
 
-from nixt.object import *
+from nixbot.object import *
 
 
 PACKAGE = [
     'client',
-    'disk',
+    'errors',
+    'event',
+    'find',
+    'fleet',
     'handler',
-    'json',
     'object',
-    'store',
-    'thread'
+    'path',
+    'persist',
+    'thread',
+    'timer''
 ]
 
 
