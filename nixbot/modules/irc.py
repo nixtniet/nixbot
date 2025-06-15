@@ -14,14 +14,16 @@ import threading
 import time
 
 
-from ..client  import Client
-from ..event   import Event as IEvent
-from ..find    import last
-from ..fleet   import Fleet
-from ..object  import Default, Object, keys
-from ..persist import getpath, ident, write
-from ..thread  import launch
-from .         import Main, command, edit, fmt, rlog
+from nixt.client  import Client
+from nixt.event   import Event as IEvent
+from nixt.find    import last
+from nixt.fleet   import  Fleet
+from nixt.object  import Default, Object, keys
+from nixt.persist import getpath, ident, write
+from nixt.thread  import launch
+
+
+from . import Main, command, edit, fmt, rlog
 
 
 IGNORE  = ["PING", "PONG", "PRIVMSG"]
@@ -29,6 +31,7 @@ IGNORE  = ["PING", "PONG", "PRIVMSG"]
 
 saylock = threading.RLock()
 
+#saylock = _thread.allocate_lock()
 
 def init():
     irc = IRC()

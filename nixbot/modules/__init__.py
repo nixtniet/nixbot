@@ -15,9 +15,9 @@ import time
 import _thread
 
 
-from ..fleet  import Fleet
-from ..object import Default, items, keys
-from ..thread import later, launch
+from nixt.fleet  import Fleet
+from nixt.object import Default, items, keys
+from nixt.thread import later, launch
 
 
 STARTTIME = time.time()
@@ -28,6 +28,7 @@ path = os.path.dirname(__file__)
 
 
 CHECKSUM = "5206bffdc9dbf7a0967565deaabc2144"
+CHECKSUM = ""
 MD5      = {}
 NAMES    = {}
 

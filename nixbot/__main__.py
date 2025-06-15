@@ -11,17 +11,20 @@ import time
 import _thread
 
 
-from .client  import Client
-from .errors  import Errors, full
-from .event   import Event
-from .modules import fmt, level, parse, rlog
-from .modules import CHECKSUM, Commands, Main, command, inits
-from .modules import md5sum, mods, modules, settable
-from .object  import dumps
-from .path    import Workdir, pidname, skel
+from nixt.client  import Client
+from nixt.errors  import Errors, full
+from nixt.event   import Event
+from nixt.object  import dumps
+from nixt.path    import Workdir, pidname, skel
+
+
+from nixbot.modules import fmt, level, parse, rlog
+from nixbot.modules import CHECKSUM, Commands, Main, command, inits
+from nixbot.modules import md5sum, mods, modules, settable
 
 
 CHECKSUM2 = "5206bffdc9dbf7a0967565deaabc2144"
+CHECKSUM2 = ""
 
 
 class CLI(Client):
