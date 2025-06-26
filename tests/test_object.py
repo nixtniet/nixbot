@@ -7,10 +7,10 @@
 import unittest
 
 
-from nixbot.object import Object, items, keys, update, values
+from nixt.object import Object, items, keys, update, values
 
 
-import nixbot.object
+import nixt.object
 
 
 OBJECT  = Object()
@@ -154,7 +154,7 @@ class TestObject(unittest.TestCase):
         self.assertTrue(okd)
 
     def test_module(self):
-        self.assertEqual(Object().__module__, "nixbot.object")
+        self.assertEqual(Object().__module__, "nixt.object")
 
     def test_register(self):
         obj = Object()

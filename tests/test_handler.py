@@ -7,7 +7,7 @@
 import unittest
 
 
-from nixbot.handler import Event, Handler
+from nixt.handler   import Event, Handler
 from nixbot.modules import command
 
 
