@@ -19,9 +19,11 @@ class Handler:
     def __init__(self):
         self.cblock  = _thread.allocate_lock()
         self.cbs     = {}
+        self.later   = []
         self.queue   = queue.Queue()
         self.ready   = threading.Event()
         self.stopped = threading.Event()
+        self.threshold = 50
 
     def callback(self, evt):
         with self.cblock:
@@ -33,13 +35,19 @@ class Handler:
                 cmd = evt.txt.split(maxsplit=1)[0]
             else:
                 cmd = name(func)
-            evt._thr = launch(func, evt, name=cmd, daemon=True)
+            try:
+                evt._thr = launch(func, evt, name=cmd, daemon=True)
+            except RuntimeError as ex:
+                if "can't start" in str(ex):
+                    self.later.append(evt)
+                raise ex
 
     def loop(self):
         while not self.stopped.is_set():
             try:
-                if threading.active_count() > 30:
-                    time.sleep(0.01)
+                if threading.active_count() > self.threshold:
+                    time.sleep(0.1)
+                    self.threshold += 1
                     continue
                 evt = self.poll()
                 if evt is None:
@@ -97,9 +105,9 @@ class Event(Default):
         self.result[time.time()] = txt
 
     def wait(self):
-        self._ready.wait()
         if self._thr:
             self._thr.join()
+        self._ready.wait()
 
 
 def __dir__():

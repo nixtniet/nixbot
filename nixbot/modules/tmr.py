@@ -9,9 +9,8 @@ import re
 import time
 
 
-from nixt.cache  import write
+from nixt.cache  import last, write
 from nixt.client import Fleet
-from nixt.find   import last
 from nixt.object import Object, items
 from nixt.timer  import Timed
 

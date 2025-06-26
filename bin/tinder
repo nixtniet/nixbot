@@ -66,7 +66,7 @@ param.ver = [""]
 
 
 pre = Object()
-pre.cfg = ["cfg nick=mekker", ""]
+pre.cfg = ["nick=mekker", ""]
 pre.imp = ["tests/feeds.opml", ""]
 pre.log = ["bla", ""]
 pre.rss = ["http://hnrss.org/newest", ""]
@@ -120,6 +120,7 @@ def payload(clt, cmds):
         examples = getattr(cmds, cmd)
         for example in examples:
             event = Event()
+            event.orig = repr(clt)
             event.txt = cmd + " " + example
             event.type = "command"
             events.append(event)
@@ -179,15 +180,21 @@ def main():
         nr = thr.join()
         nrcommand += nr
     consume(events)
-    Fleet.shutdown()
-    Fleet.wait()
+    #Fleet.shutdown()
+    #Fleet.wait()
 
 
 if __name__ == "__main__":
     wrap(main)
     endtime = time.time()
     lap = elapsed(endtime-STARTTIME)
+    nrevents = len(events)
     percall = (endtime-STARTTIME)/(nrcommand)
     if "v" in Main.opts:
-        print(f"{len(events)} events left.")
+        if nrevents:
+            print(f"{nrevents} events left.")
+            for evt in events:
+                if not evt._ready.is_set():
+                    print(evt)
+                    break
         print(f"total: {lap} nrs: {nrs} cmds: {nrcommand} call: %.6fs" % percall)

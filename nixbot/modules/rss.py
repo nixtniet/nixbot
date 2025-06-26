@@ -24,8 +24,6 @@ from urllib.parse import quote_plus, urlencode
 from nixt.cache   import find, fntime, last, write
 from nixt.client  import Fleet
 from nixt.default import Default
-#from nixt.disk    import write
-#from nixt.find    import find, fntime, last
 from nixt.object  import Object, update
 from nixt.path    import getpath
 from nixt.thread  import launch
@@ -396,7 +394,6 @@ def imp(event):
             if not url.startswith("http"):
                 continue
             has = list(find("rss", {'rss': url}, matching=True))
-            print(has)
             if has:
                 skipped.append(url)
                 nrskip += 1

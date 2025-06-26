@@ -24,16 +24,14 @@ class Cache:
 
     @staticmethod
     def add(path, obj):
-        with lock:
-            Cache.objs[path] = obj
-            typ = path.split(os.sep)[0]
-            if typ not in Cache.names:
-                Cache.names.append(typ)
+        Cache.objs[path] = obj
+        typ = path.split(os.sep)[0]
+        if typ not in Cache.names:
+            Cache.names.append(typ)
 
     @staticmethod
     def get(path):
-        with lock:
-            return Cache.objs.get(path, None)
+        return Cache.objs.get(path, None)
 
     @staticmethod
     def long(name):
@@ -55,18 +53,16 @@ class Cache:
 
     @staticmethod
     def types():
-        with lock:
-            return Cache.names
+        return Cache.names
 
     @staticmethod
     def update(path, obj):
-        with lock:
-            if not obj:
-                return
-            try:
-                update(Cache.objs[path], obj)
-            except KeyError:
-                Cache.add(path, obj)
+        if not obj:
+            return
+        try:
+            update(Cache.objs[path], obj)
+        except KeyError:
+            Cache.add(path, obj)
 
 
 def find(clz, selector=None, deleted=False, matching=False):
