@@ -10,8 +10,8 @@ import time
 import _thread
 
 
-from .errors import later
-from .thread import launch, name
+from .object import Default
+from .thread import later, launch, name
 
 
 class Handler:
@@ -33,11 +33,14 @@ class Handler:
                 cmd = evt.txt.split(maxsplit=1)[0]
             else:
                 cmd = name(func)
-            evt._thr = launch(func, evt, name=cmd)
+            evt._thr = launch(func, evt, name=cmd, daemon=True)
 
     def loop(self):
         while not self.stopped.is_set():
             try:
+                if threading.active_count() > 50:
+                    time.sleep(0.01)
+                    continue
                 evt = self.poll()
                 if evt is None:
                     break
@@ -72,7 +75,35 @@ class Handler:
         self.ready.wait()
 
 
+class Event(Default):
+
+    def __init__(self):
+        Default.__init__(self)
+        self._ready = threading.Event()
+        self._thr   = None
+        self.ctime  = time.time()
+        self.orig   = ""
+        self.result = {}
+        self.type   = "event"
+        self.txt    = ""
+
+    def done(self):
+        self.reply("ok")
+
+    def ready(self):
+        self._ready.set()
+
+    def reply(self, txt):
+        self.result[time.time()] = txt
+
+    def wait(self):
+        self._ready.wait()
+        if self._thr:
+            self._thr.join()
+
+
 def __dir__():
     return (
-        'Handler',
+        'Event',
+        'Handler'
     )

@@ -1,19 +1,20 @@
 # This file is placed in the Public Domain.
 
 
-"disk"
+"persistence"
 
 
 import datetime
 import json.decoder
 import os
 import pathlib
-import time
 import _thread
 
 
-from .object import Object, dump, fqn, items, load, update
+from .cache  import Cache
+from .object import fqn, update
 from .path   import store
+from .serial import dump, load
 
 
 lock = _thread.allocate_lock()
@@ -22,33 +23,6 @@ lock = _thread.allocate_lock()
 class Error(Exception):
 
     pass
-
-
-class Cache:
-
-    objs = {}
-
-    @staticmethod
-    def add(path, obj):
-        Cache.objs[path] = obj
-
-    @staticmethod
-    def get(path):
-        return Cache.objs.get(path, None)
-
-    @staticmethod
-    def typed(matcher):
-        for key in Cache.objs:
-            if matcher not in key:
-                continue
-            yield Cache.objs.get(key)
-
-    @staticmethod
-    def update(path, obj):
-        try:
-            update(Cache.objs[path], obj)
-        except KeyError:
-            Cache.add(path, obj)
 
 
 def cdir(path):

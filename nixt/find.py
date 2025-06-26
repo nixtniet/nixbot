@@ -8,9 +8,10 @@ import os
 import time
 
 
-from .persist import Cache, read
-from .object  import Object, fqn, items, update
-from .path    import long, store
+from .cache  import Cache
+from .disk   import read
+from .object import Object, fqn, items, update
+from .path   import long, store
 
 
 def find(clz, selector=None, deleted=False, matching=False):
