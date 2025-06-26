@@ -12,10 +12,10 @@ import _thread
 
 
 from nixt.client  import Client
-from nixt.errors  import Errors, full
-from nixt.event   import Event
-from nixt.object  import dumps
+from nixt.handler import Event
 from nixt.path    import Workdir, pidname, skel
+from nixt.serial  import dumps
+from nixt.thread  import Errors, full
 
 
 from nixbot.modules import fmt, level, parse, rlog

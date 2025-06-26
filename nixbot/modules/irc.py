@@ -15,11 +15,11 @@ import time
 
 
 from nixt.client  import Client
-from nixt.event   import Event as IEvent
+from nixt.disk    import getpath, ident, write
 from nixt.find    import last
-from nixt.fleet   import  Fleet
+from nixt.fleet   import Fleet
+from nixt.handler import Event as IEvent
 from nixt.object  import Default, Object, keys
-from nixt.persist import getpath, ident, write
 from nixt.thread  import launch
 
 
