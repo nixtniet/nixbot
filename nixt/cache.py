@@ -83,7 +83,6 @@ def find(clz, selector=None, deleted=False, matching=False):
 
 
 def fntime(daystr):
-    print(daystr)
     datestr = ' '.join(daystr.split(os.sep)[-2:])
     datestr = datestr.replace("_", " ")
     if '.' in datestr:
@@ -138,7 +137,6 @@ def read(obj, path):
 
 
 def write(obj, path):
-    print(path)
     with writelock:
         Cache.update(path, obj)
         return path

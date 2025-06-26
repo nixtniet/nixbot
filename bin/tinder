@@ -18,6 +18,7 @@ sys.path.insert(0, os.getcwd())
 
 
 from nixt.client  import Client
+from nixt.fleet   import Fleet
 from nixt.handler import Event
 from nixt.object  import Object, keys
 from nixt.path    import Workdir, skel
@@ -178,6 +179,8 @@ def main():
         nr = thr.join()
         nrcommand += nr
     consume(events)
+    Fleet.shutdown()
+    Fleet.wait()
 
 
 if __name__ == "__main__":
@@ -186,4 +189,5 @@ if __name__ == "__main__":
     lap = elapsed(endtime-STARTTIME)
     percall = (endtime-STARTTIME)/(nrcommand)
     if "v" in Main.opts:
+        print(f"{len(events)} events left.")
         print(f"total: {lap} nrs: {nrs} cmds: {nrcommand} call: %.6fs" % percall)
