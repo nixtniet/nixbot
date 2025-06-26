@@ -10,6 +10,7 @@ import time
 from nixt.disk   import write
 from nixt.find   import find, fntime
 from nixt.object import Object
+from nixt.path   import getpath
 
 
 from . import elapsed
@@ -34,5 +35,5 @@ def log(event):
         return
     obj = Log()
     obj.txt = event.rest
-    write(obj)
+    write(obj, getpath(obj))
     event.done()

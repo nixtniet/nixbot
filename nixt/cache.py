@@ -10,46 +10,70 @@ import threading
 import time
 
 
-from .object import fqn, items, update
+from .object import fqn, items, keys, update
 
 
-lock = threading.RLock()
-j    = os.path.join
-
-
-class Error(Exception):
-
-    pass
+lock      = threading.RLock()
+writelock = threading.RLock()
 
 
 class Cache:
 
+    names = []
     objs = {}
 
     @staticmethod
     def add(path, obj):
-        Cache.objs[path] = obj
+        with lock:
+            Cache.objs[path] = obj
+            typ = path.split(os.sep)[0]
+            if typ not in Cache.names:
+                Cache.names.append(typ)
 
     @staticmethod
     def get(path):
-        return Cache.objs.get(path, None)
+        with lock:
+            return Cache.objs.get(path, None)
 
+    @staticmethod
+    def long(name):
+        split = name.split(".")[-1].lower()
+        res = name
+        for names in Cache.types():
+            if split == names.split(".")[-1].lower():
+                res = names
+                break
+        return res
+
+    @staticmethod
+    def typed(matcher):
+        with lock:
+            for key in keys(Cache.objs):
+                if matcher not in key:
+                    continue
+                yield key
+
+    @staticmethod
+    def types():
+        with lock:
+            return Cache.names
 
     @staticmethod
     def update(path, obj):
-        if not obj:
-            return
-        try:
-            update(Cache.objs[path], obj)
-        except KeyError:
-            Cache.add(path, obj)
+        with lock:
+            if not obj:
+                return
+            try:
+                update(Cache.objs[path], obj)
+            except KeyError:
+                Cache.add(path, obj)
 
 
 def find(clz, selector=None, deleted=False, matching=False):
-    clz = long(clz)
+    clz = Cache.long(clz)
     if selector is None:
         selector = {}
-    for pth in typed(clz):
+    for pth in Cache.typed(clz):
         obj = Cache.get(pth)
         if not deleted and isdeleted(obj):
             continue
@@ -59,6 +83,7 @@ def find(clz, selector=None, deleted=False, matching=False):
 
 
 def fntime(daystr):
+    print(daystr)
     datestr = ' '.join(daystr.split(os.sep)[-2:])
     datestr = datestr.replace("_", " ")
     if '.' in datestr:
@@ -69,14 +94,6 @@ def fntime(daystr):
     if rest:
         timed += float('.' + rest)
     return float(timed)
-
-
-def getpath(obj):
-    return ident(obj)
-
-
-def ident(obj):
-    return j(fqn(obj),*str(datetime.datetime.now()).split())
 
 
 def isdeleted(obj):
@@ -93,27 +110,6 @@ def last(obj, selector=None):
         update(obj, inp[-1])
         res = inp[0]
     return res
-
-
-def long(name):
-    split = name.split(".")[-1].lower()
-    res = name
-    for names in types():
-        if split == names.split(".")[-1].lower():
-            res = names
-            break
-    return res
-    
-
-def typed(matcher):
-    for key in Cache.objs:
-        if matcher not in key:
-            continue
-        yield key
-
-
-def types():
-    return set(Cache.objs.keys())
 
 
 def search(obj, selector, matching=False):
@@ -135,16 +131,15 @@ def search(obj, selector, matching=False):
 
 
 def read(obj, path):
-    with lock:
+    with writelock:
         val = Cache.get(path)
         if val:
             update(obj, val)
 
 
-def write(obj, path=""):
-    with lock:
-        if path == "":
-            path = getpath(obj)
+def write(obj, path):
+    print(path)
+    with writelock:
         Cache.update(path, obj)
         return path
 
@@ -152,12 +147,9 @@ def write(obj, path=""):
 def __dir__():
     return (
         'Cache',
-        'Error',
         'find',
         'fns',
         'fntime',
-        'getpath',
-        'ident',
         'last',
         'read',
         'search',

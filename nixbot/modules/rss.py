@@ -21,15 +21,16 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 
 
+from nixt.cache   import find, fntime, last, write
 from nixt.client  import Fleet
-from nixt.disk    import getpath, write
-from nixt.find    import find, fntime, last
-from nixt.object  import Default, Object, update
+from nixt.default import Default
+#from nixt.disk    import write
+#from nixt.find    import find, fntime, last
+from nixt.object  import Object, update
+from nixt.path    import getpath
 from nixt.thread  import launch
 from nixt.timer   import Repeater
-
-
-from . import elapsed, fmt, rlog, spl
+from .            import elapsed, fmt, rlog, spl
 
 
 DEBUG = False
@@ -102,7 +103,7 @@ class Fetcher(Object):
                 if uurl in seen:
                     continue
                 if self.dosave:
-                    write(fed)
+                    write(fed, getpath(fed))
                 result.append(fed)
             setattr(self.seen, feed.rss, urls)
             if not self.seenfn:
@@ -395,6 +396,7 @@ def imp(event):
             if not url.startswith("http"):
                 continue
             has = list(find("rss", {'rss': url}, matching=True))
+            print(has)
             if has:
                 skipped.append(url)
                 nrskip += 1
@@ -403,7 +405,7 @@ def imp(event):
             update(rss, obj)
             rss.rss = obj.xmlUrl
             rss.insertid = insertid
-            write(rss)
+            write(rss, getpath(rss))
             nrs += 1
     if nrskip:
         event.reply(f"skipped {nrskip} urls.")
@@ -475,7 +477,7 @@ def rss(event):
             return
     rss = Rss()
     rss.rss = event.args[0]
-    write(rss)
+    write(rss, getpath(rss))
     event.done()
 
 

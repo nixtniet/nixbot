@@ -13,11 +13,13 @@ import threading
 import time
 
 
-from nixt.cache   import getpath, ident, last, write
+from nixt.cache   import last, write
 from nixt.client  import Client
+from nixt.default import Default
 from nixt.fleet   import Fleet
 from nixt.handler import Event as IEvent
-from nixt.object  import Default, Object, keys
+from nixt.object  import Object, keys
+from nixt.path    import getpath, ident
 from nixt.thread  import launch
 from .            import Main, command, edit, fmt, rlog
 
@@ -91,6 +93,7 @@ class TextWrap(textwrap.TextWrapper):
 
 
 wrapper = TextWrap()
+
 
 class IRC(Client):
 
