@@ -15,13 +15,12 @@ import time
 
 from nixt.cache   import last, write
 from nixt.client  import Client
-from nixt.default import Default
 from nixt.fleet   import Fleet
 from nixt.handler import Event as IEvent
 from nixt.object  import Object, keys
 from nixt.path    import getpath, ident
 from nixt.thread  import launch
-from .            import Main, command, edit, fmt, rlog
+from .            import Default, Main, command, edit, fmt, rlog
 
 
 IGNORE  = ["PING", "PONG", "PRIVMSG"]
@@ -594,7 +593,6 @@ def cfg(event):
     else:
         edit(config, event.sets)
         write(config, fnm or getpath(config))
-        event.done()
 
 
 def mre(event):

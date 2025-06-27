@@ -7,6 +7,7 @@
 
 import os
 import random
+import queue
 import shutil
 import sys
 import termios
@@ -32,17 +33,6 @@ from nixbot.modules import command, elapsed, modules, parse, settable, spl
 Main.debug  = True
 Main.md5    = False
 Workdir.wdr = ".test"
-
-
-lap = 1
-nrs = 1
-nrcommand = 1
-percall   = 1
-
-
-events = []
-ignore = "dbg,"
-paylock = _thread.allocate_lock()
 
 
 param = Object()
@@ -79,6 +69,18 @@ post.dne = ["hnrss", ""]
 post.rem = ["hnrss", ""]
 
 
+lap = 1
+nrs = 1
+nrcommand = 1
+percall   = 1
+
+
+events = queue.Queue()
+ignore = "dbg,"
+paylock = _thread.allocate_lock()
+
+
+
 rand = random.SystemRandom()
 
 
@@ -101,12 +103,11 @@ def banner():
 
 def consume(evts):
     done = []
-    for event in evts:
+    while True:
+        event = events.get()
         event.wait()
-        done.append(event)
-    for todo in done:
-        events.remove(todo)
-    return done
+        if events.qsize() == 0:
+            break
 
 
 def payload(clt, cmds):
@@ -123,7 +124,7 @@ def payload(clt, cmds):
             event.orig = repr(clt)
             event.txt = cmd + " " + example
             event.type = "command"
-            events.append(event)
+            events.put(event)
             clt.put(event)
             nmr += 1
     return nmr
@@ -166,19 +167,22 @@ def main():
         thrs.append(launch(payload, clt, pre))
     for thr in thrs:
         nr = thr.join()
-        nrcommand += nr
+        if nr:
+            nrcommand += nr
     thrs = []
     for _nr in range(nrs):
         thrs.append(launch(payload, clt, param))
     for thr in thrs:
         nr = thr.join()
-        nrcommand += nr
+        if nr:
+            nrcommand += nr
     thrs = []
     for _nr in range(nrs):
         thrs.append(launch(payload, clt, post))
     for thr in thrs:
         nr = thr.join()
-        nrcommand += nr
+        if nr:
+            nrcommand += nr
     consume(events)
     #Fleet.shutdown()
     #Fleet.wait()
@@ -188,13 +192,9 @@ if __name__ == "__main__":
     wrap(main)
     endtime = time.time()
     lap = elapsed(endtime-STARTTIME)
-    nrevents = len(events)
+    nrevents = events.qsize()
     percall = (endtime-STARTTIME)/(nrcommand)
     if "v" in Main.opts:
         if nrevents:
             print(f"{nrevents} events left.")
-            for evt in events:
-                if not evt._ready.is_set():
-                    print(evt)
-                    break
         print(f"total: {lap} nrs: {nrs} cmds: {nrcommand} call: %.6fs" % percall)

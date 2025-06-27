@@ -68,6 +68,7 @@ def __dir__():
         'Default',
         'Object',
         'construct',
+        'fmt',
         'fqn',
         'items',
         'keys',

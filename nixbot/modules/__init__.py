@@ -15,9 +15,8 @@ import time
 import _thread
 
 
-from nixt.default import Default
 from nixt.fleet   import Fleet
-from nixt.object  import items, keys
+from nixt.object  import Object, items, keys
 from nixt.thread  import later, launch
 
 
@@ -32,6 +31,14 @@ CHECKSUM = "5206bffdc9dbf7a0967565deaabc2144"
 CHECKSUM = ""
 MD5      = {}
 NAMES    = {}
+
+
+class Default(Object):
+
+    def __getattr__(self, key):
+        if key not in self:
+            setattr(self, key, "")
+        return self.__dict__.get(key, "")
 
 
 class Main(Default):

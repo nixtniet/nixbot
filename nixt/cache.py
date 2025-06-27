@@ -24,10 +24,11 @@ class Cache:
 
     @staticmethod
     def add(path, obj):
-        Cache.objs[path] = obj
-        typ = path.split(os.sep)[0]
-        if typ not in Cache.names:
-            Cache.names.append(typ)
+        with lock:
+            Cache.objs[path] = obj
+            typ = path.split(os.sep)[0]
+            if typ not in Cache.names:
+                Cache.names.append(typ)
 
     @staticmethod
     def get(path):
@@ -48,7 +49,7 @@ class Cache:
         with lock:
             for key in keys(Cache.objs):
                 if matcher not in key:
-                    continue
+                     continue
                 yield key
 
     @staticmethod
@@ -59,9 +60,9 @@ class Cache:
     def update(path, obj):
         if not obj:
             return
-        try:
+        if path in Cache.objs:
             update(Cache.objs[path], obj)
-        except KeyError:
+        else:
             Cache.add(path, obj)
 
 
@@ -126,16 +127,14 @@ def search(obj, selector, matching=False):
 
 
 def read(obj, path):
-    with writelock:
-        val = Cache.get(path)
-        if val:
-            update(obj, val)
+    val = Cache.get(path)
+    if val:
+        update(obj, val)
 
 
 def write(obj, path):
-    with writelock:
-        Cache.update(path, obj)
-        return path
+    Cache.update(path, obj)
+    return path
 
 
 def __dir__():
