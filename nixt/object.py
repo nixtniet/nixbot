@@ -19,9 +19,6 @@ class Object:
         return str(self.__dict__)
 
 
-"methods"
-
-
 def construct(obj, *args, **kwargs):
     if args:
         val = args[0]
@@ -65,50 +62,13 @@ def values(obj):
     return obj.__dict__.values()
 
 
-"unions"
-
-
-def cartes(obj, other):
-    pass
-
-
-def complement(obj, other):
-    pass
-
-
-def diff(obj, other):
-    pass
-
-
-def power(obj, other):
-    pass
-
-
-def section(obj, other):
-    pass
-
-
-def union(obj, other):
-    pass
-
-
-"interface"
-
-
 def __dir__():
     return (
         'Object',
-        'cartes',
-        'complement',
         'construct',
-        'diff',
-        'fmt',
         'fqn',
         'items',
         'keys',
-        'power',
-        'section',
         'update',
-        'values',
-        'union'
+        'values'
     )
