@@ -9,9 +9,11 @@ import re
 import time
 
 
-from nixt.cache  import last, write
 from nixt.client import Fleet
+from nixt.disk   import write
+from nixt.find   import last
 from nixt.object import Object, items
+from nixt.path   import getpath
 from nixt.timer  import Timed
 
 
@@ -45,7 +47,7 @@ def init():
             remove.append(tme)
     for tme in remove:
         delattr(timers, tme)
-    write(timers, pth)
+    write(timers, pth or getpath(timers))
 
 
 def extract_date(daystr):
