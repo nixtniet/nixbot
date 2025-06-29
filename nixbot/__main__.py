@@ -18,7 +18,7 @@ from nixt.serial  import dumps
 from nixt.thread  import Errors, full
 
 
-from nixbot.modules import fmt, level, parse, rlog
+from nixbot.modules import level, parse
 from nixbot.modules import CHECKSUM, Commands, Main, command, inits
 from nixbot.modules import md5sum, mods, modules, settable
 

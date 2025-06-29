@@ -10,8 +10,8 @@ import pathlib
 import _thread
 
 
-from .object import Object, fqn, items, update
-from .path   import long, store
+from .object import update
+from .path   import store
 from .serial import dump, load
 
 

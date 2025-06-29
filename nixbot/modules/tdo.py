@@ -30,7 +30,7 @@ def dne(event):
     for fnm, obj in find('todo', selector):
         nmr += 1
         obj.__deleted__ = True
-        write(obj, getpath(fobj))
+        write(obj, getpath(obj))
         event.done()
         break
     if not nmr:
