@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"modules"
+"commands"
 
 
 import hashlib
@@ -15,15 +15,15 @@ import time
 import _thread
 
 
-from nixt.fleet   import Fleet
-from nixt.object  import Object, items, keys
-from nixt.thread  import later, launch
+from nixt.clients import Fleet
+from nixt.objects import Default
+from nixt.threads import later, launch
 
 
 STARTTIME = time.time()
 
 
-lock = _thread.allocate_lock()
+lock  = _thread.allocate_lock()
 path = os.path.dirname(__file__)
 
 
@@ -33,19 +33,11 @@ MD5      = {}
 NAMES    = {}
 
 
-class Default(Object):
-
-    def __getattr__(self, key):
-        if key not in self:
-            setattr(self, key, "")
-        return self.__dict__.get(key, "")
-
-
 class Main(Default):
 
     debug   = False
     gets    = Default()
-    ignore  = ""
+    ignore  = "dbg,"
     init    = ""
     level   = "debug"
     md5     = True
@@ -54,7 +46,7 @@ class Main(Default):
     otxt    = ""
     sets    = Default()
     verbose = False
-    version = 102
+    version = 103
 
 
 class Commands:
@@ -118,161 +110,6 @@ def inits(names):
     return modz
 
 
-"modules"
-
-
-def check(name, md5=""):
-    if not CHECKSUM:
-        return True
-    mname = f"{__name__}.{name}"
-    if sys.modules.get(mname):
-        return True
-    pth = os.path.join(path, name + ".py")
-    spec = importlib.util.spec_from_file_location(mname, pth)
-    if not spec:
-        return False
-    if md5sum(pth) == (md5 or MD5.get(name, "")):
-        return True
-    if CHECKSUM and Main.md5:
-        rlog("error", f"{name} md5sum failed.")
-    return False
-
-
-def gettbl(name):
-    pth = os.path.join(path, "tbl.py")
-    if not os.path.exists(pth):
-        rlog("error", "tbl.py is not there.")
-        return {}
-    if CHECKSUM and (md5sum(pth) != CHECKSUM):
-        rlog("error", "tbl.py checksum failed.")
-        return {}
-    mname = f"{__name__}.tbl"
-    mod = sys.modules.get(mname, None)
-    if not mod:
-        spec = importlib.util.spec_from_file_location(mname, pth)
-        if not spec or not spec.loader:
-                return {}
-        mod = importlib.util.module_from_spec(spec)
-        if mod:
-            spec.loader.exec_module(mod)
-            sys.modules[mname] = mod
-    return getattr(mod, name, {})
-
-
-def load(name):
-    with lock:
-        if name in Main.ignore:
-            return None
-        module = None
-        mname = f"{__name__}.{name}"
-        module = sys.modules.get(mname, None)
-        if not module:
-            pth = os.path.join(path, f"{name}.py")
-            if not os.path.exists(pth):
-                return None
-            spec = importlib.util.spec_from_file_location(mname, pth)
-            if not spec or not spec.loader:
-                return None
-            module = importlib.util.module_from_spec(spec)
-            if not module:
-                return None
-            spec.loader.exec_module(module)
-            sys.modules[mname] = module
-        if Main.debug:
-            module.DEBUG = True
-        return module
-
-
-def md5sum(modpath):
-    with open(modpath, "r", encoding="utf-8") as file:
-        txt = file.read().encode("utf-8")
-        return str(hashlib.md5(txt).hexdigest())
-
-
-def mods(names=""):
-    res = []
-    for nme in modules():
-        if names and nme not in spl(names):
-            continue
-        mod = load(nme)
-        if not mod:
-            continue
-        res.append(mod)
-    return res
-
-
-def modules(mdir=""):
-    return sorted([
-                   x[:-3] for x in os.listdir(mdir or path)
-                   if x.endswith(".py") and not x.startswith("__") and
-                   x[:-3] not in Main.ignore
-                  ])
-
-
-def settable():
-    Commands.names.update(table())
-
-
-def table():
-    md5s = gettbl("MD5")
-    if md5s:
-        MD5.update(md5s)
-    names = gettbl("NAMES")
-    if names:
-        NAMES.update(names)
-    return NAMES
-
-
-"methods"
-
-
-def edit(obj, setter, skip=True):
-    for key, val in items(setter):
-        if skip and val == "":
-            continue
-        try:
-            setattr(obj, key, int(val))
-            continue
-        except ValueError:
-            pass
-        try:
-            setattr(obj, key, float(val))
-            continue
-        except ValueError:
-            pass
-        if val in ["True", "true"]:
-            setattr(obj, key, True)
-        elif val in ["False", "false"]:
-            setattr(obj, key, False)
-        else:
-            setattr(obj, key, val)
-
-
-def fmt(obj, args=None, skip=None, plain=False, empty=False):
-    if args is None:
-        args = keys(obj)
-    if skip is None:
-        skip = []
-    txt = ""
-    for key in args:
-        if key.startswith("__"):
-            continue
-        if key in skip:
-            continue
-        value = getattr(obj, key, None)
-        if value is None:
-            continue
-        if not empty and not value:
-            continue
-        if plain:
-            txt += f"{value} "
-        elif isinstance(value, str):
-            txt += f'{key}="{value}" '
-        else:
-            txt += f'{key}={value} '
-    return txt.strip()
-
-
 def parse(obj, txt=""):
     if txt == "":
         if "txt" in dir(obj):
@@ -332,16 +169,109 @@ def parse(obj, txt=""):
         obj.txt = obj.cmd or ""
 
 
+"imports"
+
+
+def check(name, md5=""):
+    if not CHECKSUM:
+        return True
+    mname = f"{__name__}.{name}"
+    if sys.modules.get(mname):
+        return True
+    pth = os.path.join(path, name + ".py")
+    spec = importlib.util.spec_from_file_location(mname, pth)
+    if not spec:
+        return False
+    if md5sum(pth) == (md5 or MD5.get(name, "")):
+        return True
+    if CHECKSUM and Main.md5:
+        rlog("error", f"{name} md5sum failed.")
+    return False
+
+
+def gettbl():
+    pth = os.path.join(path, "tbl.py")
+    if not os.path.exists(pth):
+        rlog("error", "tbl.py is not there.")
+        return {}
+    if CHECKSUM and (md5sum(pth) != CHECKSUM):
+        rlog("error", "tbl.py checksum failed.")
+        return {}
+    mname = f"{__name__}.tbl"
+    mod = sys.modules.get(mname, None)
+    if not mod:
+        spec = importlib.util.spec_from_file_location(mname, pth)
+        if not spec or not spec.loader:
+            return {}
+        mod = importlib.util.module_from_spec(spec)
+        if mod:
+            spec.loader.exec_module(mod)
+            sys.modules[mname] = mod
+    return mod
+
+
+def load(name):
+    with lock:
+        if name in Main.ignore:
+            return None
+        mname = f"{__name__}.{name}"
+        module = sys.modules.get(mname, None)
+        if module:
+            return module
+        pth = os.path.join(path, f"{name}.py")
+        if not os.path.exists(pth):
+            return None
+        spec = importlib.util.spec_from_file_location(mname, pth)
+        if not spec or not spec.loader:
+            return None
+        module = importlib.util.module_from_spec(spec)
+        if not module:
+            return None
+        spec.loader.exec_module(module)
+        sys.modules[mname] = module
+        if Main.debug:
+            module.DEBUG = True
+        return module
+
+
+def md5sum(modpath):
+    with open(modpath, "r", encoding="utf-8") as file:
+        txt = file.read().encode("utf-8")
+        return str(hashlib.md5(txt).hexdigest())
+
+
+def mods(names=""):
+    res = []
+    for nme in modules():
+        if names and nme not in spl(names):
+            continue
+        mod = load(nme)
+        if not mod:
+            continue
+        res.append(mod)
+    return res
+
+
+def modules():
+    return sorted([
+                   x[:-3] for x in os.listdir(path)
+                   if x.endswith(".py") and not x.startswith("__") and
+                   x[:-3] not in Main.ignore
+                  ])
+
+
+def settable():
+    Commands.names.update(table())
+
+
+def table():
+    tbl = gettbl()
+    MD5.update(getattr(tbl, "MD5", {}))
+    NAMES.update(getattr(tbl, "NAMES", {}))
+    return NAMES
+
+
 "utilities"
-
-
-LEVELS = {'debug': logging.DEBUG,
-          'info': logging.INFO,
-          'warning': logging.WARNING,
-          'warn': logging.WARNING,
-          'error': logging.ERROR,
-          'critical': logging.CRITICAL
-         }
 
 
 def elapsed(seconds, short=True):
@@ -383,23 +313,6 @@ def elapsed(seconds, short=True):
     return txt
 
 
-def level(loglevel="debug"):
-    if loglevel != "none":
-        format_short = "%(message)-80s"
-        datefmt = '%H:%M:%S'
-        logging.basicConfig(stream=sys.stderr, datefmt=datefmt, format=format_short)
-        logging.getLogger().setLevel(LEVELS.get(loglevel))
-
-
-def rlog(level, txt, ignore=None):
-    if ignore is None:
-        ignore = []
-    for ign in ignore:
-        if ign in str(txt):
-            return
-    logging.log(LEVELS.get(level), txt)
-
-
 def spl(txt):
     try:
         result = txt.split(',')
@@ -408,8 +321,48 @@ def spl(txt):
     return [x for x in result if x]
 
 
+"logging"
+
+
+LEVELS = {'debug': logging.DEBUG,
+          'info': logging.INFO,
+          'warning': logging.WARNING,
+          'warn': logging.WARNING,
+          'error': logging.ERROR,
+          'critical': logging.CRITICAL
+         }
+
+
+def level(loglevel="debug"):
+    if loglevel != "none":
+        format_short = "%(message)-80s"
+        datefmt = '%H:%M:%S'
+        logging.basicConfig(stream=sys.stderr, datefmt=datefmt, format=format_short)
+        logging.getLogger().setLevel(LEVELS.get(loglevel))
+
+
+def rlog(loglevel, txt, ignore=None):
+    if ignore is None:
+        ignore = []
+    for ign in ignore:
+        if ign in str(txt):
+            return
+    logging.log(LEVELS.get(loglevel), txt)
+
+
 "interface"
 
 
 def __dir__():
-    return modules()
+    return (
+        'Commands',
+        'Main',
+        'command',
+        'elapsed',
+        'inits',
+        'level',
+        'load',
+        'parse',
+        'rlog',
+        'spl'
+    )

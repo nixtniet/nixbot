@@ -11,20 +11,22 @@ import time
 import _thread
 
 
-from nixt.client  import Client
+from nixt.clients import Client
 from nixt.handler import Event
-from nixt.path    import Workdir, pidname, skel
-from nixt.serial  import dumps
-from nixt.thread  import Errors, full
+from nixt.objects import dumps
+from nixt.persist import Workdir, pidname, skel, types
+from nixt.threads import Errors, full
 
 
-from nixbot.modules import level, parse
-from nixbot.modules import CHECKSUM, Commands, Main, command, inits
-from nixbot.modules import md5sum, mods, modules, settable
+from nixbot.modules import CHECKSUM, Commands, Main, command, inits, parse
+from nixbot.modules import level, md5sum, mods, modules, settable
 
 
 CHECKSUM2 = "5206bffdc9dbf7a0967565deaabc2144"
 CHECKSUM2 = ""
+
+
+Main.name = "nixbot"
 
 
 class CLI(Client):
@@ -149,8 +151,12 @@ def cmd(event):
     event.reply(",".join(sorted([x for x in Commands.names if x not in Main.ignore])))
 
 
+def ls(event):
+    event.reply(",".join([x.split(".")[-1].lower() for x in types()]))
+
+
 def md5(event):
-    table = mods("tbl")[0]
+    table = mods(path, "tbl")[0]
     event.reply(md5sum(table.__file__))
 
 
@@ -201,6 +207,7 @@ def console():
     Main.verbose = Main.sets.verbose or Main.verbose
     Main.level   = Main.sets.level or Main.level or "warn"
     Commands.add(cmd)
+    Commands.add(ls)
     level(Main.level or "debug")
     setwd(Main.name)
     settable()
@@ -222,6 +229,7 @@ def control():
     setwd(Main.name)
     settable()
     Commands.add(cmd)
+    Commands.add(ls)
     Commands.add(md5)
     Commands.add(srv)
     Commands.add(tbl)

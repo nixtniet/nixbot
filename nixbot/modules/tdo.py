@@ -7,11 +7,9 @@
 import time
 
 
-from nixt.disk   import write
-from nixt.find   import find, fntime
-from nixt.object import Object, update
-from nixt.path   import getpath
-from .           import elapsed
+from nixt.persist import find, fntime, getpath, write
+from nixt.objects import Object, update
+from .            import elapsed
 
 
 class Todo(Object):

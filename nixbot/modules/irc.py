@@ -13,15 +13,12 @@ import threading
 import time
 
 
-from nixt.client  import Buffered
-from nixt.disk    import write
-from nixt.find    import last
-from nixt.fleet   import Fleet
+from nixt.clients import Buffered, Fleet
 from nixt.handler import Event as IEvent
-from nixt.object  import Object, keys
-from nixt.path    import getpath, ident
-from nixt.thread  import launch
-from .            import Default, Main, command, edit, fmt, rlog
+from nixt.objects import Object, edit, fmt, keys
+from nixt.persist import getpath, ident, last, write
+from nixt.threads import launch
+from .            import Default, Main, command, rlog
 
 
 IGNORE  = ["PING", "PONG", "PRIVMSG"]
@@ -34,7 +31,7 @@ def init():
     irc = IRC()
     irc.start()
     irc.events.joined.wait(30.0)
-    rlog("debug", fmt(irc.cfg, skip=["password"]))
+    rlog("debug", fmt(irc.cfg, skip=["password", "realname", "username"]))
     return irc
 
 
