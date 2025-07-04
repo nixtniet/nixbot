@@ -11,11 +11,15 @@ import time
 import _thread
 
 
-from nixt.clients import Client
-from nixt.handler import Event
-from nixt.objects import dumps
+sys.path.insert(0, os.getcwd())
+
+
+from nixt.client  import Client
+from nixt.errors  import Errors, full
+from nixt.event   import Event
+from nixt.fleet   import Fleet
 from nixt.persist import Workdir, pidname, skel, types
-from nixt.threads import Errors, full
+from nixt.serial  import dumps
 
 
 from nixbot.modules import CHECKSUM, Commands, Main, command, inits, parse
@@ -46,7 +50,7 @@ class Console(CLI):
         pass
 
     def callback(self, evt):
-        CLI.callback(self, evt)
+        super().callback(evt)
         evt.wait()
 
     def poll(self):
@@ -54,10 +58,6 @@ class Console(CLI):
         evt.txt = input("> ")
         evt.type = "command"
         return evt
-
-
-def handler(signum, frame):
-    _thread.interrupt_main()
 
 
 "output"
@@ -114,10 +114,7 @@ def errors():
 
 def forever():
     while True:
-        try:
-            time.sleep(0.1)
-        except (KeyboardInterrupt, EOFError):
-            _thread.interrupt_main()
+        time.sleep(0.01)
 
 
 def pidfile(filename):
@@ -262,7 +259,6 @@ def wrapped(func):
         func()
     except (KeyboardInterrupt, EOFError):
         out("")
-    errors()
 
 
 def wrap(func):
