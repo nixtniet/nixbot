@@ -19,17 +19,21 @@ sys.path.insert(0, os.getcwd())
 
 
 from nixbot.clients import Client, Fleet
-from nixbot.command import command, modules, parse
+from nixbot.command import command, modules, parse, scan
 from nixbot.handler import Event
 from nixbot.objects import Object, keys
 from nixbot.persist import Workdir, skel
-from nixbot.runtime import STARTTIME, Errors, Main, full, launch
-from nixbot.utility umport elapsed, spl
+from nixbot.runtime import STARTTIME, Main, launch
+from nixbot.utility import elapsed, spl
+from nixbot.modules import thr as THR
 
 
 Main.debug  = True
 Main.md5    = False
 Workdir.wdr = ".test"
+
+
+path = os.path.dirname(THR.__file__)
 
 
 param = Object()
@@ -95,7 +99,7 @@ class CLI(Client):
 def banner():
     tme = time.ctime(time.time()).replace("  ", " ")
     print(f"{Main.name.upper()} since {tme}")
-    print("loaded " + ",".join(sorted(modules())))
+    print("loaded " + ",".join(sorted(modules(path))))
 
 
 def consume(evts):
@@ -140,15 +144,13 @@ def wrap(function):
     finally:
         if old3:
             termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old3)
-    for exc in Errors.errors:
-        print(full(exc))
 
 
 def main():
     global nrs
     global nrcommand
-    settable()
     parse(Main, " ".join(sys.argv[1:]))
+    scan(path)
     nrcommand = 0
     if "v" in Main.opts:
         banner()
