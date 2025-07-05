@@ -23,6 +23,9 @@ classifiers=[
 ]
 
 
+[project.scripts]
+"nixbot" = "nixbot.__main__:main"
+
 [project.urls]
 "home" = "https://pypi.org/project/nixbot"
 "bugs" = "https://github.com/nixtniet/nixbot/issues"

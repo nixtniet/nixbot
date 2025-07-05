@@ -9,7 +9,7 @@ import time
 
 
 from ..command import STARTTIME
-from ..utils   import  elapsed
+from ..utility import  elapsed
 
 
 def thr(event):

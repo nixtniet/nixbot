@@ -13,14 +13,13 @@ import threading
 import time
 
 
-from ..client  import Output
+from ..clients import Fleet, Output
 from ..command import Main, command
-from ..event   import Event as IEvent
-from ..fleet   import Fleet
-from ..object  import Default, Object, edit, fmt, keys
+from ..handler import Event as IEvent
+from ..objects import Default, Object, edit, fmt, keys
 from ..persist import getpath, ident, last, write
-from ..thread  import launch
-from ..utils   import rlog
+from ..runtime import launch
+from ..utility import rlog
 
 
 IGNORE  = ["PING", "PONG", "PRIVMSG"]

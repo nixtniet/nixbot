@@ -12,10 +12,10 @@ import sys
 import time
 
 
-from .fleet  import Fleet
-from .object import Default
-from .thread import launch
-from .utils  import spl
+from .clients import Fleet
+from .objects import Default
+from .runtime import launch
+from .utility import spl
 
 
 STARTTIME = time.time()

@@ -7,9 +7,9 @@
 import time
 
 
-from ..object  import Object, update
+from ..objects import Object, update
 from ..persist import find, fntime, getpath, write
-from ..utils   import elapsed
+from ..utility import elapsed
 
 
 class Todo(Object):
