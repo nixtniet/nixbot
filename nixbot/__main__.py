@@ -15,14 +15,13 @@ from .clients import Client
 from .command import Main, Commands, command, inits, modules, parse, scan
 from .handler import Event
 from .persist import Workdir, pidname, skel, types
-from .runtime import Errors, full
 from .utility import level
 
 
-from .modules import err
+from .modules import thr
 
 
-Main.modpath = os.path.dirname(err.__file__)
+Main.modpath = os.path.dirname(thr.__file__)
 Main.name = Main.__module__.split(".")[0]
 
 
@@ -95,17 +94,11 @@ def daemon(verbose=False):
     os.nice(10)
 
 
-def errors():
-    for exc in Errors.errors:
-        out(full(exc))
-
-
 def forever():
     while True:
         try:
             time.sleep(0.01)
         except (KeyboardInterrupt, EOFError):
-            errors()
             sys.exit(1)
 
 
@@ -258,8 +251,6 @@ def wrap(func):
         if old:
             termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old)
 
-    errors()
-
 def main():
     if check("a"):
         Main.init = ",".join(modules(Main.modpath))
@@ -277,4 +268,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    errors()
