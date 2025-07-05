@@ -10,10 +10,9 @@ import time
 
 
 from ..clients import Fleet
-from ..logging import rlog
 from ..objects import Object, items
 from ..persist import getpath, last, write
-from ..runtime import Timed, elapsed
+from ..runtime import Timed, elapsed, rlog
 
 
 class NoDate(Exception):

@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"main program"
+"main"
 
 
 import os
@@ -14,10 +14,8 @@ import time
 from .clients import Client
 from .command import Main, Commands, command, inits, modules, parse, scan
 from .handler import Event
-from .logging import level
 from .persist import Workdir, pidname, skel, types
-
-
+from .runtime import level
 from .modules import thr
 
 
@@ -55,6 +53,9 @@ class Console(CLI):
         evt.txt = input("> ")
         evt.type = "command"
         return evt
+
+
+"utilities"
 
 
 def banner():

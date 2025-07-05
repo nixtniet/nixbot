@@ -6,6 +6,7 @@
 
 import logging
 import queue
+import sys
 import time
 import threading
 import traceback
@@ -23,6 +24,9 @@ launchlock = threading.RLock()
 lock = threading.RLock()
 
 
+"config"
+
+
 class Main(Default):
 
     debug   = False
@@ -37,6 +41,9 @@ class Main(Default):
     sets    = Default()
     verbose = False
     version = 103
+
+
+"threads"
 
 
 class Thread(threading.Thread):
@@ -143,6 +150,35 @@ class Repeater(Timed):
         super().run()
 
 
+"logging"
+
+
+LEVELS = {'debug': logging.DEBUG,
+          'info': logging.INFO,
+          'warning': logging.WARNING,
+          'warn': logging.WARNING,
+          'error': logging.ERROR,
+          'critical': logging.CRITICAL
+         }
+
+
+def level(loglevel="debug"):
+    if loglevel != "none":
+        format_short = "%(message)-80s"
+        datefmt = '%H:%M:%S'
+        logging.basicConfig(stream=sys.stderr, datefmt=datefmt, format=format_short)
+        logging.getLogger().setLevel(LEVELS.get(loglevel))
+
+
+def rlog(loglevel, txt, ignore=None):
+    if ignore is None:
+        ignore = []
+    for ign in ignore:
+        if ign in str(txt):
+            return
+    logging.log(LEVELS.get(loglevel), txt)
+
+
 "utilities"
 
 
@@ -205,6 +241,8 @@ def __dir__():
         'Timed',
         'elapsed',
         'launch',
+        'level',
         'name',
+        'rlog',
         'spl'
     )

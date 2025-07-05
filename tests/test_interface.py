@@ -11,30 +11,24 @@ import unittest
 
 
 import nixbot
-import nixbot.client
+import nixbot.clients
 import nixbot.command
-import nixbot.engine
-import nixbot.event
-import nixbot.fleet
-import nixbot.object
+import nixbot.handler
+import nixbot.objects
 import nixbot.persist
-import nixbot.thread
-import nixbot.timer
+import nixbot.runtime
 
 
-from nixbot.object import *
+from nixbot.objects import *
 
 
 PACKAGE = [
-    'client',
+    'clients',
     'command',
-    'engine',
-    'event',
-    'fleet',
-    'object',
+    'handler',
+    'objects',
     'persist',
-    'thread',
-    'timer'
+    'runtime',
 ]
 
 

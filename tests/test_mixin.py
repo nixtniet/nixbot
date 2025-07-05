@@ -7,7 +7,7 @@
 import unittest
 
 
-from nixbot.object import Object
+from nixbot.objects import Object
 
 
 class Mix:
