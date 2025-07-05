@@ -10,7 +10,7 @@ import sys
 
 
 IGNORE = ['__main__','modules', 'output']
-NAME   = "nixt"
+NAME   = "nixbot"
 
 
 def ignore(txt):

@@ -9,32 +9,11 @@ import importlib.util
 import inspect
 import os
 import sys
-import time
 
 
 from .clients import Fleet
 from .objects import Default
-from .runtime import launch
-from .utility import spl
-
-
-STARTTIME = time.time()
-
-
-class Main(Default):
-
-    debug   = False
-    gets    = Default()
-    ignore  = ""
-    init    = ""
-    level   = "warn"
-    modpath = ""
-    name    = Default.__module__.split(".")[-2]
-    opts    = Default()
-    otxt    = ""
-    sets    = Default()
-    verbose = False
-    version = 103
+from .runtime import Main, launch, spl
 
 
 class Commands:
