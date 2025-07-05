@@ -7,14 +7,14 @@
 import unittest
 
 
-from nixt.object import Object, items, keys, update, values
+from nixbot.object import Object, items, keys, update, values
 
 
-import nixt.object
+import nixbot.object
 
 
 OBJECT  = Object()
-PACKAGE = nixt.object
+PACKAGE = nixbot.object
 VALIDJSON = '{"test": "bla"}'
 
 
@@ -154,7 +154,7 @@ class TestObject(unittest.TestCase):
         self.assertTrue(okd)
 
     def test_module(self):
-        self.assertEqual(Object().__module__, "nixt.object")
+        self.assertEqual(Object().__module__, "nixbot.object")
 
     def test_register(self):
         obj = Object()

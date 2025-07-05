@@ -10,32 +10,29 @@ import sys
 import unittest
 
 
-import nixt
-import nixt.cache
-import nixt.client
-import nixt.disk
-import nixt.find
-import nixt.fleet
-import nixt.handler
-import nixt.object
-import nixt.path
-import nixt.serial
-import nixt.thread
-import nixt.timer
+import nixbot
+import nixbot.client
+import nixbot.command
+import nixbot.engine
+import nixbot.event
+import nixbot.fleet
+import nixbot.object
+import nixbot.persist
+import nixbot.thread
+import nixbot.timer
 
 
-from nixt.object import *
+from nixbot.object import *
 
 
 PACKAGE = [
-    'cache',
     'client',
-    'disk',
-    'find',
+    'command',
+    'engine',
+    'event',
     'fleet',
-    'handler',
     'object',
-    'path',
+    'persist',
     'thread',
     'timer'
 ]
@@ -78,7 +75,7 @@ class TestInterface(unittest.TestCase):
     def test_package(self):
         okd = True
         for mod in PACKAGE:
-            mod1 = getattr(nixt, mod, None)
+            mod1 = getattr(nixbot, mod, None)
             if not mod1:
                 okd = False
                 print(mod)

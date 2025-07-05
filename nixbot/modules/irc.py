@@ -13,12 +13,14 @@ import threading
 import time
 
 
-from nixt.clients import Buffered, Fleet
-from nixt.handler import Event as IEvent
-from nixt.objects import Object, edit, fmt, keys
-from nixt.persist import getpath, ident, last, write
-from nixt.threads import launch
-from .            import Default, Main, command, rlog
+from ..client  import Output
+from ..command import Main, command
+from ..event   import Event as IEvent
+from ..fleet   import Fleet
+from ..object  import Default, Object, edit, fmt, keys
+from ..persist import getpath, ident, last, write
+from ..thread  import launch
+from ..utils   import rlog
 
 
 IGNORE  = ["PING", "PONG", "PRIVMSG"]
@@ -92,12 +94,12 @@ class TextWrap(textwrap.TextWrapper):
 wrapper = TextWrap()
 
 
-class IRC(Buffered):
+class IRC(Output):
 
     def __init__(self):
-        Buffered.__init__(self)
+        Output.__init__(self)
         self.buffer = []
-        self.cache = {}
+        self.cache = Object()
         self.cfg = Config()
         self.channels = []
         self.events = Object()
@@ -400,12 +402,15 @@ class IRC(Buffered):
                     ConnectionResetError,
                     BrokenPipeError
                    ) as ex:
-                self.stop()
                 self.state.nrerror += 1
                 self.state.error = str(ex)
                 rlog("error", "handler stopped")
-                evt = self.event(str(ex))
-                return evt
+                self.state.stopkeep = False
+                self.state.pongcheck = True
+                #self.stop()
+                return None
+                #evt = self.event(str(ex))
+                #return evt
         try:
             txt = self.buffer.pop(0)
         except IndexError:
@@ -474,7 +479,7 @@ class IRC(Buffered):
         self.events.ready.clear()
         self.events.connected.clear()
         self.events.joined.clear()
-        Buffered.start(self)
+        Output.start(self)
         launch(
                self.doconnect,
                self.cfg.server or "localhost",
@@ -486,8 +491,8 @@ class IRC(Buffered):
 
     def stop(self):
         self.state.stopkeep = True
+        Output.stop(self)
         self.disconnect()
-        super().stop
 
     def wait(self):
         self.events.ready.wait()
@@ -562,7 +567,7 @@ def cb_privmsg(evt):
         if evt.txt:
             evt.txt = evt.txt[0].lower() + evt.txt[1:]
         if evt.txt:
-            command(evt)
+            launch(command, evt)
 
 
 def cb_quit(evt):

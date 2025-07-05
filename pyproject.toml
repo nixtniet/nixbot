@@ -14,21 +14,13 @@ authors = [
 ]
 description = "NIXBOT"
 readme = "README.rst"
-license = { text="Public Domain"}
-dependencies = [
-    'nixt',
-]
+license = "Unlicense"
 classifiers=[
     'Development Status :: 3 - Alpha',
-    'License :: Public Domain',
     'Operating System :: Unix',
     'Programming Language :: Python :: 3',
     'Topic :: Utilities'
 ]
-
-
-[project.scripts]
-"nixbot" = "nixbot.__main__:main"
 
 
 [project.urls]
