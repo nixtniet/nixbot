@@ -27,6 +27,10 @@ from nixbot.thread  import hook
 from nixbot.utils   import level, rlog
 
 
+import nixbot.modules
+
+
+Main.modpath = nixbot.modules.__path__[0]
 Main.name = "nixbot"
 
 

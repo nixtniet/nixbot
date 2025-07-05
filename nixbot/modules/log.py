@@ -8,8 +8,7 @@ import time
 
 
 from ..object  import Object
-from ..persist import find, fntime, getpath
-from ..store   import  write
+from ..persist import find, fntime, getpath, write
 from ..utils   import elapsed
 
 

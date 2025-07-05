@@ -5,6 +5,7 @@
 
 
 import importlib
+import importlib.util
 import inspect
 import os
 import sys
@@ -27,13 +28,13 @@ class Main(Default):
     ignore  = ""
     init    = ""
     level   = "warn"
-    modpath = "nixbot/modules"
+    modpath = ""
     name    = Default.__module__.split(".")[-2]
     opts    = Default()
     otxt    = ""
     sets    = Default()
     verbose = False
-    version = 340
+    version = 103
 
 
 class Commands:
@@ -76,7 +77,8 @@ def inits(names):
     modz = []
     for name in sorted(spl(names)):
         path = os.path.join(Main.modpath, name + ".py")
-        mod = load(path, name)
+        mname = pathtoname(path)
+        mod = load(path, mname)
         if not mod:
             continue
         if "init" in dir(mod):
@@ -86,17 +88,20 @@ def inits(names):
 
 
 def load(path, mname=None):
-    mname = mname or path.split(os.sep)[-1]
     if not os.path.exists(path):
         return None
+    if mname is None:
+        mname = pathtoname(path)
+    if mname is None:
+        mname = path.split(os.sep)[-1][:-3]
     spec = importlib.util.spec_from_file_location(mname, path)
     if not spec or not spec.loader:
         return None
     module = importlib.util.module_from_spec(spec)
     if not module:
         return None
+    sys.modules[module.__name__] = module
     spec.loader.exec_module(module)
-    sys.modules[mname] = module
     return module
 
 
@@ -106,6 +111,19 @@ def modules(path):
                    if x.endswith(".py") and not x.startswith("__") and
                    x[:-3] not in Main.ignore
                   ])
+
+
+def pathtoname(path):
+    brk = __name__.split(".")[0]
+    splitted = path.split(os.sep)
+    res = []
+    for spl in splitted[::-1]:
+        if spl.endswith(".py"):
+           spl = spl[:-3]
+        res.append(spl)
+        if spl == brk:
+            break
+    return ".".join(res[::-1])
 
 
 def parse(obj, txt=""):
