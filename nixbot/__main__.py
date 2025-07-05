@@ -8,25 +8,22 @@ import os
 import pathlib
 import sys
 import time
-import threading
-import _thread
 
 
 
-from .clients import Client, Fleet
+from .clients import Client
 from .command import Main, Commands, command, inits, modules, parse, scan
 from .handler import Event
-from .objects import dumps
 from .persist import Workdir, pidname, skel, types
 from .runtime import Errors, full
-from .utility import level, rlog
+from .utility import level
 
 
-import nixbot.modules
+from .modules import err
 
 
-Main.modpath = nixbot.modules.__path__[0]
-Main.name = "nixbot"
+Main.modpath = os.path.dirname(err.__file__)
+Main.name = Main.__module__.split(".")[0]
 
 
 def out(txt):
@@ -108,7 +105,8 @@ def forever():
         try:
             time.sleep(0.01)
         except (KeyboardInterrupt, EOFError):
-            sys.exit()
+            errors()
+            sys.exit(1)
 
 
 def pidfile(filename):
@@ -260,6 +258,7 @@ def wrap(func):
         if old:
             termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old)
 
+    errors()
 
 def main():
     if check("a"):
@@ -274,7 +273,8 @@ def main():
         wrapped(service)
     else:
         wrapped(control)
-    errors()
+
 
 if __name__ == "__main__":
     main()
+    errors()

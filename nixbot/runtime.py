@@ -4,8 +4,6 @@
 "runtime"
 
 
-import logging
-import os
 import queue
 import time
 import threading
@@ -13,9 +11,28 @@ import traceback
 import _thread
 
 
+from .objects import Default
+
+
 errorlock = threading.RLock()
 launchlock = threading.RLock()
 lock = threading.RLock()
+
+
+class Main(Default):
+
+    debug   = False
+    gets    = Default()
+    ignore  = ""
+    init    = ""
+    level   = "warn"
+    modpath = ""
+    name    = Default.__module__.split(".")[-2]
+    opts    = Default()
+    otxt    = ""
+    sets    = Default()
+    verbose = False
+    version = 103
 
 
 class Thread(threading.Thread):
@@ -181,7 +198,9 @@ def line(exc):
 
 def __dir__():
     return (
+        'Default',
         'Errors',
+        'Main',
         'Repeater',
         'Thread',
         'Timed',

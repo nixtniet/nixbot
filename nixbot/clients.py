@@ -6,6 +6,7 @@
 
 import queue
 import threading
+import time
 
 
 from .handler import Handler

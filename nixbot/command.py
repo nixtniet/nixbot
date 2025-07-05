@@ -117,11 +117,11 @@ def pathtoname(path):
     brk = __name__.split(".")[0]
     splitted = path.split(os.sep)
     res = []
-    for spl in splitted[::-1]:
-        if spl.endswith(".py"):
-           spl = spl[:-3]
-        res.append(spl)
-        if spl == brk:
+    for splt in splitted[::-1]:
+        if splt.endswith(".py"):
+           splt = splt[:-3]
+        res.append(splt)
+        if splt == brk:
             break
     return ".".join(res[::-1])
 
