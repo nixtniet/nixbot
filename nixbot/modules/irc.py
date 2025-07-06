@@ -292,16 +292,13 @@ class IRC(Output):
             self.state.keeprunning = True
             self.state.latest = time.time()
             time.sleep(self.cfg.sleep)
-            print("sending ping")
             self.docommand('PING', self.cfg.server)
-            print(self.state.pongcheck)
             if self.state.pongcheck:
                 rlog('error', "failed pong check, restarting")
                 self.state.pongcheck = False
                 self.state.keeprunning = False
                 self.events.connected.clear()
-                self.stop()
-                print("launch")
+                #self.stop()
                 launch(init)
                 break
 
@@ -394,7 +391,6 @@ class IRC(Output):
             try:
                 self.some()
             except BlockingIOError as ex:
-                print("blocking")
                 time.sleep(1.0)
                 return self.event(str(ex))
             except (
@@ -489,7 +485,7 @@ class IRC(Output):
 
     def stop(self):
         self.state.stopkeep = True
-        Output.stop(self)
+        self.ostop.set()
         self.disconnect()
 
     def wait(self):
