@@ -108,13 +108,14 @@ class IRC(Output):
         self.idents = []
         self.sock = None
         self.state = Object()
-        self.state.dostop = False
         self.state.error = ""
         self.state.keeprunning = False
+        self.state.last = time.time()
         self.state.lastline = ""
         self.state.nrconnect = 0
         self.state.nrerror = 0
         self.state.nrsend = 0
+        self.state.sleep = self.cfg.sleep 
         self.state.stopkeep = False
         self.zelf = ''
         self.register('903', cb_h903)
@@ -131,7 +132,7 @@ class IRC(Output):
 
     def announce(self, txt):
         for channel in self.channels:
-            self.dosay(channel, txt)
+            self.say(channel, txt)
 
     def connect(self, server, port=6667):
         rlog("debug", f"connecting to {server}:{port}")
@@ -289,16 +290,19 @@ class IRC(Output):
             self.events.connected.wait()
             self.events.authed.wait()
             self.state.keeprunning = True
+            self.state.latest = time.time()
             time.sleep(self.cfg.sleep)
-            self.state.pongcheck = True
+            print("sending ping")
             self.docommand('PING', self.cfg.server)
+            print(self.state.pongcheck)
             if self.state.pongcheck:
                 rlog('error', "failed pong check, restarting")
                 self.state.pongcheck = False
                 self.state.keeprunning = False
                 self.events.connected.clear()
                 self.stop()
-                init()
+                print("launch")
+                launch(init)
                 break
 
     def logon(self, server, nck):
@@ -390,6 +394,7 @@ class IRC(Output):
             try:
                 self.some()
             except BlockingIOError as ex:
+                print("blocking")
                 time.sleep(1.0)
                 return self.event(str(ex))
             except (
@@ -402,13 +407,8 @@ class IRC(Output):
                    ) as ex:
                 self.state.nrerror += 1
                 self.state.error = str(ex)
-                rlog("error", "handler stopped")
-                self.state.stopkeep = False
-                self.state.pongcheck = True
-                #self.stop()
+                rlog("error", self.state.error)
                 return None
-                #evt = self.event(str(ex))
-                #return evt
         try:
             txt = self.buffer.pop(0)
         except IndexError:
@@ -433,7 +433,7 @@ class IRC(Output):
                    ) as ex:
                 self.state.nrerror += 1
                 self.state.error = str(ex)
-                self.stop()
+                self.state.pongcheck = True
                 return
         self.state.last = time.time()
         self.state.nrsend += 1

@@ -111,7 +111,7 @@ class Fetcher(Object):
             txt = f'[{feedname}] '
         for obj in result:
             txt2 = txt + self.display(obj)
-            for bot in Fleet.clients.values():
+            for bot in Fleet.all():
                 bot.announce(txt2)
         return counter
 
