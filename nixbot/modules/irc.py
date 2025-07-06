@@ -197,7 +197,6 @@ class IRC(Output):
                          evt.channel,
                          f"use !mre to show more (+{length})"
                         )
-        print("eod")
 
     def docommand(self, cmd, *args):
         with saylock:
@@ -295,11 +294,9 @@ class IRC(Output):
             time.sleep(self.cfg.sleep)
             self.docommand('PING', self.cfg.server)
             if self.state.pongcheck:
-                rlog('error', "failed pong check, restarting")
                 self.state.pongcheck = False
                 self.state.keeprunning = False
                 self.events.connected.clear()
-                #self.stop()
                 launch(init)
                 break
 

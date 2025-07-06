@@ -56,7 +56,6 @@ class Output(Client):
         while not self.ostop.is_set():
             event = self.oqueue.get()
             if event is None:
-                print("break")
                 self.oqueue.task_done()
                 break
             self.display(event)

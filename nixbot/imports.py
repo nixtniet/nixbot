@@ -10,7 +10,7 @@ import os
 import sys
 
 
-from .runtime import Main
+"modules"
 
 
 def load(path, mname=None):
@@ -34,9 +34,11 @@ def load(path, mname=None):
 def modules(path):
     return sorted([
                    x[:-3] for x in os.listdir(path)
-                   if x.endswith(".py") and not x.startswith("__") and
-                   x[:-3] not in Main.ignore
+                   if x.endswith(".py") and not x.startswith("__")
                   ])
+
+
+"utilities"
 
 
 def pathtoname(path):

@@ -7,12 +7,38 @@
 import inspect
 import os
 import sys
+import time
 
 
 from .clients import Fleet
 from .imports import load, pathtoname
 from .objects import Default
-from .runtime import Main, launch, spl
+from .runtime import launch, spl
+
+
+STARTTIME = time.time()
+
+
+"config"
+
+
+class Main(Default):
+
+    debug   = False
+    gets    = Default()
+    ignore  = ""
+    init    = ""
+    level   = "warn"
+    modpath = ""
+    name    = Default.__module__.split(".")[-2]
+    opts    = Default()
+    otxt    = ""
+    sets    = Default()
+    verbose = False
+    version = 103
+
+
+"commands"
 
 
 class Commands:
@@ -38,6 +64,9 @@ class Commands:
                 continue
             if 'event' in cmdz.__code__.co_varnames:
                 Commands.add(cmdz, mod)
+
+
+"utilities"
 
 
 def command(evt):
