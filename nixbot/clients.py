@@ -70,16 +70,10 @@ class Output(Client):
         launch(self.output)
 
     def stop(self):
-        #if self.oready.is_set():
-        #    return
-        print("stop output")
         Client.stop(self)
-        print("stopped client")
         self.ostop.set()
         self.oqueue.put(None)
-        print("waiting for ready")
         self.oready.wait()
-        print("stopped")
 
     def wait(self):
         self.oqueue.join()
