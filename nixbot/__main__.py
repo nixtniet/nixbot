@@ -12,8 +12,9 @@ import time
 
 
 from .clients import Client
-from .command import Main, Commands, command, inits, modules, parse, scan
+from .command import Main, Commands, command, inits, parse, scan
 from .handler import Event
+from .imports import modules
 from .persist import Workdir, pidname, skel, types
 from .runtime import level
 from .modules import thr

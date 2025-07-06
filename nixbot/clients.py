@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"client"
+"clients"
 
 
 import queue
@@ -56,6 +56,7 @@ class Output(Client):
         while not self.ostop.is_set():
             event = self.oqueue.get()
             if event is None:
+                print("break")
                 self.oqueue.task_done()
                 break
             self.display(event)
@@ -69,12 +70,16 @@ class Output(Client):
         launch(self.output)
 
     def stop(self):
-        if self.oready.is_set():
-            return
+        #if self.oready.is_set():
+        #    return
+        print("stop output")
         Client.stop(self)
+        print("stopped client")
         self.ostop.set()
         self.oqueue.put(None)
+        print("waiting for ready")
         self.oready.wait()
+        print("stopped")
 
     def wait(self):
         self.oqueue.join()

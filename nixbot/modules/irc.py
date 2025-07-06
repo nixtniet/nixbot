@@ -197,6 +197,7 @@ class IRC(Output):
                          evt.channel,
                          f"use !mre to show more (+{length})"
                         )
+        print("eod")
 
     def docommand(self, cmd, *args):
         with saylock:
@@ -313,17 +314,6 @@ class IRC(Output):
             setattr(self.cache, evt.channel, [])
         self.oqueue.put_nowait(evt)
 
-    def output(self):
-        while not self.ostop.is_set():
-            evt = self.oqueue.get()
-            if evt is None:
-                break
-            if self.ostop.is_set():
-                break
-            if not evt.result:
-                continue
-            self.display(evt)
-
     def parsing(self, txt):
         rawstr = str(txt)
         rawstr = rawstr.replace('\u0001', '')
@@ -430,6 +420,7 @@ class IRC(Output):
                 self.state.nrerror += 1
                 self.state.error = str(ex)
                 self.state.pongcheck = True
+                self.stop()
                 return
         self.state.last = time.time()
         self.state.nrsend += 1
@@ -485,8 +476,8 @@ class IRC(Output):
 
     def stop(self):
         self.state.stopkeep = True
-        self.ostop.set()
-        self.disconnect()
+        Output.stop(self)
+        #self.disconnect()
 
     def wait(self):
         self.events.ready.wait()
