@@ -19,12 +19,12 @@ sys.path.insert(0, os.getcwd())
 
 
 from nixbot.clients import Client, Fleet
-from nixbot.command import command, parse, scan
+from nixbot.command import STARTTIME, Main, command, parse, scan
 from nixbot.handler import Event
 from nixbot.imports import modules
 from nixbot.objects import Object, keys
 from nixbot.persist import Workdir, skel
-from nixbot.runtime import STARTTIME, Main, elapsed, launch, spl
+from nixbot.runtime import elapsed, launch, spl
 from nixbot.modules import thr as THR
 
 
