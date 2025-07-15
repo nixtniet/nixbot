@@ -4,7 +4,6 @@
 "debug"
 
 
-import logging
 import time
 
 
@@ -24,5 +23,5 @@ def brk(event):
             time.sleep(2.0)
             try:
                 clt.sock.shutdown(2)
-            except OSError as ex:
-                logging.exception(ex)
+            except OSError:
+                pass
