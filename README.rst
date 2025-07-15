@@ -185,13 +185,8 @@ and add the following for ``hello world``
         event.reply("hello world !!")
 
 
-Save this and recreate the dispatch table
-
-|
-| ``$ nixbot tbl > nixbot/modules/tbl.py``
-|
-
-``nixbot`` can execute the ``hello`` command now.
+include the <name> in nixbot/modules/__init__.py and ``nixbot`` can execute the ``hello``
+command now.
 
 |
 | ``$ nixbot hello``
