@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"event handler"
+"handler"
 
 
 import queue
@@ -12,9 +12,6 @@ import _thread
 
 from .objects import Object
 from .runtime import launch
-
-
-"handler"
 
 
 class Handler:

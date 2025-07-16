@@ -1,35 +1,31 @@
 # This file is placed in the Public Domain.
 
 
-"main"
-
-
+import inspect
 import os
 import pathlib
 import sys
 import time
 
 
-from .clients import Client
-from .command import Main, Commands
-from .command import command, inits, parse, scan
+from .clients import Client, Fleet
+from .command import Commands, Default, Main
+from .command import elapsed, command, elapsed, parse, scan, spl
 from .handler import Event
 from .persist import Workdir, pidname, skel, types
-from .runtime import level
+from .runtime import launch, level
+from .        import modules as MODS
 
 
-from . import modules as MODS
+Main.version = 351
 
 
-Main.name = Main.__module__.split(".")[0]
+STARTTIME = time.time()
 
 
 def out(txt):
     print(txt)
     sys.stdout.flush()
-
-
-"clients"
 
 
 class CLI(Client):
@@ -45,7 +41,6 @@ class CLI(Client):
 class Console(CLI):
 
     def announce(self, txt):
-        #out(txt)
         pass
 
     def callback(self, evt):
@@ -58,6 +53,21 @@ class Console(CLI):
         evt.type = "command"
         return evt
 
+    def raw(self, txt):
+        out(txt)
+
+
+def inits(pkg, names):
+    modz = []
+    for name in sorted(spl(names)):
+        mod = getattr(pkg, name, None)
+        if not mod:
+            continue
+        if "init" in dir(mod):
+            thr = launch(mod.init)
+            modz.append((mod, thr))
+    return modz
+
 
 "utilities"
 
@@ -65,7 +75,8 @@ class Console(CLI):
 def banner():
     tme = time.ctime(time.time()).replace("  ", " ")
     out(f"{Main.name.upper()} {Main.version} since {tme} ({Main.level.upper()})")
-    out(f"loaded {".".join(dir(MODS))}")
+    if None:
+        out(f'loaded {".".join(dir(MODS))}')
 
 
 def check(txt):
@@ -136,7 +147,8 @@ def setwd(name, path=""):
 
 
 def cmd(event):
-    event.reply(",".join(sorted([x for x in Commands.names if x not in Main.ignore])))
+    if Commands.names:
+        event.reply(",".join(sorted(Commands.names)))
 
 
 def ls(event):
@@ -168,7 +180,7 @@ def console():
     import readline # noqa: F401
     parse(Main, " ".join(sys.argv[1:]))
     Main.init = Main.sets.init or Main.init
-    Main.verbose = Main.sets.verbose or Main.verbose
+    Main.verbose = Main.sets.verbose or False
     Main.level   = Main.sets.level or Main.level or "warn"
     level(Main.level)
     setwd(Main.name)

@@ -15,9 +15,9 @@ import time
 
 
 from ..clients import Client, Fleet
-from ..command import Main, command
+from ..command import Default, Main, command
 from ..handler import Event as IEvent
-from ..objects import Default, Object, edit, fmt, keys
+from ..objects import Object, edit, fmt, keys
 from ..persist import getpath, ident, last, write
 from ..runtime import launch, rlog
 
