@@ -112,7 +112,7 @@ def control():
 def service():
     level(Main.level or "warn")
     setwd(Main.name)
-    banner()
+    banner(MODS)
     privileges()
     pidfile(pidname(Main.name))
     scan(MODS)
