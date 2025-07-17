@@ -1,0 +1,162 @@
+# This file is placed in the Public Domain.
+
+
+"main program"
+
+
+import os
+import pathlib
+import sys
+import time
+
+
+from .client import Client
+from .cmnd   import Commands, Main, command, inits, scan
+from .event  import Event
+from .log    import level
+from .parse  import parse
+from .paths  import Workdir, pidname, setwd, skel, types
+from .utils  import check, forever
+
+
+from . import modules as MODS
+
+
+Main.name = Main.__module__.split(".")[0]
+
+
+def out(txt):
+    print(txt)
+    sys.stdout.flush()
+
+
+class CLI(Client):
+
+    def __init__(self):
+        Client.__init__(self)
+        self.register("command", command)
+
+    def raw(self, txt):
+        out(txt.encode('utf-8', 'replace').decode("utf-8"))
+
+
+class Console(CLI):
+
+    def announce(self, txt):
+        pass
+
+    def callback(self, evt):
+        super().callback(evt)
+        evt.wait()
+
+    def poll(self):
+        evt = Event()
+        evt.txt = input("> ")
+        evt.type = "command"
+        return evt
+
+
+def banner(mods):
+    tme = time.ctime(time.time()).replace("  ", " ")
+    out(f"{Main.name.upper()} {Main.version} since {tme} ({Main.level.upper()})")
+    out(f"loaded {".".join(dir(mods))}")
+
+
+def background():
+    daemon("-v" in sys.argv)
+    privileges()
+    level(Main.level or "debug")
+    setwd(Main.name)
+    pidfile(pidname(Main.name))
+    scan(MODS)
+    inits(MODS, Main.init or "irc,rss")
+    forever()
+
+
+def console():
+    import readline # noqa: F401
+    parse(Main, " ".join(sys.argv[1:]))
+    Main.init = Main.sets.init or Main.init
+    Main.verbose = Main.sets.verbose or Main.verbose
+    Main.level   = Main.sets.level or Main.level or "warn"
+    level(Main.level)
+    setwd(Main.name)
+    scan(MODS)    
+    if "v" in Main.opts:
+        banner(MODS)
+    for _mod, thr in inits(MODS, Main.init):
+        if "w" in Main.opts:
+            thr.join(30.0)
+    csl = Console()
+    csl.start()
+    forever()
+
+
+def control():
+    if len(sys.argv) == 1:
+        return
+    parse(Main, " ".join(sys.argv[1:]))
+    level(Main.level or "warn")
+    setwd(Main.name)
+    scan(MODS)
+    #srv = getattr(MODS, "srv", None)
+    #if srv:
+    Commands.scan(MODS.srv)
+    csl = CLI()
+    evt = Event()
+    evt.orig = repr(csl)
+    evt.type = "command"
+    evt.txt = Main.otxt
+    command(evt)
+    evt.wait()
+
+
+def service():
+    level(Main.level or "warn")
+    setwd(Main.name)
+    banner()
+    privileges()
+    pidfile(pidname(Main.name))
+    scan(MODS)
+    inits(MODS, Main.init or "irc,rss")
+    forever()
+
+
+def wrapped(func):
+    try:
+        func()
+    except (KeyboardInterrupt, EOFError):
+        out("")
+
+
+def wrap(func):
+    import termios
+    old = None
+    try:
+        old = termios.tcgetattr(sys.stdin.fileno())
+    except termios.error:
+        pass
+    try:
+        wrapped(func)
+    finally:
+        if old:
+            termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old)
+
+
+def main():
+    if check("a"):
+        Main.init = ",".join(dir(MODS))
+    if check("v"):
+        setattr(Main.opts, "v", True)
+    if check("c"):
+        wrap(console)
+    elif check("d"):
+        background()
+    elif check("s"):
+        wrapped(service)
+    else:
+        wrapped(control)
+
+
+if __name__ == "__main__":
+    main()
