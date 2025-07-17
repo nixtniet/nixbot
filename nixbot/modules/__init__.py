@@ -5,19 +5,19 @@
 
 
 from . import cmd, dbg, irc, lst, req, rss, slg, srv, thr # noqa: F401
-from . import fnd
+from . import fnd, ver
 
 
 __all__ = (
     "cmd",
-    "dbg",
     "fnd",
     "irc",
     "lst",
     "req",
     "rss",
     "slg",
-    "thr"
+    "thr",
+    "ver"
 )
 
 
