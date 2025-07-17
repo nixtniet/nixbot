@@ -11,61 +11,78 @@ import unittest
 
 
 import nixbot
-import nixbot.clients
-import nixbot.command
-import nixbot.handler
-import nixbot.objects
-import nixbot.persist
-import nixbot.runtime
+import nixbot.client
+import nixbot.cmnd
+import nixbot.config
+import nixbot.disk
+import nixbot.engine
+import nixbot.event
+import nixbot.find
+import nixbot.fleet
+import nixbot.json
+import nixbot.log
+import nixbot.object
+import nixbot.paths
+import nixbot.thread
+import nixbot.timer
+import nixbot.utils
 
 
-from nixbot.objects import *
+from nixbot.object import *
 
 
 PACKAGE = [
-    'clients',
-    'command',
-    'handler',
-    'objects',
-    'persist',
-    'runtime',
+    "client",
+    "cmnd",
+    "config",
+    "disk",
+    "engine",
+    "event",
+    "find",
+    "fleet",
+    "json",
+    "log",
+    "object",
+    "paths",
+    "thread",
+    "timer",
+    "utils"
 ]
 
 
 METHODS = [
-    '__class__',
-    '__delattr__',
-    '__dict__',
-    '__dir__',
-    '__doc__',
-    '__eq__',
-    '__format__',
-    '__ge__',
-    '__getattribute__',
-    '__getstate__',
-    '__gt__',
-    '__hash__',
-    '__init__',
-    '__init_subclass__',
-    '__le__',
-    '__len__',
-    '__lt__',
-    '__module__',
-    '__ne__',
-    '__new__',
-    '__reduce__',
-    '__reduce_ex__',
-    '__repr__',
-    '__setattr__',
-    '__sizeof__',
-    '__str__',
-    '__subclasshook__',
-    '__weakref__'
+    "__class__",
+    "__delattr__",
+    "__dict__",
+    "__dir__",
+    "__doc__",
+    "__eq__",
+    "__format__",
+    "__ge__",
+    "__getattribute__",
+    "__getstate__",
+    "__gt__",
+    "__hash__",
+    "__init__",
+    "__init_subclass__",
+    "__le__",
+    "__len__",
+    "__lt__",
+    "__module__",
+    "__ne__",
+    "__new__",
+    "__reduce__",
+    "__reduce_ex__",
+    "__repr__",
+    "__setattr__",
+    "__sizeof__",
+    "__str__",
+    "__subclasshook__",
+    "__weakref__",
 ]
 
 
 class TestInterface(unittest.TestCase):
-
     def test_package(self):
         okd = True
         for mod in PACKAGE:
