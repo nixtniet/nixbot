@@ -4,8 +4,6 @@
 "main program"
 
 
-import os
-import pathlib
 import sys
 import time
 
@@ -15,8 +13,8 @@ from .cmnd   import Commands, Main, command, inits, scan
 from .event  import Event
 from .log    import level
 from .parse  import parse
-from .paths  import Workdir, pidname, setwd, skel, types
-from .utils  import check, forever
+from .paths  import pidname, setwd
+from .utils  import check, daemon, forever, pidfile, privileges
 
 
 from . import modules as MODS

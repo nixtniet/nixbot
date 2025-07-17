@@ -4,12 +4,14 @@
 "modules"
 
 
-from . import cmd, dbg, irc, lst, req, rss, slg, srv, thr
+from . import cmd, dbg, irc, lst, req, rss, slg, srv, thr # noqa: F401
+from . import fnd
 
 
 __all__ = (
     "cmd",
     "dbg",
+    "fnd",
     "irc",
     "lst",
     "req",

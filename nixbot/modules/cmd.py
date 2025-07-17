@@ -4,7 +4,7 @@
 "available commands"
 
 
-from ..cmnd import Commands, Main
+from ..cmnd import Commands
 
 
 def cmd(event):

@@ -5,11 +5,9 @@
 
 
 import os
+import pathlib
 import sys
 import time
-
-
-from .paths  import Workdir, skel
 
 
 def check(txt):

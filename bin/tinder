@@ -18,15 +18,20 @@ import _thread
 sys.path.insert(0, os.getcwd())
 
 
-from nixbot.clients import Client, Fleet
-from nixbot.command import STARTTIME, Main, command, elapsed, parse, scan, spl
-from nixbot.handler import Event
-from nixbot.objects import Object, keys
-from nixbot.persist import Workdir, skel
-from nixbot.runtime import launch
+from nixbot.client import Client
+from nixbot.cmnd   import Main, command, parse, scan
+from nixbot.event  import Event
+from nixbot.fleet  import Fleet
+from nixbot.object import Object, keys
+from nixbot.paths  import Workdir, skel
+from nixbot.thread import launch
+from nixbot.utils  import elapsed, spl
 
 
 import nixbot.modules as MODS
+
+
+STARTTIME = time.time()
 
 
 Main.debug  = True
