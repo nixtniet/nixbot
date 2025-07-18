@@ -9,12 +9,11 @@ import time
 
 
 from .client import Client
-from .cmnd   import Commands, Main, command, inits, scan
+from .cmnd   import Commands, Main, command, inits, parse, scan
 from .event  import Event
 from .log    import level
-from .parse  import parse
 from .paths  import pidname, setwd
-from .utils  import check, daemon, forever, pidfile, privileges
+from .utils  import check, daemon, pidfile, privileges
 
 
 from . import modules as MODS
@@ -60,6 +59,15 @@ def banner(mods):
     out(f"loaded {".".join(dir(mods))}")
 
 
+def forever():
+    while True:
+        try:
+            time.sleep(0.1)
+        except (KeyboardInterrupt, EOFError):
+            print("")
+            sys.exit(1)
+
+
 def background():
     daemon("-v" in sys.argv)
     privileges()
@@ -97,8 +105,6 @@ def control():
     level(Main.level or "warn")
     setwd(Main.name)
     scan(MODS)
-    #srv = getattr(MODS, "srv", None)
-    #if srv:
     Commands.scan(MODS.srv)
     csl = CLI()
     evt = Event()

@@ -36,7 +36,7 @@ class Thread(threading.Thread):
         try:
             self.result = func(*args)
         except (KeyboardInterrupt, EOFError) as ex:
-            raise ex
+            _thread.interrupt_main()
         except Exception as ex:
             logging.exception(ex)
             _thread.interrupt_main()

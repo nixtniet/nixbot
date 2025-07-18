@@ -80,15 +80,6 @@ def elapsed(seconds, short=True):
     return txt
 
 
-def forever():
-    while True:
-        try:
-            time.sleep(0.1)
-        except (KeyboardInterrupt, EOFError):
-            print("")
-            sys.exit(1)
-
-
 def pidfile(filename):
     if os.path.exists(filename):
         os.unlink(filename)
