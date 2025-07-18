@@ -53,9 +53,6 @@ def spl(txt):
     return [x for x in result if x]
 
 
-"interface"
-
-
 def __dir__():
     return (
         "elapsed",

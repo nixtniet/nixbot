@@ -71,9 +71,6 @@ def name(obj):
     return ""
 
 
-"interface"
-
-
 def __dir__():
     return (
         "Thread",

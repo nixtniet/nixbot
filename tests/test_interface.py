@@ -5,8 +5,6 @@
 "interface"
 
 
-import logging
-import sys
 import unittest
 
 
@@ -102,9 +100,3 @@ class TestInterface(unittest.TestCase):
                 okd = False
                 print(f"{meth} not found")
         self.assertTrue(okd)
-
-
-if __name__ == "__main__":
-    logging.basicConfig(stream=sys.stderr)
-    logging.getLogger("SomeTest.testSomething").setLevel(logging.DEBUG)
-    unittest.main()

@@ -137,9 +137,6 @@ def scan(pkg):
         Commands.scan(mod)
 
 
-"interface"
-
-
 def __dir__():
     return (
         "Commands",
