@@ -21,16 +21,16 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 
 
-from ..config import Default
+from ..auto   import Default
 from ..disk   import write
 from ..fleet  import Fleet
 from ..find   import find, fntime, last
-from ..log    import rlog
 from ..method import fmt
 from ..object import Object, update
 from ..paths  import getpath
 from ..thread import launch
 from ..timer  import Repeater
+from ..utils  import elapsed, rlog, spl
 
 
 DEBUG = False
@@ -55,12 +55,14 @@ def init():
 
 
 class Feed(Default):
+
     def __init__(self):
         Default.__init__(self)
         self.name = ""
 
 
 class Rss(Default):
+
     def __init__(self):
         Default.__init__(self)
         self.display_list = "title,link,author"
@@ -70,6 +72,7 @@ class Rss(Default):
 
 
 class Urls(Default):
+
     pass
 
 
@@ -77,6 +80,7 @@ class Urls(Default):
 
 
 class Fetcher(Object):
+
     def __init__(self):
         self.dosave = False
         self.seen = Urls()
@@ -158,6 +162,7 @@ class Fetcher(Object):
 
 
 class Parser:
+
     @staticmethod
     def getitem(line, item):
         lne = ""
@@ -211,6 +216,7 @@ class Parser:
 
 
 class OPML:
+
     @staticmethod
     def getnames(line):
         return [x.split('="')[0] for x in line.split()]
@@ -515,52 +521,3 @@ TEMPLATE = """<opml version="1.0">
     </head>
     <body>
         <outline title="opml" text="rss feeds">"""
-
-
-def elapsed(seconds, short=True):
-    txt = ""
-    nsec = float(seconds)
-    if nsec < 1:
-        return f"{nsec:.2f}s"
-    yea = 365 * 24 * 60 * 60
-    week = 7 * 24 * 60 * 60
-    nday = 24 * 60 * 60
-    hour = 60 * 60
-    minute = 60
-    yeas = int(nsec / yea)
-    nsec -= yeas * yea
-    weeks = int(nsec / week)
-    nsec -= weeks * week
-    nrdays = int(nsec / nday)
-    nsec -= nrdays * nday
-    hours = int(nsec / hour)
-    nsec -= hours * hour
-    minutes = int(nsec / minute)
-    nsec -= int(minute * minutes)
-    sec = int(nsec)
-    if yeas:
-        txt += f"{yeas}y"
-    if weeks:
-        nrdays += weeks * 7
-    if nrdays:
-        txt += f"{nrdays}d"
-    if short and txt:
-        return txt.strip()
-    if hours:
-        txt += f"{hours}h"
-    if minutes:
-        txt += f"{minutes}m"
-    if sec:
-        txt += f"{sec}s"
-    txt = txt.strip()
-    return txt
-
-
-def spl(txt):
-    try:
-        result = txt.split(",")
-    except (TypeError, ValueError):
-        result = [
-            txt,
-        ]
-    return [x for x in result if x]

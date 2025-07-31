@@ -5,18 +5,20 @@
 
 
 import json
+import json.decoder
 import pathlib
 import threading
 
 
-from .json   import dump, load
 from .object import update
+from .serial import dump, load
 
 
 lock = threading.RLock()
 
 
 class Cache:
+
     objs = {}
 
     @staticmethod
@@ -62,8 +64,8 @@ def write(obj, path):
 
 def __dir__():
     return (
-        "Cache",
-        "cdir",
-        "read",
-        "write"
+        'Cache',
+        'cdir',
+        'read',
+        'write'
     )

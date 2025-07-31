@@ -56,6 +56,6 @@ def fmt(obj, args=None, skip=None, plain=False, empty=False):
 
 def __dir__():
     return (
-        "edit",
-        "fmt"
+        'edit',
+        'fmt'
     )

@@ -4,7 +4,12 @@
 "create service file"
 
 
-from ..cmnd import Main
+from ..auto import Default
+
+
+class Main:
+
+    name = Default.__module__.split(".")[-2]
 
 
 TXT = """[Unit]
@@ -19,7 +24,6 @@ ExecStart=/home/%s/.local/bin/%s -s
 
 [Install]
 WantedBy=multi-user.target"""
-
 
 
 def srv(event):

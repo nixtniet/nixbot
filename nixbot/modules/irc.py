@@ -5,7 +5,6 @@
 
 
 import base64
-import queue
 import os
 import socket
 import ssl
@@ -14,18 +13,19 @@ import threading
 import time
 
 
+from ..auto   import Default
 from ..client import Client
-from ..cmnd   import Main, command
-from ..config import Default
+from ..cmnd   import command
 from ..disk   import write
 from ..event  import Event as IEvent
 from ..find   import last
 from ..fleet  import Fleet
-from ..log    import rlog
 from ..method import edit, fmt
 from ..object import Object, keys
+from ..output import Output
 from ..paths  import getpath, ident
-from ..thread  import launch
+from ..thread import launch
+from ..utils  import rlog
 
 
 IGNORE = ["PING", "PONG", "PRIVMSG"]
@@ -53,7 +53,13 @@ def init():
 "config"
 
 
+class Main:
+
+    name = Default.__module__.split(".")[-2]
+
+
 class Config(Default):
+
     channel = f"#{Main.name}"
     commands = True
     control = "!"
@@ -83,6 +89,7 @@ class Config(Default):
 
 
 class Event(IEvent):
+
     def __init__(self):
         super().__init__()
         self.args = []
@@ -100,6 +107,7 @@ class Event(IEvent):
 
 
 class TextWrap(textwrap.TextWrapper):
+
     def __init__(self):
         super().__init__()
         self.break_long_words = False
@@ -113,48 +121,16 @@ class TextWrap(textwrap.TextWrapper):
 wrapper = TextWrap()
 
 
-"output"
-
-
-class Output:
-    def __init__(self):
-        self.oqueue = queue.Queue()
-        self.ostop = threading.Event()
-
-    def oput(self, event):
-        self.oqueue.put(event)
-
-    def output(self):
-        while not self.ostop.is_set():
-            event = self.oqueue.get()
-            if event is None:
-                self.oqueue.task_done()
-                break
-            self.display(event)
-            self.oqueue.task_done()
-
-    def start(self):
-        self.ostop.clear()
-        launch(self.output)
-
-    def stop(self):
-        self.ostop.set()
-        self.oqueue.put(None)
-
-    def wait(self):
-        self.oqueue.join()
-        super().wait()
-
-
 "IRC"
 
 
 class IRC(Output, Client):
+
     def __init__(self):
         Client.__init__(self)
         Output.__init__(self)
         self.buffer = []
-        self.cache = Object()
+        self.cache = Default()
         self.cfg = Config()
         self.channels = []
         self.events = Object()
@@ -236,23 +212,25 @@ class IRC(Output, Client):
         except (ssl.SSLError, OSError, BrokenPipeError) as _ex:
             pass
 
-    def display(self, evt):
-        for key in sorted(evt.result, key=lambda x: x):
-            txt = evt.result.get(key)
+    def display(self, event):
+        for key in sorted(event.result, key=lambda x: x):
+            txt = event.result.get(key)
+            if not txt:
+                continue
             textlist = []
             txtlist = wrapper.wrap(txt)
             if len(txtlist) > 3:
-                self.extend(evt.channel, txtlist[3:])
+                self.extend(event.channel, txtlist[3:])
                 textlist = txtlist[:3]
             else:
                 textlist = txtlist
             _nr = -1
             for txt in textlist:
                 _nr += 1
-                self.dosay(evt.channel, txt)
+                self.dosay(event.channel, txt)
             if len(txtlist) > 3:
                 length = len(txtlist) - 3
-                self.say(evt.channel, f"use !mre to show more (+{length})")
+                self.say(event.channel, f"use !mre to show more (+{length})")
 
     def docommand(self, cmd, *args):
         with saylock:
@@ -321,7 +299,7 @@ class IRC(Output, Client):
 
     def extend(self, channel, txtlist):
         if channel not in dir(self.cache):
-            self.cache[channel] = []
+            setattr(self.cache, channel, [])
         chanlist = getattr(self.cache, channel)
         chanlist.extend(txtlist)
 
@@ -359,10 +337,10 @@ class IRC(Output, Client):
         self.direct(f"NICK {nck}")
         self.direct(f"USER {nck} {server} {server} {nck}")
 
-    def oput(self, evt):
-        if evt.channel and evt.channel not in dir(self.cache):
-            setattr(self.cache, evt.channel, [])
-        self.oqueue.put_nowait(evt)
+    def oput(self, event):
+        if event.channel and event.channel not in dir(self.cache):
+            setattr(self.cache, event.channel, [])
+        self.oqueue.put_nowait(event)
 
     def parsing(self, txt):
         rawstr = str(txt)
@@ -597,7 +575,7 @@ def cb_ready(evt):
 
 def cb_001(evt):
     bot = Fleet.get(evt.orig)
-    bot.events.logon, set()
+    bot.events.logon.set()
 
 
 def cb_notice(evt):

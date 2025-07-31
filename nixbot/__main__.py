@@ -11,11 +11,24 @@ import time
 
 
 from .client import Client
-from .cmnd   import Commands, Main, command, inits, parse, scan
+from .cmnd   import Commands, command, scan
+from .auto   import Default
 from .event  import Event
-from .log    import level
+from .parse  import parse
 from .paths  import pidname, setwd
+from .thread import launch
+from .utils  import level, spl
 from .       import modules as MODS
+
+
+class Main(Default):
+
+    init = ""
+    level = "warn"
+    name = Default.__module__.split(".")[-2]
+    opts = Default()
+    verbose = False
+    version = 111
 
 
 class CLI(Client):
@@ -33,9 +46,9 @@ class Console(CLI):
     def announce(self, txt):
         pass
 
-    def callback(self, evt):
-        super().callback(evt)
-        evt.wait()
+    def callback(self, event):
+        super().callback(event)
+        event.wait()
 
     def poll(self):
         evt = Event()
@@ -50,23 +63,6 @@ def banner(mods):
     out(f"loaded {".".join(dir(mods))}")
 
 
-def forever():
-    while True:
-        try:
-            time.sleep(0.1)
-        except (KeyboardInterrupt, EOFError):
-            print("")
-            sys.exit(1)
-
-
-def out(txt):
-    print(txt)
-    sys.stdout.flush()
-
-
-"daemon"
-
-
 def check(txt):
     args = sys.argv[1:]
     for arg in args:
@@ -76,6 +72,35 @@ def check(txt):
             if char in arg:
                 return True
     return False
+
+
+def forever():
+    while True:
+        try:
+            time.sleep(0.1)
+        except (KeyboardInterrupt, EOFError):
+            print("")
+            sys.exit(1)
+
+
+def inits(pkg, names):
+    modz = []
+    for name in sorted(spl(names)):
+        mod = getattr(pkg, name, None)
+        if not mod:
+            continue
+        if "init" in dir(mod):
+            thr = launch(mod.init)
+            modz.append((mod, thr))
+    return modz
+
+
+def out(txt):
+    print(txt)
+    sys.stdout.flush()
+
+
+"daemon"
 
 
 def daemon(verbose=False):
@@ -115,6 +140,13 @@ def privileges():
     os.setuid(pwnam2.pw_uid)
 
 
+"commands"
+
+
+def ver(event):
+    event.reply(f"{Main.name.upper()} {Main.version}")
+
+
 "scripts"
 
 
@@ -124,6 +156,7 @@ def background():
     level(Main.level or "debug")
     setwd(Main.name)
     pidfile(pidname(Main.name))
+    Commands.add(ver)
     scan(MODS)
     inits(MODS, Main.init or "irc,rss")
     forever()
@@ -137,7 +170,8 @@ def console():
     Main.level   = Main.sets.level or Main.level or "warn"
     level(Main.level)
     setwd(Main.name)
-    scan(MODS)    
+    Commands.add(ver)
+    scan(MODS)
     if "v" in Main.opts:
         banner(MODS)
     for _mod, thr in inits(MODS, Main.init):
@@ -154,8 +188,9 @@ def control():
     parse(Main, " ".join(sys.argv[1:]))
     level(Main.level or "warn")
     setwd(Main.name)
-    scan(MODS)
     Commands.scan(MODS.srv)
+    Commands.add(ver)
+    scan(MODS)
     csl = CLI()
     evt = Event()
     evt.orig = repr(csl)
@@ -171,6 +206,7 @@ def service():
     banner(MODS)
     privileges()
     pidfile(pidname(Main.name))
+    Commands.add(ver)
     scan(MODS)
     inits(MODS, Main.init or "irc,rss")
     forever()
@@ -217,4 +253,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

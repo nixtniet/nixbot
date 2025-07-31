@@ -15,6 +15,7 @@ lock = threading.RLock()
 
 
 class Thread(threading.Thread):
+
     def __init__(self, func, thrname, *args, daemon=True, **kwargs):
         super().__init__(None, self.run, thrname, (), daemon=daemon)
         self.name = thrname or kwargs.get("name", name(func))
@@ -28,14 +29,13 @@ class Thread(threading.Thread):
         return self
 
     def __next__(self):
-        for k in dir(self):
-            yield k
+        yield from dir(self)
 
     def run(self):
         func, args = self.queue.get()
         try:
             self.result = func(*args)
-        except (KeyboardInterrupt, EOFError) as ex:
+        except (KeyboardInterrupt, EOFError):
             _thread.interrupt_main()
         except Exception as ex:
             logging.exception(ex)
@@ -48,10 +48,7 @@ class Thread(threading.Thread):
 
 def launch(func, *args, **kwargs):
     with lock:
-        nme = kwargs.get("name", None)
-        if not nme:
-            nme = name(func)
-        thread = Thread(func, nme, *args, **kwargs)
+        thread = Thread(func, None, *args, **kwargs)
         thread.start()
         return thread
 
@@ -73,7 +70,7 @@ def name(obj):
 
 def __dir__():
     return (
-        "Thread",
-        "launch",
-        "name"
+        'Thread',
+        'launch',
+        'name'
     )

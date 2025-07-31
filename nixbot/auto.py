@@ -1,7 +1,7 @@
-# this file is placed in the Public Domain.
+# This file is placed in the Public Domain.
 
 
-"config"
+"auto construct"
 
 
 from .object import Object
@@ -17,5 +17,5 @@ class Default(Object):
 
 def __dir__():
     return (
-        "Default",
+        'Default',
     )
