@@ -13,18 +13,20 @@ import threading
 import time
 
 
-from ..auto   import Auto
+from nixt.auto   import Auto
+from nixt.event  import Event as IEvent
+from nixt.fleet  import Fleet
+from nixt.log    import rlog
+from nixt.object import Object, keys
+from nixt.output import Output
+from nixt.thread import launch
+
+
+from ..cmds   import command
 from ..disk   import write
-from ..event  import Event as IEvent
-from ..find   import last
-from ..fleet  import Fleet
 from ..func   import edit, fmt
-from ..object import Object, keys
-from ..output import Output
-from ..path   import getpath, ident
-from ..thread import launch
-from ..utils  import rlog
-from .        import Main, command
+from ..run    import Main
+from ..store  import getpath, ident, last
 
 
 IGNORE = ["PING", "PONG", "PRIVMSG"]

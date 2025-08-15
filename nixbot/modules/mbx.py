@@ -9,11 +9,12 @@ import os
 import time
 
 
-from ..disk   import write
-from ..find   import find
+from nixt.object import Object, keys, update
+
+
+from ..disk  import write
 from ..func   import fmt
-from ..object import Object, keys, update
-from ..path   import ident, store
+from ..store import find, ident, store
 from ..utils  import elapsed
 
 

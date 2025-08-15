@@ -1,17 +1,15 @@
 # This file is placed in the Public Domain.
 
 
-"disk"
+"read/write"
 
 
-import json
-import json.decoder
 import pathlib
 import threading
 
 
-from .object import update
-from .serial import dump, load
+from nixt.object import update
+from nixt.serial import dump, load
 
 
 lock = threading.RLock()
@@ -70,3 +68,4 @@ def __dir__():
         'read',
         'write'
     )
+        

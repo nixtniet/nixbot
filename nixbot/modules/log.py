@@ -7,10 +7,11 @@
 import time
 
 
-from ..disk   import write
-from ..find   import find, fntime
-from ..object import Object
-from ..path   import ident, store
+from nixt.object import Object
+
+
+from ..disk  import write
+from ..store import find, fntime, ident, store
 from ..utils  import elapsed
 
 

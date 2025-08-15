@@ -7,7 +7,9 @@
 import time
 
 
-from ..timer import STARTTIME
+from nixt.timer import STARTTIME
+
+
 from ..utils import elapsed
 
 

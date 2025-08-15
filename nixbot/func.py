@@ -4,7 +4,7 @@
 "methods"
 
 
-from .object import items, keys
+from nixt.object import items, keys
 
 
 def edit(obj, setter, skip=True):

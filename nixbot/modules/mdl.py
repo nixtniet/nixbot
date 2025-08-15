@@ -8,11 +8,14 @@ import datetime
 import time
 
 
-from ..event import Event
-from ..fleet import Fleet
-from ..object import Object, construct, keys
-from ..timer import Repeater
-from ..utils import elapsed, rlog
+from nixt.event  import Event
+from nixt.fleet  import Fleet
+from nixt.log    import rlog
+from nixt.object import Object, construct, keys
+from nixt.timer  import Repeater
+
+
+from ..utils import elapsed
 
 
 
