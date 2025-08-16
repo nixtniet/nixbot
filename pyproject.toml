@@ -8,13 +8,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nixbot"
-version = "120"
+version = "130"
 authors = [
     {name = "Bart Thate", email = "nixtniet@gmail.com" },
 ]
 description = "NIXBOT"
 readme = "README.rst"
 license = "Unlicense"
+dependencies = [
+    'nixt',
+]
 classifiers=[
     'Development Status :: 3 - Alpha',
     'Operating System :: Unix',
@@ -25,6 +28,7 @@ classifiers=[
 
 [project.scripts]
 "nixbot" = "nixbot.__main__:main"
+
 
 [project.urls]
 "home" = "https://pypi.org/project/nixbot"

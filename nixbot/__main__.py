@@ -10,26 +10,25 @@ import os.path
 import pathlib
 import signal
 import sys
+import threading
 import time
 import _thread
-
-
-sys.path.insert(0, os.getcwd())
 
 
 from nixt.auto   import Auto
 from nixt.client import Client
 from nixt.event  import Event
+from nixt.fleet  import Fleet
 from nixt.log    import level
 from nixt.serial import dumps
 from nixt.thread import launch
 
 
-from .cmds    import Commands, command, parse, scan, table
-from .imports import mod, mods, modules
-from .run     import Main
-from .store   import pidname, setwd
-from .utils   import spl
+from .cmds  import Commands, command, parse, scan, table
+from .pkg   import mod, mods, modules
+from .run   import Main
+from .store import pidname, setwd
+from .utils import spl
 
 
 "clients"
@@ -157,7 +156,7 @@ def console():
         if "w" in Main.opts:
             thr.join(30.0)
     csl = Console()
-    csl.start()
+    csl.start(daemon=True)
     forever()
 
 
@@ -260,7 +259,10 @@ def check(txt):
 
 def forever():
     while True:
-        time.sleep(0.1)
+        try:
+            time.sleep(0.1)
+        except (KeyboardInterrupt, EOFError):
+            break
 
 
 def out(txt):
@@ -276,6 +278,7 @@ def wrapped(func):
         func()
     except (KeyboardInterrupt, EOFError):
         out("")
+    Fleet.shutdown()
 
 
 def wrap(func):
@@ -309,4 +312,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    os._exit(0)
