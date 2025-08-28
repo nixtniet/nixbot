@@ -9,10 +9,6 @@ import os
 import pathlib
 
 
-
-
-
-
 class Workdir:
 
     name = __file__.rsplit(os.sep, maxsplit=2)[-2]
@@ -55,6 +51,8 @@ def setwd(name, path=""):
 
 
 def skel():
+    if os.path.exists(store()):
+        return
     pth = pathlib.Path(store())
     pth.mkdir(parents=True, exist_ok=True)
     return str(pth)
@@ -69,6 +67,7 @@ def strip(pth, nmr=2):
 
 
 def types():
+    skel()
     return os.listdir(store())
 
 
