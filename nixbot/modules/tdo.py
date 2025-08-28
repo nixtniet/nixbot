@@ -11,7 +11,8 @@ from nixt.object import Object
 
 
 from ..disk  import write
-from ..store import find, fntime, ident, store
+from ..find  import find, fntime
+from ..paths import ident, store
 from ..utils import elapsed
 
 

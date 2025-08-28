@@ -13,9 +13,10 @@ from nixt.object import Object, keys, update
 
 
 from ..disk  import write
-from ..func   import fmt
-from ..store import find, ident, store
-from ..utils  import elapsed
+from ..find  import find
+from ..func  import fmt
+from ..paths import ident, store
+from ..utils import elapsed
 
 
 from .tmr import extract_date

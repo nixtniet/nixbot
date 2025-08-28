@@ -27,8 +27,8 @@ from nixt.thread import launch
 
 from .cmds  import Commands, command, parse, scan, table
 from .pkg   import md5sum, mod, mods, modules
+from .paths import pidname, setwd
 from .run   import Main
-from .store import pidname, setwd
 from .utils import spl
 
 

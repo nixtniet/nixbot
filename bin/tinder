@@ -31,9 +31,20 @@ from nixt.timer  import STARTTIME
 
 from nixbot.cmds  import Commands, command, parse, scan, table
 from nixbot.pkg   import mods
-from nixbot.run   import Main
-from nixbot.store import Workdir, setwd, skel
+from nixbot.paths import Workdir, setwd, skel
 from nixbot.utils import elapsed, spl 
+
+
+class Main(Auto):
+
+    debug   = False
+    init    = ""
+    level   = "warn"
+    md5     = False
+    name    = Fleet.__module__.split(".", maxsplit=1)[0].lower()
+    opts    = Auto()
+    verbose = False
+    version = 130
 
 
 class Pool:

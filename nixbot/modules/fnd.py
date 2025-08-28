@@ -8,8 +8,9 @@ import time
 
 
 
+from ..find  import find, fntime
 from ..func  import fmt
-from ..store  import find, fntime, long, skel, types
+from ..paths import long, skel, types
 from ..utils import elapsed
 
 

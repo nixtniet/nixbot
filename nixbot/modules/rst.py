@@ -19,7 +19,7 @@ from nixt.object import Object
 from nixt.thread import launch
 
 
-from ..store import Workdir, types
+from ..paths import Workdir, types
 
 
 DEBUG = False

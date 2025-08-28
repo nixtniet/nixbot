@@ -31,9 +31,10 @@ from nixt.timer  import Repeater
 
 
 from ..disk  import write 
+from ..find  import find, fntime, last
 from ..func  import fmt
 from ..utils import elapsed, spl
-from ..store import find, fntime,  getpath, last
+from ..paths import getpath
 
 
 DEBUG = False

@@ -16,7 +16,8 @@ from nixt.timer  import Timed
 
 
 from ..disk  import write
-from ..store import find, ident, store
+from ..find  import find
+from ..paths import ident, store
 from ..utils import elapsed
 
 

@@ -25,8 +25,9 @@ from nixt.thread import launch
 from ..cmds   import command
 from ..disk   import write
 from ..func   import edit, fmt
+from ..find   import last
 from ..run    import Main
-from ..store  import getpath, ident, last
+from ..paths  import getpath, ident
 
 
 IGNORE = ["PING", "PONG", "PRIVMSG"]
