@@ -4,6 +4,7 @@
 "main"
 
 
+import json
 import logging
 import os
 import os.path
@@ -25,7 +26,7 @@ from nixt.thread import launch
 
 
 from .cmds  import Commands, command, parse, scan, table
-from .pkg   import mod, mods, modules
+from .pkg   import md5sum, mod, mods, modules
 from .run   import Main
 from .store import pidname, setwd
 from .utils import spl
@@ -222,7 +223,7 @@ def srv(event):
 def tbl(event):
     if not check("f"):
         Commands.names = {}
-    for mod in mods(empty=True):
+    for mod in mods():
         scan(mod)
     event.reply("# This file is placed in the Public Domain.")
     event.reply("")
@@ -230,7 +231,13 @@ def tbl(event):
     event.reply('"lookup tables"')
     event.reply("")
     event.reply("")
-    event.reply(f"NAMES = {dumps(Commands.names, indent=4, sort_keys=True)}")
+    event.reply(f"NAMES = {json.dumps(Commands.names, indent=4, sort_keys=True)}")
+    event.reply("")
+    event.reply("")
+    event.reply("MD5 = {")
+    for mod in mods():
+        event.reply(f'    "{mod.__name__.split(".")[-1]}": "{md5sum(mod.__file__)}",')
+    event.reply("}")
 
 
 def ver(event):

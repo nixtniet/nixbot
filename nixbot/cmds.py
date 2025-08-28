@@ -12,7 +12,8 @@ from nixt.auto  import Auto
 from nixt.fleet import Fleet
 
 
-from .pkg   import mod, path
+from .parse import parse
+from .pkg   import Mods, mod
 from .utils import spl
 
 
@@ -76,69 +77,10 @@ def scan(mod):
 
 
 def table():
-    pth = os.path.join(path, "tbl.py")
+    pth = os.path.join(Mods.path, "tbl.py")
     if not os.path.exists(pth):
         return
     tbl = mod("tbl")
     names = getattr(tbl, "NAMES", None)
     if names:
         Commands.names.update(names)
-
-
-def parse(obj, txt=None):
-    if txt is None:
-        if "txt" in dir(obj):
-            txt = obj.txt
-        else:
-            txt = ""
-    args = []
-    obj.args   = []
-    obj.cmd    = ""
-    obj.gets   = Auto()
-    obj.index  = None
-    obj.mod    = ""
-    obj.opts   = ""
-    obj.result = {}
-    obj.sets   = Auto()
-    obj.silent = Auto()
-    obj.txt    = txt or ""
-    obj.otxt   = obj.txt
-    _nr = -1
-    for spli in obj.otxt.split():
-        if spli.startswith("-"):
-            try:
-                obj.index = int(spli[1:])
-            except ValueError:
-                obj.opts += spli[1:]
-            continue
-        if "-=" in spli:
-            key, value = spli.split("-=", maxsplit=1)
-            setattr(obj.silent, key, value)
-            setattr(obj.gets, key, value)
-            continue
-        elif "==" in spli:
-            key, value = spli.split("==", maxsplit=1)
-            setattr(obj.gets, key, value)
-            continue
-        if "=" in spli:
-            key, value = spli.split("=", maxsplit=1)
-            if key == "mod":
-                if obj.mod:
-                    obj.mod += f",{value}"
-                else:
-                    obj.mod = value
-                continue
-            setattr(obj.sets, key, value)
-            continue
-        _nr += 1
-        if _nr == 0:
-            obj.cmd = spli
-            continue
-        args.append(spli)
-    if args:
-        obj.args = args
-        obj.txt  = obj.cmd or ""
-        obj.rest = " ".join(obj.args)
-        obj.txt  = obj.cmd + " " + obj.rest
-    else:
-        obj.txt = obj.cmd or ""
