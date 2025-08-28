@@ -47,7 +47,6 @@ def mod(name, debug=False):
                 return None
             if md5sum(pth) == (hash or Mods.md5s.get(name, None)):
                 logging.error(f"md5 doesn't match on {pth}")
-                return
             spec = importlib.util.spec_from_file_location(mname, pth)
             module = importlib.util.module_from_spec(spec)
             sys.modules[mname] = module

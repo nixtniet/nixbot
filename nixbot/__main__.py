@@ -11,22 +11,19 @@ import os.path
 import pathlib
 import signal
 import sys
-import threading
 import time
 import _thread
 
 
-from nixt.auto   import Auto
 from nixt.client import Client
 from nixt.event  import Event
 from nixt.fleet  import Fleet
 from nixt.log    import level
-from nixt.serial import dumps
 from nixt.thread import launch
 
 
 from .cmds  import Commands, command, parse, scan, table
-from .pkg   import md5sum, mod, mods, modules
+from .pkg   import md5sum, mod, mods, modules, sums
 from .paths import pidname, setwd
 from .run   import Main
 from .utils import spl
@@ -133,6 +130,8 @@ def background():
     level(Main.level or "debug")
     setwd(Main.name)
     pidfile(pidname(Main.name))
+    if Main.md5 and not sums(Main.md5):
+        logging.error("table sum doesn't match")
     table()
     Commands.add(cmd)
     Commands.add(ver)
@@ -148,6 +147,8 @@ def console():
     Main.level   = Main.sets.level or Main.level or "warn"
     level(Main.level)
     setwd(Main.name)
+    if Main.md5 and not sums(Main.md5):
+        logging.error("table sum doesn't match")
     table()
     Commands.add(cmd)
     Commands.add(ver)
@@ -167,6 +168,8 @@ def control():
     parse(Main, " ".join(sys.argv[1:]))
     level(Main.level or "warn")
     setwd(Main.name)
+    if Main.md5 and not sums(Main.md5):
+        logging.error("table sum doesn't match")
     table()
     Commands.add(cmd)
     Commands.add(tbl)
@@ -186,6 +189,8 @@ def service():
     banner()
     privileges()
     pidfile(pidname(Main.name))
+    if Main.md5 and not sums(Main.md5):
+        logging.error("table sum doesn't match")
     table()
     Commands.add(cmd)
     Commands.add(ver)
@@ -223,8 +228,8 @@ def srv(event):
 def tbl(event):
     if not check("f"):
         Commands.names = {}
-    for mod in mods():
-        scan(mod)
+    for module in mods():
+        scan(module)
     event.reply("# This file is placed in the Public Domain.")
     event.reply("")
     event.reply("")
@@ -235,8 +240,8 @@ def tbl(event):
     event.reply("")
     event.reply("")
     event.reply("MD5 = {")
-    for mod in mods():
-        event.reply(f'    "{mod.__name__.split(".")[-1]}": "{md5sum(mod.__file__)}",')
+    for module in mods():
+        event.reply(f'    "{module.__name__.split(".")[-1]}": "{md5sum(module.__file__)}",')
     event.reply("}")
 
 

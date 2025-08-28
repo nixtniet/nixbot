@@ -7,13 +7,10 @@
 import datetime
 import os
 import pathlib
-import time
 
 
-from nixt.object import Object, items, update
 
 
-from .disk import Cache, read, write
 
 
 class Workdir:

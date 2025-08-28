@@ -5,22 +5,22 @@
 
 
 import inspect
-import os
+import logging
+import _thread
 
 
-from nixt.auto  import Auto
-from nixt.fleet import Fleet
+from nixt.fleet  import Fleet
+from nixt.thread import launch
 
 
 from .parse import parse
-from .pkg   import Mods, mod
+from .pkg   import mod
 from .utils import spl
 
 
 class Commands:
 
     cmds  = {}
-    md5   = {}
     names = {}
 
     @staticmethod
@@ -77,10 +77,17 @@ def scan(mod):
 
 
 def table():
-    pth = os.path.join(Mods.path, "tbl.py")
-    if not os.path.exists(pth):
-        return
     tbl = mod("tbl")
     names = getattr(tbl, "NAMES", None)
     if names:
         Commands.names.update(names)
+
+
+def __dir__():
+    return (
+        'Commands',
+        'command',
+        'inits',
+        'scan',
+        'table'
+    )
