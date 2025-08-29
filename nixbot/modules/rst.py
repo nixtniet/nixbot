@@ -15,8 +15,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 
 from ..objects import Object
 from ..persist import Workdir, types
-from ..runtime import launch
-from ..utility import rlog
+from ..runtime import launch, rlog
 
 
 DEBUG = False

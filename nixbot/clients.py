@@ -9,13 +9,14 @@ import threading
 import time
 
 
-from .runtime import Engine, launch
+from .handler import Handler
+from .runtime import launch
 
 
-class Client(Engine):
+class Client(Handler):
 
     def __init__(self):
-        Engine.__init__(self)
+        Handler.__init__(self)
         self.olock = threading.RLock()
         Fleet.add(self)
 
