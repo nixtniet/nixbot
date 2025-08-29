@@ -8,9 +8,7 @@ import threading
 import time
 
 
-from nixt.timer import STARTTIME
-
-
+from ..timer import STARTTIME
 from ..utils import elapsed
 
 

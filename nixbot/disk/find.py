@@ -8,11 +8,9 @@ import os
 import time
 
 
-from nixt.object import Object, items, update
-
-
-from .disk  import Cache, read
-from .paths import fqn, long, store
+from .disk   import Cache, read
+from .object import Object, items, update
+from .paths  import fqn, long, store
 
 
 def find(clz, selector=None, deleted=False, matching=False):

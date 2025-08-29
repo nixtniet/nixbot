@@ -50,7 +50,7 @@ class Thread(threading.Thread):
 
 
 def launch(func, *args, **kwargs):
-    thread = Task(func, *args, **kwargs)
+    thread = Thread(func, *args, **kwargs)
     thread.start()
     return thread
 

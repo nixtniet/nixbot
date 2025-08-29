@@ -4,17 +4,16 @@
 "runtime"
 
 
-from nixt.auto import Auto
-
-
-class Main(Auto):
+class Main:
 
     debug   = False
+    gets    = {}
     init    = ""
     level   = "warn"
     md5     = False
     name    = __package__.split(".", maxsplit=1)[0].lower()
-    opts    = Auto()
+    opts    = {}
+    sets    = {}
     verbose = False
     version = 130
 

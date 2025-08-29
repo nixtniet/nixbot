@@ -9,8 +9,8 @@ import pathlib
 import threading
 
 
-from nixt.object import update
-from nixt.serial import dump, load
+from .object import update
+from .serial import dump, load
 
 
 lock = threading.RLock()

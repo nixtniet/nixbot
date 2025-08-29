@@ -13,13 +13,10 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
-from nixt.auto   import Auto
-from nixt.log    import rlog
-from nixt.object import Object
-from nixt.thread import launch
-
-
+from ..object import Object
 from ..paths import Workdir, types
+from ..thread import launch
+from ..utils import rlog
 
 
 DEBUG = False
@@ -35,7 +32,7 @@ def init():
         rlog("debug", f"rest abort {ex}")
 
 
-class Config(Auto):
+class Config:
 
     hostname = "localhost"
     port     = 10102

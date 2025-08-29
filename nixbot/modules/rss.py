@@ -21,20 +21,16 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 
 
-from nixt.auto   import Auto
-from nixt.fleet  import Fleet
-from nixt.log    import rlog
-from nixt.object import Object, update
-from nixt.thread import launch
-from nixt.timer  import Repeater
 
-
-
-from ..disk  import write 
-from ..find  import find, fntime, last
-from ..func  import fmt
-from ..utils import elapsed, spl
-from ..paths import getpath
+from ..disk   import write 
+from ..find   import find, fntime, last
+from ..fleet  import Fleet
+from ..func   import fmt
+from ..object import Object, update
+from ..paths  import getpath
+from ..thread import launch
+from ..timer  import Repeater
+from ..utils  import elapsed, rlog, spl
 
 
 DEBUG = False
@@ -58,24 +54,23 @@ def init():
 "classes"
 
 
-class Feed(Auto):
+class Feed:
 
     def __init__(self):
-        Auto.__init__(self)
+        self.link = ""
         self.name = ""
 
 
-class Rss(Auto):
+class Rss:
 
     def __init__(self):
-        Auto.__init__(self)
         self.display_list = "title,link,author"
         self.insertid = None
         self.name = ""
         self.rss = ""
 
 
-class Urls(Auto):
+class Urls:
 
     pass
 

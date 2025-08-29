@@ -13,10 +13,9 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
-from nixt.auto   import Auto
-from nixt.log    import rlog
-from nixt.object import Object
-from nixt.thread import launch
+from ..object import Object
+from ..thread import launch
+from ..utils  import rlog
 
 
 DEBUG = False
@@ -32,7 +31,7 @@ def init():
         rlog("debug", f"web abort {ex}")
 
 
-class Cfg(Auto):
+class Cfg:
 
     hostname = "localhost"
     port     = 8000

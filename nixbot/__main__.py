@@ -15,18 +15,15 @@ import time
 import _thread
 
 
-from nixt.client import Client
-from nixt.event  import Event
-from nixt.fleet  import Fleet
-from nixt.log    import level
-from nixt.thread import launch
-
-
+from .client import Client
 from .cmds  import Commands, command, parse, scan, table
+from .event  import Event
+from .fleet  import Fleet
 from .pkg   import md5sum, mod, mods, modules, sums
 from .paths import pidname, setwd
 from .run   import Main
-from .utils import spl
+from .thread import launch
+from .utils import level, spl
 
 
 "clients"
@@ -142,9 +139,9 @@ def background():
 def console():
     import readline # noqa: F401
     parse(Main, " ".join(sys.argv[1:]))
-    Main.init = Main.sets.init or Main.init
-    Main.verbose = Main.sets.verbose or Main.verbose
-    Main.level   = Main.sets.level or Main.level or "warn"
+    Main.init = Main.sets.get("init", Main.init)
+    Main.verbose = Main.sets.get("verbose", Main.verbose)
+    Main.level   = Main.sets.get("level", Main.level or "warn")
     level(Main.level)
     setwd(Main.name)
     if Main.md5 and not sums(Main.md5):
@@ -311,7 +308,7 @@ def main():
     if check("a"):
         Main.init = ",".join(modules())
     if check("v"):
-        setattr(Main.opts, "v", True)
+        Main.opts["v"] = True
     if check("c"):
         wrap(console)
     elif check("d"):

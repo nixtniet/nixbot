@@ -1,10 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"command parsing"
-
-
-from nixt.auto import Auto
+"command line parsing"
 
 
 def parse(obj, txt=None):
@@ -16,13 +13,13 @@ def parse(obj, txt=None):
     args = []
     obj.args   = []
     obj.cmd    = ""
-    obj.gets   = Auto()
+    obj.gets   = {}
     obj.index  = None
     obj.mod    = ""
     obj.opts   = ""
     obj.result = {}
-    obj.sets   = Auto()
-    obj.silent = Auto()
+    obj.sets   = {}
+    obj.silent = {}
     obj.txt    = txt or ""
     obj.otxt   = obj.txt
     _nr = -1
@@ -35,12 +32,12 @@ def parse(obj, txt=None):
             continue
         if "-=" in spli:
             key, value = spli.split("-=", maxsplit=1)
-            setattr(obj.silent, key, value)
-            setattr(obj.gets, key, value)
+            obj.silent[key] = value
+            obj.gets[key] = value
             continue
-        elif "==" in spli:
+        if "==" in spli:
             key, value = spli.split("==", maxsplit=1)
-            setattr(obj.gets, key, value)
+            obj.gets[key] = value
             continue
         if "=" in spli:
             key, value = spli.split("=", maxsplit=1)
@@ -50,7 +47,7 @@ def parse(obj, txt=None):
                 else:
                     obj.mod = value
                 continue
-            setattr(obj.sets, key, value)
+            obj.sets[key] = value
             continue
         _nr += 1
         if _nr == 0:
