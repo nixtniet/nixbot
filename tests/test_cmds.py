@@ -7,7 +7,7 @@
 import unittest
 
 
-from nixbot.cmds import Commands
+from nixbot.modules import Commands
 
 
 class TestCommands(unittest.TestCase):

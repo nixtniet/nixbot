@@ -7,8 +7,7 @@
 import unittest
 
 
-from nixbot.func import edit, fmt
-from nixt.object import Object
+from nixbot.objects import Object, edit, fmt
 
 
 class TestFunctions(unittest.TestCase):

@@ -7,7 +7,7 @@
 import unittest
 
 
-from nixbot.paths import Workdir
+from nixbot.persist import Workdir
 
 
 class TestPaths(unittest.TestCase):

@@ -7,8 +7,8 @@
 import unittest
 
 
-from nixt.object  import Object
-from nixbot.parse import parse
+from nixbot.objects import Object
+from nixbot.modules import parse
 
 
 class TestParse(unittest.TestCase):

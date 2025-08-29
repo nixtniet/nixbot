@@ -11,7 +11,7 @@ import pathlib
 import threading
 
 
-from .objects import dump, load, update
+from .objects import Object, dump, load, update
 
 
 lock = threading.RLock()

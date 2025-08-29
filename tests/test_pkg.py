@@ -7,7 +7,7 @@
 import unittest
 
 
-from nixbot.pkg import Mods
+from nixbot.modules import Mods
 
 
 class TestPackage(unittest.TestCase):
