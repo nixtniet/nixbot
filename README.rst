@@ -185,7 +185,21 @@ and add the following for ``hello world``
         event.reply("hello world !!")
 
 
-include the <name> in nixbot/modules/__init__.py and ``nixbot`` can execute the ``hello``
+``nixbot`` uses loading on demand of modules and has a ``tbl`` command to
+generate a table for this.
+
+
+|
+| ``$ nixbot tbl > nixbot/modules/tbl.py``
+|
+
+a md5sum can be added to verify the modules md5sums are matching.
+
+|
+| ``$ nixbot md5``
+|
+
+put this value in nixbot/modules/__init__.py and ``nixbot`` can execute the ``hello``
 command now.
 
 |
