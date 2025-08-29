@@ -21,16 +21,11 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 
 
-
-from ..disk   import write 
-from ..find   import find, fntime, last
-from ..fleet  import Fleet
-from ..func   import fmt
-from ..object import Object, update
-from ..paths  import getpath
-from ..thread import launch
-from ..timer  import Repeater
-from ..utils  import elapsed, rlog, spl
+from ..clients import Fleet
+from ..objects import Object, fmt, update
+from ..persist import find, fntime, getpath, last, write
+from ..runtime import Repeater, launch
+from ..utility import elapsed, rlog, spl
 
 
 DEBUG = False
@@ -448,7 +443,7 @@ def rem(event):
         event.reply("rem <stringinurl>")
         return
     for fnm, rss in find("rss"):
-        feed = Auto()
+        feed = Object()
         update(feed, rss)
         if event.args[0] not in feed.rss:
             continue
@@ -464,7 +459,7 @@ def res(event):
         event.reply("res <stringinurl>")
         return
     for fnm, rss in find("rss", deleted=True):
-        feed = Auto()
+        feed = Object()
         update(feed, rss)
         if event.args[0] not in feed.rss:
             continue

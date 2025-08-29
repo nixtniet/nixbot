@@ -15,6 +15,7 @@ class Event:
         self._ready = threading.Event()
         self._thr = None
         self.args = []
+        self.channel = ""
         self.ctime = time.time()
         self.rest = ""
         self.result = {}

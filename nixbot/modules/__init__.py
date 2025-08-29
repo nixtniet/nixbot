@@ -4,16 +4,37 @@
 "commands"
 
 
+import hashlib
 import inspect
+import importlib
+import importlib.util
 import logging
+import os
+import sys
+import threading
 import _thread
 
 
-from .fleet  import Fleet
-from .parse import parse
-from .pkg   import mod
-from .thread import launch
-from .utils import spl
+from ..clients import Fleet, parse
+from ..runtime import launch
+from ..utility import spl
+
+
+loadlock = threading.RLock()
+
+
+class Main:
+
+    debug   = False
+    gets    = {}
+    init    = ""
+    level   = "warn"
+    md5     = False
+    name    = __package__.split(".", maxsplit=1)[0].lower()
+    opts    = {}
+    sets    = {}
+    verbose = False
+    version = 130
 
 
 class Commands:
@@ -81,44 +102,14 @@ def table():
         Commands.names.update(names)
 
 
-def __dir__():
-    return (
-        'Commands',
-        'command',
-        'inits',
-        'scan',
-        'table'
-    )
-# This file is placed in the Public Domain.
-
-
-"commands"
-
-
-import hashlib
-import importlib
-import importlib.util
-import logging
-import os
-import sys
-import threading
-
-
-from .utils import spl
-
-
-loadlock = threading.RLock()
-
-
 class Mods:
 
-    checksum = "9d933e03285b44922648fd13706d2981"
+    checksum = "fd204fbc5dbe4417ccc7f5d0ee9080f6"
     loaded   = []
     md5s     = {}
     ignore   = []
     path     = os.path.dirname(__file__)
-    path     = os.path.join(path, "modules")
-    pname    = f"{__package__}.modules"
+    pname    = __package__
 
 
 def md5sum(path):
@@ -184,8 +175,13 @@ def sums():
 
 def __dir__():
     return (
+        'Main',
+        'Commands',
+        'command',
+        'inits',
         'mod',
         'mods',
         'modules',
+        'scan',
         'table'
     )

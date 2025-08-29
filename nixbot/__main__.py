@@ -15,15 +15,14 @@ import time
 import _thread
 
 
-from .client import Client
-from .cmds  import Commands, command, parse, scan, table
-from .event  import Event
-from .fleet  import Fleet
-from .pkg   import md5sum, mod, mods, modules, sums
-from .paths import pidname, setwd
-from .run   import Main
-from .thread import launch
-from .utils import level, spl
+from .clients import Client, Fleet, Main
+from .runtime import Event, launch
+from .persist import pidname, setwd
+from .utility import level, spl
+
+
+from .modules import Commands, command, parse, scan, table
+from .modules import md5sum, mod, mods, modules, sums
 
 
 "clients"
@@ -169,6 +168,7 @@ def control():
         logging.error("table sum doesn't match")
     table()
     Commands.add(cmd)
+    Commands.add(md5)
     Commands.add(tbl)
     Commands.add(ver)
     csl = CLI()
@@ -200,6 +200,11 @@ def service():
 
 def cmd(event):
     event.reply(",".join(sorted(Commands.names)))
+
+
+def md5(event):
+    table = mods("tbl")[0]
+    event.reply(md5sum(table.__file__))
 
 
 TXT = """[Unit]

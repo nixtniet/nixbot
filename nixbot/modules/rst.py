@@ -13,10 +13,10 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
-from ..object import Object
-from ..paths import Workdir, types
-from ..thread import launch
-from ..utils import rlog
+from ..objects import Object
+from ..persist import Workdir, types
+from ..runtime import launch
+from ..utility import rlog
 
 
 DEBUG = False

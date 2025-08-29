@@ -8,8 +8,8 @@ import queue
 import threading
 
 
-from .client import Client
-from .thread import launch
+from ..runtime import launch
+from .client   import Client
 
 
 class Output(Client):

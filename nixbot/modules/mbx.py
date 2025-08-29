@@ -9,12 +9,9 @@ import os
 import time
 
 
-from ..disk  import write
-from ..find  import find
-from ..func  import fmt
-from ..object import Object, keys, update
-from ..paths import ident, store
-from ..utils import elapsed
+from ..persist import find, ident, store, write
+from ..objects import Object, fmt, keys, update
+from ..utility import elapsed
 
 
 from .tmr import extract_date
