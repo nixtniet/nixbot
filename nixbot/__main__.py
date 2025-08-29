@@ -15,13 +15,13 @@ import time
 import _thread
 
 
-from .clients import Client, Fleet, Main
+from .clients import Client, Fleet
 from .runtime import Event, launch
 from .persist import pidname, setwd
 from .utility import level, spl
 
 
-from .modules import Commands, command, parse, scan, table
+from .modules import Commands, Main, command, parse, scan, table
 from .modules import md5sum, mod, mods, modules, sums
 
 
