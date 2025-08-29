@@ -7,7 +7,7 @@
 import unittest
 
 
-from nixbot.utility import elapsed, spl
+from nixbot.utility import elapsed
 
 
 class TestUtilities(unittest.TestCase):

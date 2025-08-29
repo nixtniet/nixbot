@@ -8,7 +8,7 @@ import unittest
 
 
 from nixbot.objects import Object
-from nixbot.persist import Workdir, find, getpath, ident, write
+from nixbot.persist import Workdir, find, getpath, write
 
 
 class TestFind(unittest.TestCase):

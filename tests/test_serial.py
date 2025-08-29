@@ -7,7 +7,7 @@
 import unittest
 
 
-from nixbot.objects import Object, dumps, loads
+from nixbot.objects import Object, dumps
 
 
 class TestSerial(unittest.TestCase):
