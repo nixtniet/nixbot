@@ -14,14 +14,14 @@ import time
 
 
 from ..persist import getpath, ident, last, write
-from ..clients import Fleet, Main, Output
+from ..clients import Fleet, Output
 from ..objects import Object, edit, fmt, keys
 from ..runtime import Event as IEvent
 from ..runtime import launch
 from ..utility import rlog
 
 
-from . import command
+from . import Main, command
 
 
 IGNORE = ["PING", "PONG", "PRIVMSG"]
