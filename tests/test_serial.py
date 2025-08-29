@@ -1,0 +1,18 @@
+# This file is placed in the Public Domain.
+
+
+"decoder/encoder"
+
+
+import unittest
+
+
+from nixbot.objects import Object, dumps, loads
+
+
+class TestSerial(unittest.TestCase):
+
+    def test_dumps(self):
+        obj = Object()
+        result = dumps(obj)
+        self.assertEqual(result, '{}')
