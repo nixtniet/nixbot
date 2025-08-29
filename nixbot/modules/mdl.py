@@ -37,10 +37,6 @@ def init():
             rlog("debug", f"{name} at {STARTDATE} {elapsed(time.time()-STARTTIME)}")
 
 
-
-"model"
-
-
 oor = """"Totaal onderliggende doodsoorzaken (aantal)";
          "1 Infectieuze en parasitaire ziekten/Totaal infectieuze en parasitaire zktn (aantal)";
          "1 Infectieuze en parasitaire ziekten/1.1 Tuberculose (aantal)";
@@ -277,9 +273,6 @@ construct(oorzaak, zip(oor, aantal))
 oorzaken = Object()
 
 
-"utilities"
-
-
 def getalias(txt):
     result = ""
     for key, value in aliases.items():
@@ -328,9 +321,6 @@ def hourly():
         cbnow(evt)
 
 
-"callbacks"
-
-
 def cbnow(_evt):
     delta = time.time() - STARTTIME
     txt = elapsed(delta) + " "
@@ -366,9 +356,6 @@ def cbstats(evt):
         Fleet.announce(txt)
 
 
-"commands"
-
-
 def dis(event):
     delta = time.time() - STARTTIME
     txt = elapsed(delta) + " "
@@ -401,9 +388,6 @@ def now(event):
             elapsed(needed)
         )
         event.reply(txt)
-
-
-"init"
 
 
 def boot():

@@ -31,9 +31,6 @@ initlock = threading.RLock()
 saylock = threading.RLock()
 
 
-"init"
-
-
 def init():
     with initlock:
         irc = IRC()
@@ -44,9 +41,6 @@ def init():
         else:
             irc.stop()
         return irc
-
-
-"config"
 
 
 class Config:
@@ -75,9 +69,6 @@ class Config:
         self.username = Config.username
 
 
-"event"
-
-
 class Event(IEvent):
 
     def __init__(self):
@@ -93,9 +84,6 @@ class Event(IEvent):
         self.txt = ""
 
 
-"wrapper"
-
-
 class TextWrap(textwrap.TextWrapper):
 
     def __init__(self):
@@ -109,9 +97,6 @@ class TextWrap(textwrap.TextWrapper):
 
 
 wrapper = TextWrap()
-
-
-"IRC"
 
 
 class IRC(Output):
@@ -512,9 +497,6 @@ class IRC(Output):
         self.events.ready.wait()
 
 
-"callbacks"
-
-
 def cb_auth(evt):
     bot = Fleet.get(evt.orig)
     bot.docommand(f"AUTHENTICATE {bot.cfg.password}")
@@ -598,9 +580,6 @@ def cb_quit(evt):
     bot.state.error = evt.txt
     if evt.orig and evt.orig in bot.zelf:
         bot.stop()
-
-
-"commands"
 
 
 def cfg(event):

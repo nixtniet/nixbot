@@ -7,16 +7,6 @@
 import logging
 
 
-LEVELS = {
-    'debug': logging.DEBUG,
-    'info': logging.INFO,
-    'warning': logging.WARNING,
-    'warn': logging.WARNING,
-    'error': logging.ERROR,
-    'critical': logging.CRITICAL,
-}
-
-
 def elapsed(seconds, short=True):
     txt = ""
     nsec = float(seconds)
@@ -66,8 +56,14 @@ def spl(txt):
     return [x for x in result if x]
 
 
-"logging"
-
+LEVELS = {
+    'debug': logging.DEBUG,
+    'info': logging.INFO,
+    'warning': logging.WARNING,
+    'warn': logging.WARNING,
+    'error': logging.ERROR,
+    'critical': logging.CRITICAL,
+}
 
 def level(loglevel="debug"):
     if loglevel != "none":

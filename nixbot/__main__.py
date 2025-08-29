@@ -12,20 +12,16 @@ import pathlib
 import signal
 import sys
 import time
-import _thread
 
 
 from .clients import Client, Fleet
-from .runtime import Event, launch
+from .runtime import Event
 from .persist import pidname, setwd
-from .utility import level, spl
+from .utility import level
 
 
 from .modules import Commands, Main, command, parse, scan, table
-from .modules import md5sum, mod, mods, modules, sums
-
-
-"clients"
+from .modules import inits, md5sum, mods, modules, sums
 
 
 class CLI(Client):
@@ -52,9 +48,6 @@ class Console(CLI):
         evt.txt = input("> ")
         evt.type = "command"
         return evt
-
-
-"daemon"
 
 
 def daemon(verbose=False):
@@ -84,22 +77,6 @@ def handler(signum, frame):
 signal.signal(signal.SIGHUP, handler)
 
 
-def inits(names):
-    modz = []
-    for name in spl(names):
-        try:
-            module = mod(name)
-            if not module:
-                continue
-            if "init" in dir(module):
-                thr = launch(module.init)
-                modz.append((module, thr))
-        except Exception as ex:
-            logging.exception(ex)
-            _thread.interrupt_main()
-    return modz
-
-
 def pidfile(filename):
     if os.path.exists(filename):
         os.unlink(filename)
@@ -115,9 +92,6 @@ def privileges():
     pwnam2 = pwd.getpwnam(getpass.getuser())
     os.setgid(pwnam2.pw_gid)
     os.setuid(pwnam2.pw_uid)
-
-
-"scripts"
 
 
 def background():
@@ -195,16 +169,13 @@ def service():
     forever()
 
 
-"commands"
-
-
 def cmd(event):
     event.reply(",".join(sorted(Commands.names)))
 
 
 def md5(event):
-    table = mods("tbl")[0]
-    event.reply(md5sum(table.__file__))
+    tbl = mods("tbl")[0]
+    event.reply(md5sum(tbl.__file__))
 
 
 TXT = """[Unit]
@@ -251,9 +222,6 @@ def ver(event):
     event.reply(str(Main.version))
 
 
-"utilities"
-
-
 def banner():
     tme = time.ctime(time.time()).replace("  ", " ")
     out(f"{Main.name.upper()} {Main.version} since {tme} ({Main.level.upper()})")
@@ -282,9 +250,6 @@ def forever():
 def out(txt):
     print(txt)
     sys.stdout.flush()
-
-
-"runtime"
 
 
 def wrapped(func):

@@ -34,9 +34,6 @@ class NoDate(Exception):
     pass
 
 
-"utilities"
-
-
 def extract_date(daystr):
     daystr = daystr.encode('utf-8', 'replace').decode("utf-8")
     res = time.time()
@@ -149,39 +146,6 @@ def today():
     return str(datetime.datetime.today()).split()[0]
 
 
-"data"
-
-
-MONTHS = [
-    'Bo',
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec'
-]
-
-
-FORMATS = [
-    "%Y-%M-%D %H:%M:%S",
-    "%Y-%m-%d %H:%M:%S",
-    "%Y-%m-%d",
-    "%d-%m-%Y",
-    "%d-%m",
-    "%m-%d",
-]
-
-
-"commands"
-
-
 def tmr(event):
     result = ""
     if not event.rest:
@@ -230,3 +194,30 @@ def tmr(event):
     write(timer, store(ident(timer)))
     launch(timer.start)
     event.reply("ok " +  elapsed(diff))
+
+
+MONTHS = [
+    'Bo',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec'
+]
+
+
+FORMATS = [
+    "%Y-%M-%D %H:%M:%S",
+    "%Y-%m-%d %H:%M:%S",
+    "%Y-%m-%d",
+    "%d-%m-%Y",
+    "%d-%m",
+    "%m-%d",
+]

@@ -25,16 +25,18 @@ loadlock = threading.RLock()
 
 class Main:
 
-    debug   = False
-    gets    = {}
-    init    = ""
-    level   = "warn"
-    md5     = False
-    name    = __package__.split(".", maxsplit=1)[0].lower()
-    opts    = {}
-    sets    = {}
-    verbose = False
-    version = 130
+    checksum = "fd204fbc5dbe4417ccc7f5d0ee9080f6"
+    debug    = False
+    gets     = {}
+    init     = ""
+    level    = "warn"
+    md5      = False
+    name     = __package__.split(".", maxsplit=1)[0].lower()
+    opts     = {}
+    otxt     = ""
+    sets     = {}
+    verbose  = False
+    version  = 130
 
 
 class Commands:
@@ -43,10 +45,10 @@ class Commands:
     names = {}
 
     @staticmethod
-    def add(func, mod=None) -> None:
+    def add(func, module=None) -> None:
         Commands.cmds[func.__name__] = func
-        if mod:
-            Commands.names[func.__name__] = mod.__name__.split(".")[-1]
+        if module:
+            Commands.names[func.__name__] = module.__name__.split(".")[-1]
 
     @staticmethod
     def get(cmd):
@@ -146,12 +148,12 @@ def parse(obj, txt=None):
         obj.txt = obj.cmd or ""
 
 
-def scan(mod):
-    for key, cmdz in inspect.getmembers(mod, inspect.isfunction):
+def scan(module):
+    for key, cmdz in inspect.getmembers(module, inspect.isfunction):
         if key.startswith("cb"):
             continue
         if 'event' in cmdz.__code__.co_varnames:
-            Commands.add(cmdz, mod)
+            Commands.add(cmdz, module)
 
 
 def table():
@@ -218,16 +220,16 @@ def modules(mdir=""):
            ])
 
 
-def sums():
+def sums(md5):
     pth = os.path.join(Mods.path, "tbl.py")
-    if os.path.exists(pth) and (not Mods.checksum or (md5sum(pth) == Mods.checksum)):
+    if os.path.exists(pth) and (not md5 or (md5sum(pth) == md5)):
         try:
             module = mod("tbl")
         except FileNotFoundError:
             return {}
-        sums =  getattr(module, "MD5", None)
-        if sums:
-            Mods.md5s.update(sums)
+        sms =  getattr(module, "MD5", None)
+        if sms:
+            Mods.md5s.update(sms)
             return True
     return False
 

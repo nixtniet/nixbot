@@ -60,9 +60,6 @@ def todate(date):
     return ddd
 
 
-"commands"
-
-
 def eml(event):
     nrs = -1
     args = ["From", "Subject"]

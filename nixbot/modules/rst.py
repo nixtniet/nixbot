@@ -123,9 +123,6 @@ class RESTHandler(BaseHTTPRequestHandler):
         pass
 
 
-"utilities"
-
-
 def html(txt):
     return """<!doctype html>
 <html>
