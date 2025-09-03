@@ -15,27 +15,21 @@ import threading
 import _thread
 
 
-from .clients import Fleet
+from .clients import NAME, Fleet
 from .runtime import launch
 
 
 loadlock = threading.RLock()
 
 
-class Main:
+class Mods:
 
-    checksum = "fd204fbc5dbe4417ccc7f5d0ee9080f6"
-    debug    = False
-    gets     = {}
-    init     = ""
-    level    = "warn"
-    md5      = False
-    name     = __package__.split(".", maxsplit=1)[0].lower()
-    opts     = {}
-    otxt     = ""
-    sets     = {}
-    verbose  = False
-    version  = 151
+    loaded = []
+    md5s   = {}
+    ignore = ""
+    path   = os.path.dirname(__file__)
+    path   = os.path.join(path, "modules")
+    pname  = f"{NAME}.modules"
 
 
 class Commands:
@@ -88,65 +82,6 @@ def inits(names):
     return modz
 
 
-def parse(obj, txt=None):
-    if txt is None:
-        if "txt" in dir(obj):
-            txt = obj.txt
-        else:
-            txt = ""
-    args = []
-    obj.args   = []
-    obj.cmd    = ""
-    obj.gets   = {}
-    obj.index  = None
-    obj.mod    = ""
-    obj.opts   = ""
-    obj.result = {}
-    obj.sets   = {}
-    obj.silent = {}
-    obj.txt    = txt or ""
-    obj.otxt   = obj.txt
-    _nr = -1
-    for spli in obj.otxt.split():
-        if spli.startswith("-"):
-            try:
-                obj.index = int(spli[1:])
-            except ValueError:
-                obj.opts += spli[1:]
-            continue
-        if "-=" in spli:
-            key, value = spli.split("-=", maxsplit=1)
-            obj.silent[key] = value
-            obj.gets[key] = value
-            continue
-        if "==" in spli:
-            key, value = spli.split("==", maxsplit=1)
-            obj.gets[key] = value
-            continue
-        if "=" in spli:
-            key, value = spli.split("=", maxsplit=1)
-            if key == "mod":
-                if obj.mod:
-                    obj.mod += f",{value}"
-                else:
-                    obj.mod = value
-                continue
-            obj.sets[key] = value
-            continue
-        _nr += 1
-        if _nr == 0:
-            obj.cmd = spli
-            continue
-        args.append(spli)
-    if args:
-        obj.args = args
-        obj.txt  = obj.cmd or ""
-        obj.rest = " ".join(obj.args)
-        obj.txt  = obj.cmd + " " + obj.rest
-    else:
-        obj.txt = obj.cmd or ""
-
-
 def scan(module):
     for key, cmdz in inspect.getmembers(module, inspect.isfunction):
         if key.startswith("cb"):
@@ -162,15 +97,7 @@ def table():
         Commands.names.update(names)
 
 
-class Mods:
-
-    checksum = "fd204fbc5dbe4417ccc7f5d0ee9080f6"
-    loaded   = []
-    md5s     = {}
-    ignore   = []
-    path     = os.path.dirname(__file__)
-    path     = os.path.join(path, "modules")
-    pname    = f"{__package__}.modules"
+"modules"
 
 
 def md5sum(path):
@@ -234,6 +161,9 @@ def sums(md5):
     return False
 
 
+"utilities"
+
+
 def elapsed(seconds, short=True):
     txt = ""
     nsec = float(seconds)
@@ -273,6 +203,65 @@ def elapsed(seconds, short=True):
     return txt
 
 
+def parse(obj, txt=None):
+    if txt is None:
+        if "txt" in dir(obj):
+            txt = obj.txt
+        else:
+            txt = ""
+    args = []
+    obj.args   = []
+    obj.cmd    = ""
+    obj.gets   = {}
+    obj.index  = None
+    obj.mod    = ""
+    obj.opts   = ""
+    obj.result = {}
+    obj.sets   = {}
+    obj.silent = {}
+    obj.txt    = txt or ""
+    obj.otxt   = obj.txt
+    _nr = -1
+    for spli in obj.otxt.split():
+        if spli.startswith("-"):
+            try:
+                obj.index = int(spli[1:])
+            except ValueError:
+                obj.opts += spli[1:]
+            continue
+        if "-=" in spli:
+            key, value = spli.split("-=", maxsplit=1)
+            obj.silent[key] = value
+            obj.gets[key] = value
+            continue
+        if "==" in spli:
+            key, value = spli.split("==", maxsplit=1)
+            obj.gets[key] = value
+            continue
+        if "=" in spli:
+            key, value = spli.split("=", maxsplit=1)
+            if key == "mod":
+                if obj.mod:
+                    obj.mod += f",{value}"
+                else:
+                    obj.mod = value
+                continue
+            obj.sets[key] = value
+            continue
+        _nr += 1
+        if _nr == 0:
+            obj.cmd = spli
+            continue
+        args.append(spli)
+    if args:
+        obj.args = args
+        obj.txt  = obj.cmd or ""
+        obj.rest = " ".join(obj.args)
+        obj.txt  = obj.cmd + " " + obj.rest
+    else:
+        obj.txt = obj.cmd or ""
+
+
 def spl(txt):
     try:
         result = txt.split(",")
@@ -283,9 +272,11 @@ def spl(txt):
     return [x for x in result if x]
 
 
+"interface"
+
+
 def __dir__():
     return (
-        'Main',
         'Commands',
         'command',
         'elapsed',

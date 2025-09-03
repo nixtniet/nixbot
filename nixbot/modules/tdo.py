@@ -9,7 +9,7 @@ import time
 
 from ..command import elapsed
 from ..objects import Object
-from ..persist import find, fntime, ident, store, write
+from ..persist import find, fntime, write
 
 
 class Todo(Object):
@@ -47,5 +47,5 @@ def tdo(event):
         return
     obj = Todo()
     obj.txt = event.rest
-    write(obj, store(ident(obj)))
+    write(obj)
     event.done()

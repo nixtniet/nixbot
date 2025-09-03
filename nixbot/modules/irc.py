@@ -13,8 +13,8 @@ import threading
 import time
 
 
-from ..clients import Fleet, Output
-from ..command import Main, command
+from ..clients import NAME, Fleet, Output
+from ..command import command
 from ..handler import Event as IEvent
 from ..objects import Object, edit, fmt, keys
 from ..persist import getpath, ident, last, write
@@ -42,18 +42,18 @@ def init():
 
 class Config:
 
-    channel = f"#{Main.name}"
+    channel = f"#{NAME}"
     commands = True
     control = "!"
-    nick = Main.name
+    nick = NAME
     password = ""
     port = 6667
-    realname = Main.name
+    realname = NAME
     sasl = False
     server = "localhost"
     servermodes = ""
     sleep = 60
-    username = Main.name
+    username = NAME
     users = False
 
     def __init__(self):
@@ -494,6 +494,9 @@ class IRC(Output):
         self.events.ready.wait()
 
 
+"callbacks"
+
+
 def cb_auth(evt):
     bot = Fleet.get(evt.orig)
     bot.docommand(f"AUTHENTICATE {bot.cfg.password}")
@@ -547,7 +550,7 @@ def cb_001(evt):
 def cb_notice(evt):
     bot = Fleet.get(evt.orig)
     if evt.txt.startswith("VERSION"):
-        txt = f"\001VERSION {Main.name.upper()} 140 - {bot.cfg.username}\001"
+        txt = f"\001VERSION {NAME.upper()} 140 - {bot.cfg.username}\001"
         bot.docommand("NOTICE", evt.channel, txt)
 
 
@@ -577,6 +580,9 @@ def cb_quit(evt):
     bot.state.error = evt.txt
     if evt.orig and evt.orig in bot.zelf:
         bot.stop()
+
+
+"commands"
 
 
 def cfg(event):

@@ -30,11 +30,8 @@ classifiers=[
 
 
 [tool.setuptools]
-include-package-data = false
-
-
-[tool.setuptools.packages.find]
-include = [
+packafes = [
     'nixbot',
-    'nixbot.*'
+    'nixbot.modules'
 ]
+include-package-data = false

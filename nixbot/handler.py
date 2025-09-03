@@ -13,6 +13,37 @@ import _thread
 from .runtime import launch
 
 
+class Event:
+
+    def __init__(self):
+        self._ready = threading.Event()
+        self._thr = None
+        self.args = []
+        self.channel = ""
+        self.ctime = time.time()
+        self.rest = ""
+        self.result = {}
+        self.txt = ""
+        self.type = "event"
+
+    def done(self):
+        self.reply("ok")
+
+    def ready(self):
+        self._ready.set()
+
+    def reply(self, txt):
+        self.result[time.time()] = txt
+
+    def wait(self, timeout=None):
+        try:
+            self._ready.wait()
+            if self._thr:
+                self._thr.join()
+        except (KeyboardInterrupt, EOFError):
+            _thread.interrupt_main()
+
+
 class Handler:
 
     def __init__(self):
@@ -27,7 +58,7 @@ class Handler:
     def callback(self, event):
         func = self.cbs.get(event.type, None)
         if func:
-            event._thr = launch(func, event)
+            event._thr = launch(func, event, name=event.txt and event.txt.split()[0])
 
     def loop(self):
         while not self.stopped.is_set():
@@ -61,40 +92,11 @@ class Handler:
         pass
 
 
-class Event:
-
-    def __init__(self):
-        self._ready = threading.Event()
-        self._thr = None
-        self.args = []
-        self.channel = ""
-        self.ctime = time.time()
-        self.rest = ""
-        self.result = {}
-        self.txt = ""
-        self.type = "event"
-
-    def done(self):
-        self.reply("ok")
-
-    def ready(self):
-        self._ready.set()
-
-    def reply(self, txt):
-        self.result[time.time()] = txt
-
-    def wait(self, timeout=None):
-        try:
-            self._ready.wait()
-            if self._thr:
-                self._thr.join()
-        except (KeyboardInterrupt, EOFError):
-            _thread.interrupt_main()
-
+"interface"
 
 
 def __dir__():
     return (
-        'Engine',
-        'Event'
+        'Event',
+        'Handler'
    )

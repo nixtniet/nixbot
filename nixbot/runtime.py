@@ -70,6 +70,9 @@ def name(obj):
     return ""
 
 
+"timer/repeater"
+
+
 class Timy(threading.Timer):
 
     def __init__(self, sleep, func, *args, **kwargs):
@@ -115,6 +118,9 @@ class Repeater(Timed):
         super().run()
 
 
+"logging"
+
+
 LEVELS = {
     'debug': logging.DEBUG,
     'info': logging.INFO,
@@ -141,6 +147,8 @@ def rlog(loglevel, txt, ignore=None):
     logging.log(LEVELS.get(loglevel), txt)
 
 
+"interface"
+
 
 def __dir__():
     return (
@@ -153,5 +161,5 @@ def __dir__():
         'launch',
         'level',
         'name',
-         'rlog',
+        'rlog',
    )
