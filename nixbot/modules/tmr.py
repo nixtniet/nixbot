@@ -9,24 +9,26 @@ import re
 import time
 
 
-from ..command import elapsed
-from ..persist import find, ident, store, write
-from ..clients import Fleet
-from ..runtime import Timed, launch, rlog
+from nixt.methods import elapsed
+from nixt.handler import Fleet
+from nixt.persist import find, write
+from nixt.runtime import Timed, launch, rlog
 
 
 def init():
+    nrs = 0
     for fnm, obj in find("timer"):
         if "time" not in dir(obj):
             continue
+        nrs += 1
         diff = float(obj.time) - time.time()
         if diff > 0:
             timer = Timed(diff, Fleet.announce, obj.txt)
             timer.start()
-            rlog("debug", f"timer at {time.ctime(obj.time)}")
         else:
             obj.__deleted__ = True
             write(obj, fnm)
+    rlog("warn", f"timers {nrs}")
 
 
 class NoDate(Exception):
@@ -191,7 +193,7 @@ def tmr(event):
     timer.orig = event.orig
     timer.time = target
     timer.txt = txt
-    write(timer, store(ident(timer)))
+    write(timer)
     launch(timer.start)
     event.reply("ok " +  elapsed(diff))
 

@@ -21,16 +21,17 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 
 
-from ..clients import Fleet
-from ..command import elapsed, spl
-from ..objects import Object, fmt, update
-from ..persist import find, fntime, getpath, last, write
-from ..runtime import Repeater, launch, rlog
+from nixt.methods import elapsed, spl
+from nixt.handler import Fleet
+from nixt.objects import Object, fmt, update
+from nixt.persist import find, fntime, getpath, last, write
+from nixt.runtime import Repeater, launch, rlog
 
 
 def init():
     fetcher = Fetcher()
     fetcher.start()
+    rlog("warn", f"rss since {elapsed(time.time()-fntime(fetcher.seenfn))}")
     return fetcher
 
 

@@ -7,11 +7,22 @@
 from random import SystemRandom
 
 
+from nixt.handler import Event, Fleet
+from nixt.runtime import Repeater, rlog
+
+
 rand = SystemRandom()
 
 
+def init():
+    event = Event()
+    repeater = Repeater(3600.0,  wsd, event)
+    repeater.start()
+    rlog("warn", f"wisdom has {len(TXT.split("\n"))} wise.")
+
+
 def wsd(event):
-    event.reply(rand.choice(TXT.split("\n")).strip()[2:])
+    Fleet.announce(rand.choice(TXT.split("\n")).strip()[2:])
 
 
 TXT = """| wijsheid, wijs !

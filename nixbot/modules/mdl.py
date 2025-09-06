@@ -8,11 +8,10 @@ import datetime
 import time
 
 
-from ..clients import Fleet
-from ..command import elapsed
-from ..handler import Event
-from ..objects import Object, construct, keys
-from ..runtime import Repeater, rlog
+from nixt.methods import elapsed
+from nixt.handler import Fleet, Event
+from nixt.objects import Object, construct, keys
+from nixt.runtime import Repeater, rlog
 
 
 def init():
@@ -28,7 +27,7 @@ def init():
             name = aliases.get(key)
             repeater = Repeater(sec, cbstats, evt, thrname=name)
             repeater.start()
-            rlog("debug", f"{name} at {STARTDATE} {elapsed(time.time()-STARTTIME)}")
+            rlog("warn", f"{name} since {STARTDATE} {elapsed(time.time()-STARTTIME)}")
 
 
 "defines"
