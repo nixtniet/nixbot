@@ -32,6 +32,9 @@ from nixt.runtime import launch, level, rlog
 import nixbot.modules as MODS
 
 
+NAME = "nixbot"
+
+
 "config"
 
 
@@ -47,7 +50,7 @@ class Config:
     otxt     = ""
     sets     = {}
     verbose  = False
-    version  = 413
+    version  = 160
 
 
 "clients"
@@ -297,9 +300,9 @@ def boot(doparse=True):
         parse(Config, " ".join(sys.argv[1:]))
         update(Config, Config.sets)
     level(Config.level)
+    setwd(NAME)
     if "v" in Config.opts:
         banner()
-    setwd(NAME)
     scanner(Config.mod)
     Commands.add(cmd)
     Commands.add(ver)

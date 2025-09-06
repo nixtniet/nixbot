@@ -8,13 +8,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nixbot"
-version = "151"
+version = "160"
 authors = [
     {name = "Bart Thate", email = "nixtniet@gmail.com" },
 ]
 description = "NIXBOT"
 readme = "README.rst"
 license = "Unlicense"
+dependencies = [
+    "nixt",
+]
 classifiers=[
     'Development Status :: 3 - Alpha',
     'Operating System :: Unix',
@@ -30,7 +33,7 @@ classifiers=[
 
 
 [tool.setuptools]
-packafes = [
+packages = [
     'nixbot',
     'nixbot.modules'
 ]
