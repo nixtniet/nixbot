@@ -11,18 +11,18 @@ import threading
 import time
 
 
-from ..clients import Fleet
-from ..objects import Object
-from ..runtime import launch, rlog
+from nixt.handler import Fleet
+from nixt.objects import Object
+from nixt.runtime import launch, rlog
 
 
-DEBUG = True
+DEBUG = False
 
 
 def init():
     udpd = UDP()
     udpd.start()
-    rlog("debug", f"udp at http://{Cfg.host}:{Cfg.port}")
+    rlog("warn", f"udp at http://{Cfg.host}:{Cfg.port}")
     return udpd
 
 

@@ -2,9 +2,11 @@
 # This file is placed in the Public Domain.
 
 
-"main"
+"main program"
 
 
+import importlib
+import importlib.util
 import json
 import logging
 import os
@@ -13,37 +15,45 @@ import pathlib
 import signal
 import sys
 import time
+import _thread
 
 
 sys.path.insert(0, os.getcwd())
 
 
-from nixbot.clients import NAME, Client, Fleet
-from nixbot.command import Commands, command, parse, scan, table
-from nixbot.command import Mods, inits, md5sum, mods, modules, sums
-from nixbot.handler import Event
-from nixbot.persist import pidname, setwd, skel
-from nixbot.runtime import level
+from nixt.command import Commands, command, scan
+from nixt.handler import NAME, Client, Event, Fleet
+from nixt.methods import parse, spl
+from nixt.objects import fmt, fqn, update
+from nixt.persist import Workdir, j, moddir, pidname, setwd, skel
+from nixt.runtime import launch, level, rlog
 
 
-CHECKSUM = "d80a32045e2abadddcbc62054c74bb69"
+import nixbot.modules as MODS
 
 
-Mods.ignore = "rst,udp,web,wsd"
+NAME = "nixbot"
+
+
+"config"
 
 
 class Config:
 
     debug    = False
+    default  = "irc,mdl,rss"
     gets     = {}
     init     = ""
     level    = "warn"
-    md5      = True
-    opts     = {}
+    mod      = "mods"
+    opts     = ""
     otxt     = ""
     sets     = {}
     verbose  = False
-    version  = 152
+    version  = 160
+
+
+"clients"
 
 
 class CLI(Client):
@@ -74,119 +84,11 @@ class Console(CLI):
         return evt
 
 
-def daemon(verbose=False):
-    pid = os.fork()
-    if pid != 0:
-        os._exit(0)
-    os.setsid()
-    pid2 = os.fork()
-    if pid2 != 0:
-        os._exit(0)
-    if not verbose:
-        with open('/dev/null', 'r', encoding="utf-8") as sis:
-            os.dup2(sis.fileno(), sys.stdin.fileno())
-        with open('/dev/null', 'a+', encoding="utf-8") as sos:
-            os.dup2(sos.fileno(), sys.stdout.fileno())
-        with open('/dev/null', 'a+', encoding="utf-8") as ses:
-            os.dup2(ses.fileno(), sys.stderr.fileno())
-    os.umask(0)
-    os.chdir("/")
-    os.nice(10)
-
-
-def handler(signum, frame):
-    print("handler called!")
-
-
-signal.signal(signal.SIGHUP, handler)
-
-
-def pidfile(filename):
-    if os.path.exists(filename):
-        os.unlink(filename)
-    path2 = pathlib.Path(filename)
-    path2.parent.mkdir(parents=True, exist_ok=True)
-    with open(filename, "w", encoding="utf-8") as fds:
-        fds.write(str(os.getpid()))
-
-
-def privileges():
-    import getpass
-    import pwd
-    pwnam2 = pwd.getpwnam(getpass.getuser())
-    os.setgid(pwnam2.pw_gid)
-    os.setuid(pwnam2.pw_uid)
-
-
-def background():
-    daemon("-v" in sys.argv)
-    privileges()
-    boot(False)
-    pidfile(pidname(NAME))
-    inits(Config.init or "irc,mdl,rss")
-    forever()
-
-
-def console():
-    import readline # noqa: F401
-    boot()
-    for _mod, thr in inits(Config.init):
-        if "w" in Config.opts:
-            thr.join(30.0)
-    csl = Console()
-    csl.start(daemon=True)
-    forever()
-
-
-def control():
-    if len(sys.argv) == 1:
-        return
-    boot()
-    Commands.add(md5)
-    Commands.add(srv)
-    Commands.add(tbl)
-    csl = CLI()
-    evt = Event()
-    evt.orig = repr(csl)
-    evt.type = "command"
-    evt.txt = Config.otxt
-    command(evt)
-    evt.wait()
-
-
-def service():
-    privileges()
-    boot(False)
-    pidfile(pidname(NAME))
-    inits(Config.init or "irc,mdl,rss")
-    forever()
-
-
-def boot(doparse=True):
-    if doparse:
-        parse(Config, " ".join(sys.argv[1:]))
-    Config.init = Config.sets.get("init", Config.init)
-    Config.verbose = Config.sets.get("verbose", Config.verbose)
-    Config.level   = Config.sets.get("level", Config.level or "warn")
-    level(Config.level)
-    setwd(NAME)
-    if Config.md5 and not sums(CHECKSUM):
-        logging.error("table sum doesn't match")
-    table()
-    Commands.add(cmd)
-    Commands.add(ver)
-    if "v" in Config.opts:
-        banner()
+"commands"
 
 
 def cmd(event):
-    cmds = list(Commands.cmds.keys()) + list(Commands.names.keys())
-    event.reply(",".join(sorted(cmds)))
-
-
-def md5(event):
-    tbl = mods("tbl")[0]
-    event.reply(md5sum(tbl.__file__))
+    event.reply(",".join(sorted(Commands.cmds)))
 
 
 TXT = """[Unit]
@@ -209,34 +111,124 @@ def srv(event):
     event.reply(TXT % (NAME.upper(), name, name, name, NAME))
 
 
-def tbl(event):
-    if not check("f"):
-        Commands.names = {}
-    for module in mods():
-        scan(module)
-    event.reply("# This file is placed in the Public Domain.")
-    event.reply("")
-    event.reply("")
-    event.reply('"lookup tables"')
-    event.reply("")
-    event.reply("")
-    event.reply(f"NAMES = {json.dumps(Commands.names, indent=4, sort_keys=True)}")
-    event.reply("")
-    event.reply("")
-    event.reply("MD5 = {")
-    for module in mods():
-        event.reply(f'    "{module.__name__.split(".")[-1]}": "{md5sum(module.__file__)}",')
-    event.reply("}")
-
-
 def ver(event):
     event.reply(f"{NAME.upper()} {Config.version}")
+
+
+"daemon"
+
+
+def daemon(verbose=False):
+    pid = os.fork()
+    if pid != 0:
+        os._exit(0)
+    os.setsid()
+    pid2 = os.fork()
+    if pid2 != 0:
+        os._exit(0)
+    if not verbose:
+        with open('/dev/null', 'r', encoding="utf-8") as sis:
+            os.dup2(sis.fileno(), sys.stdin.fileno())
+        with open('/dev/null', 'a+', encoding="utf-8") as sos:
+            os.dup2(sos.fileno(), sys.stdout.fileno())
+        with open('/dev/null', 'a+', encoding="utf-8") as ses:
+            os.dup2(ses.fileno(), sys.stderr.fileno())
+    os.umask(0)
+    os.chdir("/")
+    os.nice(10)
+
+
+def pidfile(filename):
+    if os.path.exists(filename):
+        os.unlink(filename)
+    path2 = pathlib.Path(filename)
+    path2.parent.mkdir(parents=True, exist_ok=True)
+    with open(filename, "w", encoding="utf-8") as fds:
+        fds.write(str(os.getpid()))
+
+
+def privileges():
+    import getpass
+    import pwd
+    pwnam2 = pwd.getpwnam(getpass.getuser())
+    os.setgid(pwnam2.pw_gid)
+    os.setuid(pwnam2.pw_uid)
+
+
+def importer(mname, path):
+    if path is None:
+        path = Config.mod
+    module = sys.modules.get(mname, None)
+    if module:
+        return module
+    pth = os.path.join(path, f"{mname}.py")
+    if not os.path.exists(pth):
+        return 
+    spec = importlib.util.spec_from_file_location(mname, pth)
+    if not spec:
+        return 
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[mname] = module
+    try:
+        spec.loader.exec_module(module)
+    except Exception as ex:
+        logging.exception(ex)
+    return module
+
+
+def inits(names):
+    modz = []
+    for name in sorted(spl(names)):
+        try:
+            module = importer(name, Config.mod)
+            if not module:
+                continue
+            if "init" in dir(module):
+                thr = launch(module.init)
+                modz.append((module, thr))
+        except Exception as ex:
+            logging.exception(ex)
+            _thread.interrupt_main()
+    return modz
+
+
+def out(txt):
+    print(txt)
+    sys.stdout.flush()
+
+
+def modules(path):
+    if not os.path.exists(path):
+        return {}
+    return sorted([
+            x[:-3] for x in os.listdir(path)
+            if x.endswith(".py") and not x.startswith("__")
+           ])
+
+
+def scanner(path, names=""):
+    res = []
+    for nme in sorted(modules(path)):
+        if names and nme not in spl(names):
+            continue
+        module = importer(nme, path)
+        if not module:
+            continue
+        scan(module)
+        res.append(module)
+    return res
+
+"utilities"
 
 
 def banner():
     tme = time.ctime(time.time()).replace("  ", " ")
     out(f"{NAME.upper()} {Config.version} since {tme} ({Config.level.upper()})")
-    out(f"loaded {",".join(modules())}")
+    mds = modules(Config.mod)
+    if mds:
+        out(f"loaded {",".join(mds)}")
+    out(f"workdir {Workdir.wdr}")
+    out(f"moddir {Config.mod}")
 
 
 def check(txt):
@@ -258,9 +250,65 @@ def forever():
             break
 
 
-def out(txt):
-    print(txt)
-    sys.stdout.flush()
+"scripts"
+
+
+def background():
+    daemon("-v" in sys.argv)
+    privileges()
+    boot(False)
+    pidfile(pidname(NAME))
+    inits(Config.init or Config.default)
+    forever()
+
+
+def console():
+    import readline # noqa: F401
+    boot()
+    for _mod, thr in inits(Config.init):
+        if "w" in Config.opts:
+            thr.join(30.0)
+    csl = Console()
+    csl.start(daemon=True)
+    forever()
+
+
+def control():
+    if len(sys.argv) == 1:
+        return
+    boot()
+    Commands.add(srv)
+    csl = CLI()
+    evt = Event()
+    evt.orig = repr(csl)
+    evt.type = "command"
+    evt.txt = Config.otxt
+    command(evt)
+    evt.wait()
+
+
+def service():
+    privileges()
+    boot(False)
+    pidfile(pidname(NAME))
+    inits(Config.init or Config.default)
+    forever()
+
+
+def boot(doparse=True):
+    if doparse:
+        parse(Config, " ".join(sys.argv[1:]))
+        update(Config, Config.sets)
+    level(Config.level)
+    setwd(NAME)
+    if "v" in Config.opts:
+        banner()
+    scanner(Config.mod)
+    Commands.add(cmd)
+    Commands.add(ver)
+
+
+"runtime"
 
 
 def wrapped(func):
@@ -286,10 +334,13 @@ def wrap(func):
 
 
 def main():
-    if check("a"):
-        Config.init = ",".join(modules())
+    Config.mod = MODS.__path__[0]
     if check("v"):
-        Config.opts["v"] = True
+        Config.opts += "v"
+    if check("m"):
+        Config.mod = "mods"
+    if check("a"):
+        Config.init = ",".join(modules(Config.mod))
     if check("c"):
         wrap(console)
     elif check("d"):

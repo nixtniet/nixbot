@@ -13,12 +13,12 @@ import threading
 import time
 
 
-from ..clients import NAME, Fleet, Output
-from ..command import command
-from ..handler import Event as IEvent
-from ..objects import Object, edit, fmt, keys
-from ..persist import getpath, ident, last, write
-from ..runtime import launch, rlog
+from nixt.command import command
+from nixt.handler import Event as IEvent
+from nixt.handler import NAME, Fleet, Output
+from nixt.objects import Object, edit, fmt, keys
+from nixt.persist import getpath, last, write
+from nixt.runtime import launch, rlog
 
 
 IGNORE = ["PING", "PONG", "PRIVMSG"]
@@ -34,7 +34,7 @@ def init():
         irc.start()
         irc.events.joined.wait(30.0)
         if irc.events.joined.is_set():
-            rlog("debug", fmt(irc.cfg, skip=["password", "realname", "username"]))
+            rlog("warn", f"irc {fmt(irc.cfg, skip=["password", "realname", "username"])} channels {",".join(irc.channels)}")
         else:
             irc.stop()
         return irc
@@ -110,7 +110,6 @@ class IRC(Output):
         self.events.joined = threading.Event()
         self.events.logon = threading.Event()
         self.events.ready = threading.Event()
-        self.idents = []
         self.sock = None
         self.state = Object()
         self.state.error = ""
@@ -134,7 +133,6 @@ class IRC(Output):
         self.register("PRIVMSG", cb_privmsg)
         self.register("QUIT", cb_quit)
         self.register("366", cb_ready)
-        self.ident = ident(self)
 
     def announce(self, txt):
         for channel in self.channels:

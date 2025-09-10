@@ -9,12 +9,9 @@ import os
 import time
 
 
-from ..command import elapsed
-from ..persist import find, ident, store, write
-from ..objects import Object, fmt, keys, update
-
-
-from .tmr import extract_date
+from nixt.methods import elapsed
+from nixt.persist import find, write
+from nixt.objects import Object, fmt, keys, update
 
 
 class Email(Object):
@@ -61,6 +58,7 @@ def todate(date):
 
 
 def eml(event):
+    from .tmr import extract_date
     nrs = -1
     args = ["From", "Subject"]
     if len(event.args) > 1:
@@ -110,7 +108,7 @@ def mbx(event):
             if payload.get_content_type() == 'text/plain':
                 obj.text += payload.get_payload()
         obj.text = obj.text.replace("\\n", "\n")
-        write(obj, store(ident(obj)))
+        write(obj)
         nrs += 1
     if nrs:
         event.reply("ok %s" % nrs)

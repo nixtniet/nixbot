@@ -13,8 +13,8 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
-from ..objects import Object
-from ..runtime import launch, rlog
+from nixt.objects import Object
+from nixt.runtime import launch, rlog
 
 
 DEBUG = False
@@ -24,10 +24,10 @@ def init():
     try:
         server = HTTP((Cfg.hostname, int(Cfg.port)), HTTPHandler)
         server.start()
-        rlog("debug", f"web at http://{Cfg.hostname}:{Cfg.port}")
+        rlog("warn", f"web at http://{Cfg.hostname}:{Cfg.port}")
         return server
     except OSError as ex:
-        rlog("debug", f"web abort {ex}")
+        rlog("warn", f"web abort {ex}")
 
 
 class Cfg:

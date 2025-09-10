@@ -12,9 +12,11 @@ import threading
 import time
 
 
-from .objects import Object, dump, items, load, update
+from .handler import NAME
+from .objects import Object, dump, fqn, load, search, update
 
 
+j    = os.path.join
 lock = threading.RLock()
 
 
@@ -66,20 +68,10 @@ def write(obj, path=None):
         return path
 
 
-"paths"
-
-
 class Workdir:
 
     name = __file__.rsplit(os.sep, maxsplit=2)[-2]
-    wdr = ""
-
-
-def fqn(obj):
-    kin = str(type(obj)).split()[-1][1:-2]
-    if kin == "type":
-        kin = f"{obj.__module__}.{obj.__name__}"
-    return kin
+    wdr = os.path.expanduser(f"~/.{NAME}")
 
 
 def getpath(obj):
@@ -87,7 +79,7 @@ def getpath(obj):
 
 
 def ident(obj):
-    return os.path.join(fqn(obj), *str(datetime.datetime.now()).split())
+    return j(fqn(obj), *str(datetime.datetime.now()).split())
 
 
 def long(name):
@@ -100,8 +92,12 @@ def long(name):
     return res
 
 
+def moddir():
+    return j(Workdir.wdr, "mods")
+
+
 def pidname(name):
-    return os.path.join(Workdir.wdr, f"{name}.pid")
+    return j(Workdir.wdr, f"{name}.pid")
 
 
 def setwd(name, path=""):
@@ -115,15 +111,17 @@ def skel():
         return
     pth = pathlib.Path(store())
     pth.mkdir(parents=True, exist_ok=True)
+    pth = pathlib.Path(moddir())
+    pth.mkdir(parents=True, exist_ok=True)
     return str(pth)
 
 
 def store(pth=""):
-    return os.path.join(Workdir.wdr, "store", pth)
+    return j(Workdir.wdr, "store", pth)
 
 
 def strip(pth, nmr=2):
-    return os.path.join(pth.split(os.sep)[-nmr:])
+    return j(pth.split(os.sep)[-nmr:])
 
 
 def types():
@@ -132,10 +130,12 @@ def types():
 
 
 def wdr(pth):
-    return os.path.join(Workdir.wdr, pth)
+    return j(Workdir.wdr, pth)
 
 
-"find"
+class Find:
+
+    pass
 
 
 def find(clz, selector=None, deleted=False, matching=False):
@@ -159,9 +159,9 @@ def fns(clz):
     pth = store(clz)
     for rootdir, dirs, _files in os.walk(pth, topdown=False):
         for dname in dirs:
-            ddd = os.path.join(rootdir, dname)
+            ddd = j(rootdir, dname)
             for fll in os.listdir(ddd):
-                yield os.path.join(ddd, fll)
+                yield j(ddd, fll)
 
 
 def fntime(daystr):
@@ -191,27 +191,6 @@ def last(obj, selector=None):
         update(obj, inp[-1])
         res = inp[0]
     return res
-
-
-def search(obj, selector, matching=False):
-    res = False
-    if not selector:
-        return res
-    for key, value in items(selector):
-        val = getattr(obj, key, None)
-        if not val:
-            continue
-        if matching and value == val:
-            res = True
-        elif str(value).lower() in str(val).lower() or value == "match":
-            res = True
-        else:
-            res = False
-            break
-    return res
-
-
-"interface"
 
 
 def __dir__():

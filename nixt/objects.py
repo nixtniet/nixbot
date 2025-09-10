@@ -57,7 +57,7 @@ def edit(obj, setter, skip=True):
             setattr(obj, key, val)
 
 
-def fmt(obj, args=None, skip=None, plain=False, empty=False):
+def fmt(obj, args=None, skip=None, plain=False, empty=False, newline=False):
     if args is None:
         args = keys(obj)
     if skip is None:
@@ -79,7 +79,17 @@ def fmt(obj, args=None, skip=None, plain=False, empty=False):
             txt += f'{key}="{value}" '
         else:
             txt += f"{key}={value} "
+        if newline:
+            txt += "\n"
     return txt.strip()
+
+
+def fqn(obj):
+    kin = str(type(obj)).split()[-1][1:-2]
+    if kin == "type":
+        kin = f"{obj.__module__}.{obj.__name__}"
+    return kin
+
 
 def items(obj):
     if isinstance(obj, dict):
@@ -93,19 +103,34 @@ def keys(obj):
     return obj.__dict__.keys()
 
 
+def search(obj, selector, matching=False):
+    res = False
+    if not selector:
+        return res
+    for key, value in items(selector):
+        val = getattr(obj, key, None)
+        if not val:
+            continue
+        if matching and value == val:
+            res = True
+        elif str(value).lower() in str(val).lower() or value == "match":
+            res = True
+        else:
+            res = False
+            break
+    return res
+
+
 def update(obj, data):
-    if isinstance(data, dict):
-        return obj.__dict__.update(data)
-    obj.__dict__.update(vars(data))
+    for key, value in items(data):
+        if key and value:
+            setattr(obj, key, value)
 
 
 def values(obj):
     if isinstance(obj, dict):
         return obj.values()
     return obj.__dict__.values()
-
-
-"decode/encode"
 
 
 class Encoder(json.JSONEncoder):
@@ -152,9 +177,6 @@ def loads(s, *args, **kw):
     return json.loads(s, *args, **kw)
 
 
-"interface"
-
-
 def __dir__():
     return (
         'Object',
@@ -163,10 +185,12 @@ def __dir__():
         'dumps',
         'edit',
         'fmt'
+        'fqn',
         'items',
         'keys',
         'load',
-        'loads'
+        'loads',
+        'search',
         'update',
         'values'
     )
