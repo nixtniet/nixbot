@@ -5,6 +5,9 @@
 "simulate clients"
 
 
+import importlib
+import importlib.util
+import logging
 import os
 import random
 import queue
@@ -19,12 +22,16 @@ import _thread
 sys.path.insert(0, os.getcwd())
 
 
-from nixbot.clients import NAME, Client, Fleet, Output
-from nixbot.command import Commands, command, elapsed, mods, parse, table
-from nixbot.handler import Event
+from nixbot.command import Commands, command, modules, scan
+from nixbot.handler import Client, Event, Fleet, Output
+from nixbot.methods import elapsed, parse, spl
 from nixbot.objects import Object, keys
-from nixbot.persist import Workdir, setwd, skel
-from nixbot.runtime import STARTTIME, launch
+from nixbot.persist import Workdir,  skel
+from nixbot.runtime import launch
+
+
+NAME = Workdir.name
+STARTTIME = time.time()
 
 
 Workdir.wdr = ".test"
@@ -34,46 +41,17 @@ class Config:
 
     debug    = False
     gets     = {}
+    index    = None
     init     = ""
     level    = "warn"
     md5      = True
-    opts     = {}
+    moddir   = "nixbot."
+    opts     = ""
     otxt     = ""
     sets     = {}
     verbose  = False
     version  = 410
 
-
-class Pool:
-
-    clients = []
-    lock = threading.RLock()
-    nrcpu = 1
-    nrlast = 0
-
-    @staticmethod
-    def add(clt):
-        Pool.clients.append(clt)
-
-    @staticmethod
-    def init(cls, nr=None):
-        Pool.nrcpu = nr or os.cpu_count
-        for x in range(Pool.nrcpu):
-            clt = cls()
-            clt.start()
-            Pool.add(clt)
-
-    @staticmethod
-    def put(evt):
-        with Pool.lock:
-            if Pool.nrlast >= Pool.nrcpu-1:
-                Pool.nrlast = 0
-            clt = Pool.clients[Pool.nrlast]
-            clt.put(evt)
-            Pool.nrlast += 1
-
-
-Workdir.wdr = ".test"
 
 
 param = Object()
@@ -98,7 +76,7 @@ param.ver = [""]
 
 pre = Object()
 pre.cfg = ["nick=mekker", ""]
-pre.imp = ["tests/feeds.opml", ""]
+pre.imp = ["testing/feeds.opml", ""]
 pre.log = ["bla", ""]
 pre.rss = ["http://hnrss.org/newest", ""]
 pre.tdo = ["mekker", ""]
@@ -126,6 +104,35 @@ paylock = _thread.allocate_lock()
 rand = random.SystemRandom()
 
 
+class Pool:
+
+    clients = []
+    lock = threading.RLock()
+    nrcpu = 1
+    nrlast = 0
+
+    @staticmethod
+    def add(clt):
+        Pool.clients.append(clt)
+
+    @staticmethod
+    def init(cls, nr=None):
+        Pool.nrcpu = nr or os.cpu_count
+        for x in range(Pool.nrcpu*2):
+            clt = cls()
+            clt.start()
+            Pool.add(clt)
+
+    @staticmethod
+    def put(evt):
+        with Pool.lock:
+            if Pool.nrlast >= Pool.nrcpu-1:
+                Pool.nrlast = 0
+            clt = Pool.clients[Pool.nrlast]
+            clt.put(evt)
+            Pool.nrlast += 1
+
+
 class CLI(Client):
 
     def __init__(self):
@@ -136,7 +143,8 @@ class CLI(Client):
         self.raw(txt)
 
     def raw(self, txt):
-        if "v" in config.opts:
+
+        if "v" in Config.opts:
             print(txt)
 
 
@@ -155,14 +163,82 @@ class Buffer(Output):
             print(txt)
 
 
+"modules"
+
+
+def importer(name, path, package=None):
+    if package:
+        fullname = f"{package}.{name}"
+    else:
+        fullname = name
+    module = sys.modules.get(fullname, None)
+    if not module:
+        try:
+            pth = os.path.join(path, f"{name}.py")
+            if not os.path.exists(pth):
+                return
+            spec = importlib.util.spec_from_file_location(fullname, pth)
+            module = importlib.util.module_from_spec(spec)
+            if module:
+                sys.modules[fullname] = module
+                spec.loader.exec_module(module)
+        except Exception as ex:
+            logging.exception(ex)
+    return module
+
+
+def inits(names):
+    modz = []
+    for name in sorted(spl(names)):
+        try:
+            module = importer(name, Commands.mod)
+            if not module:
+                continue
+            if "init" in dir(module):
+                thr = launch(module.init)
+                modz.append((module, thr))
+        except Exception as ex:
+            logging.exception(ex)
+            _thread.interrupt_main()
+    return modz
+
+
+def modules():
+    if not os.path.exists(Commands.mod):
+        return {}
+    return sorted([
+            x[:-3] for x in os.listdir(Commands.mod)
+            if x.endswith(".py") and not x.startswith("__")
+           ])
+
+
+def scanner(names=None, debug=False):
+    res = []
+    for nme in sorted(modules()):
+        if names and nme not in spl(names):
+            continue
+        module = importer(nme, Commands.mod, "mods")
+        if not module:
+            continue
+        scan(module)
+        if debug and "DENUG" in dir(module):
+            module.DEBUG = True
+        res.append(module)
+    return res
+
+
+"utilities"
+
+
 def banner():
     tme = time.ctime(time.time()).replace("  ", " ")
-    print(f"{NAME.upper()} since {tme}")
-    print("loaded " + ",".join(sorted(dir(Commands.names))))
+    print(f"{NAME.upper()} {Config.version} since {tme} ({Config.level.upper()})")
+    mds = modules()
+    if mds:
+        print(f"loaded {",".join(mds)}")
 
 
 def consume(evts):
-    done = []
     while True:
         try:
             event = events.get()
@@ -215,10 +291,6 @@ def main():
     global nrs
     global nrcommand
     parse(Config, " ".join(sys.argv[1:]))
-    table()
-    for mod in mods():
-        if "DEBUG" in dir(mod):
-            mod.DEBUG = True
     nrcommand = 0
     if "v" in Config.opts:
         banner()
@@ -226,6 +298,7 @@ def main():
         if os.path.exists(Workdir.wdr):
             shutil.rmtree(Workdir.wdr)
     skel()
+    scanner()
     if "z" in Config.opts:
         nrcpu = os.cpu_count()
     else:
@@ -256,6 +329,7 @@ def main():
     time.sleep(0.1)
     consume(events)
     Fleet.shutdown()
+    Fleet.wait()
 
 
 if __name__ == "__main__":

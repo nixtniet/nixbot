@@ -8,10 +8,10 @@ import datetime
 import time
 
 
-from nixt.methods import elapsed
-from nixt.handler import Fleet, Event
-from nixt.objects import Object, construct, keys
-from nixt.runtime import Repeater, rlog
+from nixbot.methods import elapsed
+from nixbot.handler import Fleet, Event
+from nixbot.objects import Object, construct, keys
+from nixbot.runtime import Repeater, rlog
 
 
 def init():

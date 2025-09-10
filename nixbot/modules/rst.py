@@ -13,9 +13,9 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
-from nixt.objects import Object
-from nixt.persist import Workdir, types
-from nixt.runtime import launch, rlog
+from nixbot.objects import Object
+from nixbot.persist import Workdir, types
+from nixbot.runtime import launch, rlog
 
 
 DEBUG = False

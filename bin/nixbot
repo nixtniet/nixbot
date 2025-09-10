@@ -12,7 +12,6 @@ import logging
 import os
 import os.path
 import pathlib
-import signal
 import sys
 import time
 import _thread
@@ -21,18 +20,18 @@ import _thread
 sys.path.insert(0, os.getcwd())
 
 
-from nixt.command import Commands, command, scan
-from nixt.handler import NAME, Client, Event, Fleet
-from nixt.methods import parse, spl
-from nixt.objects import fmt, fqn, update
-from nixt.persist import Workdir, j, moddir, pidname, setwd, skel
-from nixt.runtime import launch, level, rlog
+from nixbot.command import Commands, command, scan
+from nixbot.handler import Client, Event, Fleet
+from nixbot.methods import parse, spl
+from nixbot.objects import update
+from nixbot.persist import Workdir, pidname, setwd
+from nixbot.runtime import launch, level
 
 
 import nixbot.modules as MODS
 
 
-NAME = "nixbot"
+NAME = Workdir.name
 
 
 "config"
@@ -45,12 +44,12 @@ class Config:
     gets     = {}
     init     = ""
     level    = "warn"
-    mod      = "mods"
+    mod      = MODS.__path__[0]
     opts     = ""
     otxt     = ""
     sets     = {}
     verbose  = False
-    version  = 160
+    version  = 413
 
 
 "clients"
@@ -61,6 +60,9 @@ class CLI(Client):
     def __init__(self):
         Client.__init__(self)
         self.register("command", command)
+
+    def announce(self, txt):
+        self.raw(txt)
 
     def raw(self, txt):
         out(txt.encode('utf-8', 'replace').decode("utf-8"))
@@ -82,37 +84,6 @@ class Console(CLI):
         evt.txt = input("> ")
         evt.type = "command"
         return evt
-
-
-"commands"
-
-
-def cmd(event):
-    event.reply(",".join(sorted(Commands.cmds)))
-
-
-TXT = """[Unit]
-Description=%s
-After=network-online.target
-
-[Service]
-Type=simple
-User=%s
-Group=%s
-ExecStart=/home/%s/.local/bin/%s -s
-
-[Install]
-WantedBy=multi-user.target"""
-
-
-def srv(event):
-    import getpass
-    name = getpass.getuser()
-    event.reply(TXT % (NAME.upper(), name, name, name, NAME))
-
-
-def ver(event):
-    event.reply(f"{NAME.upper()} {Config.version}")
 
 
 "daemon"
@@ -155,32 +126,37 @@ def privileges():
     os.setuid(pwnam2.pw_uid)
 
 
-def importer(mname, path):
-    if path is None:
-        path = Config.mod
-    module = sys.modules.get(mname, None)
-    if module:
-        return module
-    pth = os.path.join(path, f"{mname}.py")
-    if not os.path.exists(pth):
-        return 
-    spec = importlib.util.spec_from_file_location(mname, pth)
-    if not spec:
-        return 
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[mname] = module
-    try:
-        spec.loader.exec_module(module)
-    except Exception as ex:
-        logging.exception(ex)
+"modules"
+
+
+def importer(name, path, package=None):
+    if package:
+        fullname = f"{package}.{name}"
+    else:
+        fullname = name
+    module = sys.modules.get(fullname, None)
+    if not module:
+        try:
+            pth = os.path.join(path, f"{name}.py")
+            if not os.path.exists(pth):
+                return
+            spec = importlib.util.spec_from_file_location(fullname, pth)
+            module = importlib.util.module_from_spec(spec)
+            if module:
+                sys.modules[fullname] = module
+                spec.loader.exec_module(module)
+        except Exception as ex:
+            logging.exception(ex)
     return module
 
 
-def inits(names):
+def inits(names=[]):
     modz = []
-    for name in sorted(spl(names)):
+    for name in sorted(names):
+        print(name)
         try:
-            module = importer(name, Config.mod)
+            module = importer(name, Commands.mod)
+            print(module)
             if not module:
                 continue
             if "init" in dir(module):
@@ -192,31 +168,97 @@ def inits(names):
     return modz
 
 
-def out(txt):
-    print(txt)
-    sys.stdout.flush()
-
-
-def modules(path):
-    if not os.path.exists(path):
+def modules():
+    if not os.path.exists(Commands.mod):
         return {}
-    return sorted([
-            x[:-3] for x in os.listdir(path)
+    lst = sorted([
+            x[:-3] for x in os.listdir(Commands.mod)
             if x.endswith(".py") and not x.startswith("__")
            ])
+    print(lst)
+    return lst
 
 
-def scanner(path, names=""):
+def scanner(names=None, debug=False):
     res = []
-    for nme in sorted(modules(path)):
+    for nme in sorted(modules()):
         if names and nme not in spl(names):
             continue
-        module = importer(nme, path)
+        print(nme, Commands.mod)
+        module = importer(nme, Commands.mod)
+        print(module)
         if not module:
             continue
         scan(module)
+        if debug and "DENUG" in dir(module):
+            module.DEBUG = True
         res.append(module)
     return res
+
+
+"scripts"
+
+
+def background():
+    daemon("-v" in sys.argv)
+    privileges()
+    boot(False)
+    pidfile(pidname(NAME))
+    inits(Config.init or Config.default)
+    forever()
+
+
+def console():
+    import readline # noqa: F401
+    #Commands.mod = Config.mod
+    print(Config.init)
+    boot()
+    print(Config.init)
+    for _mod, thr in inits(Config.init):
+        if "w" in Config.opts:
+            thr.join(30.0)
+    csl = Console()
+    csl.start(daemon=True)
+    forever()
+
+
+def control():
+    if len(sys.argv) == 1:
+        return
+    boot()
+    Commands.add(srv)
+    Commands.add(tbl)
+    csl = CLI()
+    evt = Event()
+    evt.orig = repr(csl)
+    evt.type = "command"
+    evt.txt = Config.otxt
+    command(evt)
+    evt.wait()
+
+
+def service():
+    privileges()
+    boot(False)
+    pidfile(pidname(NAME))
+    inits(Config.init or Config.default)
+    forever()
+
+
+def boot(doparse=True):
+    if doparse:
+        parse(Config, " ".join(sys.argv[1:]))
+        update(Config, Config.sets)
+        Commands.mod = Config.mod
+    level(Config.level)
+    if "v" in Config.opts:
+        banner()
+    setwd(NAME)
+    scanner()
+    #scanner(Config.mod)
+    Commands.add(cmd)
+    Commands.add(ver)
+
 
 "utilities"
 
@@ -224,7 +266,7 @@ def scanner(path, names=""):
 def banner():
     tme = time.ctime(time.time()).replace("  ", " ")
     out(f"{NAME.upper()} {Config.version} since {tme} ({Config.level.upper()})")
-    mds = modules(Config.mod)
+    mds = modules()
     if mds:
         out(f"loaded {",".join(mds)}")
     out(f"workdir {Workdir.wdr}")
@@ -250,62 +292,53 @@ def forever():
             break
 
 
-"scripts"
+def out(txt):
+    print(txt)
+    sys.stdout.flush()
 
 
-def background():
-    daemon("-v" in sys.argv)
-    privileges()
-    boot(False)
-    pidfile(pidname(NAME))
-    inits(Config.init or Config.default)
-    forever()
+"commands"
 
 
-def console():
-    import readline # noqa: F401
-    boot()
-    for _mod, thr in inits(Config.init):
-        if "w" in Config.opts:
-            thr.join(30.0)
-    csl = Console()
-    csl.start(daemon=True)
-    forever()
+def cmd(event):
+    event.reply(",".join(sorted(Commands.names)))
 
 
-def control():
-    if len(sys.argv) == 1:
-        return
-    boot()
-    Commands.add(srv)
-    csl = CLI()
-    evt = Event()
-    evt.orig = repr(csl)
-    evt.type = "command"
-    evt.txt = Config.otxt
-    command(evt)
-    evt.wait()
+TXT = """[Unit]
+Description=%s
+After=network-online.target
+
+[Service]
+Type=simple
+User=%s
+Group=%s
+ExecStart=/home/%s/.local/bin/%s -s
+
+[Install]
+WantedBy=multi-user.target"""
 
 
-def service():
-    privileges()
-    boot(False)
-    pidfile(pidname(NAME))
-    inits(Config.init or Config.default)
-    forever()
+def srv(event):
+    import getpass
+    name = getpass.getuser()
+    event.reply(TXT % (NAME.upper(), name, name, name, NAME))
 
 
-def boot(doparse=True):
-    if doparse:
-        parse(Config, " ".join(sys.argv[1:]))
-        update(Config, Config.sets)
-    level(Config.level)
-    setwd(NAME)
-    if "v" in Config.opts:
-        banner()
-    scanner(Config.mod)
-    Commands.add(cmd)
-    Commands.add(ver)
+def tbl(event):
+    if not check("f"):
+        Commands.names = {}
+    scanner()
+    event.reply("# This file is placed in the Public Domain.")
+    event.reply("")
+    event.reply("")
+    event.reply('"lookup tables"')
+    event.reply("")
+    event.reply("")
+    event.reply(f"NAMES = {json.dumps(Commands.names, indent=4, sort_keys=True)}")
+
+
+def ver(event):
+    event.reply(f"{NAME.upper()} {Config.version}")
 
 
 "runtime"
@@ -340,7 +373,8 @@ def main():
     if check("m"):
         Config.mod = "mods"
     if check("a"):
-        Config.init = ",".join(modules(Config.mod))
+        Config.init = ",".join(modules())
+        print(Config.init, modules())
     if check("c"):
         wrap(console)
     elif check("d"):

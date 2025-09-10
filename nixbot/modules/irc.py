@@ -13,19 +13,21 @@ import threading
 import time
 
 
-from nixt.command import command
-from nixt.handler import Event as IEvent
-from nixt.handler import NAME, Fleet, Output
-from nixt.objects import Object, edit, fmt, keys
-from nixt.persist import getpath, last, write
-from nixt.runtime import launch, rlog
+from nixbot.command import command
+from nixbot.handler import Event as IEvent
+from nixbot.handler import Fleet, Output
+from nixbot.methods import edit, fmt
+from nixbot.objects import Object, keys
+from nixbot.persist import Workdir, getpath, last, write
+from nixbot.runtime import launch, rlog
 
 
 IGNORE = ["PING", "PONG", "PRIVMSG"]
+NAME   = Workdir.name
 
 
 initlock = threading.RLock()
-saylock = threading.RLock()
+saylock  = threading.RLock()
 
 
 def init():

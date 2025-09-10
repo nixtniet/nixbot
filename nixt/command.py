@@ -8,7 +8,7 @@ import inspect
 
 
 from .handler import Fleet
-from .methods import parse, spl
+from .methods import parse
 
 
 class Commands:

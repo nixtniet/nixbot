@@ -9,10 +9,10 @@ import re
 import time
 
 
-from nixt.methods import elapsed
-from nixt.handler import Fleet
-from nixt.persist import find, write
-from nixt.runtime import Timed, launch, rlog
+from nixbot.methods import elapsed
+from nixbot.handler import Fleet
+from nixbot.persist import find, write
+from nixbot.runtime import Timed, launch, rlog
 
 
 def init():
