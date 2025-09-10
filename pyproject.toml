@@ -15,9 +15,6 @@ authors = [
 description = "NIXBOT"
 readme = "README.rst"
 license = "Unlicense"
-dependencies = [
-    "nixt",
-]
 classifiers=[
     'Development Status :: 3 - Alpha',
     'Operating System :: Unix',

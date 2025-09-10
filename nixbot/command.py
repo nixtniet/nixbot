@@ -37,7 +37,7 @@ class Commands:
             name = Commands.names.get(cmd, None)
             if not name:
                 return
-            module = importer(name)
+            module = importer(name, Commands.mod)
             if module:
                 scan(module)
                 func = Commands.cmds.get(cmd)
@@ -53,20 +53,19 @@ def command(evt):
     evt.ready()
 
 
-def importer(mname, path):
-    module = sys.modules.get(mname, None)
+def importer(name, path):
+    module = sys.modules.get(name, None)
     if not module:
         try:
-            pth = os.path.join(path, f"{mname}.py")
+            pth = os.path.join(path, f"{name}.py")
             if not os.path.exists(pth):
                 return
-            if mname != "tbl" and md5sum(pth) != Mods.md5s.get(name, None):
+            if name != "tbl" and md5sum(pth) != Commands.md5s.get(name, None):
                 rlog("warn", f"md5 error on {pth.split(os.sep)[-1]}")
-
-            spec = importlib.util.spec_from_file_location(mname, pth)
+            spec = importlib.util.spec_from_file_location(name, pth)
             module = importlib.util.module_from_spec(spec)
             if module:
-                sys.modules[mname] = module
+                sys.modules[name] = module
                 spec.loader.exec_module(module)
         except Exception as ex:
             logging.exception(ex)
