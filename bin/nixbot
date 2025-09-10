@@ -150,12 +150,11 @@ def importer(name, path, package=None):
     return module
 
 
-def inits(names=[]):
+def inits(names):
     modz = []
     for name in sorted(names):
-        print(name)
         try:
-            module = importer(name, Commands.mod)
+            module = importer(name, Commands.mod, MODS.__name__)
             print(module)
             if not module:
                 continue
@@ -170,12 +169,11 @@ def inits(names=[]):
 
 def modules():
     if not os.path.exists(Commands.mod):
-        return {}
+        return []
     lst = sorted([
             x[:-3] for x in os.listdir(Commands.mod)
             if x.endswith(".py") and not x.startswith("__")
            ])
-    print(lst)
     return lst
 
 
@@ -184,9 +182,7 @@ def scanner(names=None, debug=False):
     for nme in sorted(modules()):
         if names and nme not in spl(names):
             continue
-        print(nme, Commands.mod)
-        module = importer(nme, Commands.mod)
-        print(module)
+        module = importer(nme, Commands.mod, MODS.__name__)
         if not module:
             continue
         scan(module)
@@ -210,10 +206,7 @@ def background():
 
 def console():
     import readline # noqa: F401
-    #Commands.mod = Config.mod
-    print(Config.init)
     boot()
-    print(Config.init)
     for _mod, thr in inits(Config.init):
         if "w" in Config.opts:
             thr.join(30.0)
@@ -249,7 +242,6 @@ def boot(doparse=True):
     if doparse:
         parse(Config, " ".join(sys.argv[1:]))
         update(Config, Config.sets)
-        Commands.mod = Config.mod
     level(Config.level)
     if "v" in Config.opts:
         banner()
@@ -367,14 +359,12 @@ def wrap(func):
 
 
 def main():
-    Config.mod = MODS.__path__[0]
     if check("v"):
         Config.opts += "v"
     if check("m"):
         Config.mod = "mods"
     if check("a"):
         Config.init = ",".join(modules())
-        print(Config.init, modules())
     if check("c"):
         wrap(console)
     elif check("d"):

@@ -14,7 +14,7 @@ from .methods import parse
 class Commands:
 
     cmds  = {}
-    mod   = "mods"
+    mod   = f"{__name__.split(".")[0]}.modules"
     names = {}
 
     @staticmethod
@@ -36,15 +36,6 @@ def command(evt):
     evt.ready()
 
 
-def modules():
-    if not os.path.exists(Commands.mod):
-        return {}
-    return sorted([
-            x[:-3] for x in os.listdir(Commands.mod)
-            if x.endswith(".py") and not x.startswith("__")
-           ])
-
-
 def scan(module):
     for key, cmdz in inspect.getmembers(module, inspect.isfunction):
         if key.startswith("cb"):
@@ -57,7 +48,6 @@ def __dir__():
     return (
         'Commands',
         'command',
-        'modules',
         'parse',
         'scan'
     )
