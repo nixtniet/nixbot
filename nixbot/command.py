@@ -4,17 +4,25 @@
 "commands"
 
 
+import hashlib
+import importlib
+import importlib.util
 import inspect
+import logging
 import os
+import sys
+import _thread
 
 
-from .methods import parse
+from .methods import parse, spl
+from .runtime import launch
 
 
 class Commands:
 
-    cmds  = {}
-    mod   = f"{__name__.split(".")[0]}.modules"
+    cmds = {}
+    md5s = {}
+    mod = os.path.join(os.path.dirname(__file__), "modules")
     names = {}
 
     @staticmethod
@@ -24,7 +32,16 @@ class Commands:
 
     @staticmethod
     def get(cmd):
-        return Commands.cmds.get(cmd, None)
+        func = Commands.cmds.get(cmd, None)
+        if not func:
+            name = Commands.names.get(cmd, None)
+            if not name:
+                return
+            module = importer(name)
+            if module:
+                scan(module)
+                func = Commands.cmds.get(cmd)
+        return func
 
 
 def command(evt):
@@ -36,6 +53,57 @@ def command(evt):
     evt.ready()
 
 
+def importer(mname, path):
+    module = sys.modules.get(mname, None)
+    if not module:
+        try:
+            pth = os.path.join(path, f"{mname}.py")
+            if not os.path.exists(pth):
+                return
+            if mname != "tbl" and md5sum(pth) != Mods.md5s.get(name, None):
+                rlog("warn", f"md5 error on {pth.split(os.sep)[-1]}")
+
+            spec = importlib.util.spec_from_file_location(mname, pth)
+            module = importlib.util.module_from_spec(spec)
+            if module:
+                sys.modules[mname] = module
+                spec.loader.exec_module(module)
+        except Exception as ex:
+            logging.exception(ex)
+    return module
+
+
+def inits(names):
+    modz = []
+    for name in sorted(spl(names)):
+        try:
+            module = importer(name, Commands.mod)
+            if not module:
+                continue
+            if "init" in dir(module):
+                thr = launch(module.init)
+                modz.append((module, thr))
+        except Exception as ex:
+            logging.exception(ex)
+            _thread.interrupt_main()
+    return modz
+
+
+def md5sum(path):
+    with open(path, "r", encoding="utf-8") as file:
+        txt = file.read().encode("utf-8")
+        return hashlib.md5(txt).hexdigest()
+
+
+def modules():
+    if not os.path.exists(Commands.mod):
+        return {}
+    return sorted([
+            x[:-3] for x in os.listdir(Commands.mod)
+            if x.endswith(".py") and not x.startswith("__")
+           ])
+
+
 def scan(module):
     for key, cmdz in inspect.getmembers(module, inspect.isfunction):
         if key.startswith("cb"):
@@ -44,10 +112,38 @@ def scan(module):
             Commands.add(cmdz)
 
 
+def scanner(names=None):
+    res = []
+    for nme in sorted(modules()):
+        if names and nme not in spl(names):
+            continue
+        module = importer(nme, Commands.mod)
+        if not module:
+            continue
+        scan(module)
+        res.append(module)
+    return res
+
+
+def table():
+    tbl = importer("tbl", Commands.mod)
+    if tbl:
+        if "NAMES" in dir(tbl):
+            Commands.names.update(tbl.NAMES)
+        if "MD5" in dir(tbl):
+            Commands.md5s.update(tbl.MD5)
+    else:
+        scanner()
+
+
 def __dir__():
     return (
         'Commands',
         'command',
-        'parse',
-        'scan'
+        'importer',
+        'inits',
+        'modules',
+        'scan',
+        'scanner',
+        'table'
     )

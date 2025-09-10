@@ -20,7 +20,8 @@ import _thread
 sys.path.insert(0, os.getcwd())
 
 
-from nixbot.command import Commands, command, scan
+from nixbot.command import Commands, command, importer
+from nixbot.command import inits, md5sum, modules, scanner, table
 from nixbot.handler import Client, Event, Fleet
 from nixbot.methods import parse, spl
 from nixbot.objects import update
@@ -126,72 +127,6 @@ def privileges():
     os.setuid(pwnam2.pw_uid)
 
 
-"modules"
-
-
-def importer(name, path, package=None):
-    if package:
-        fullname = f"{package}.{name}"
-    else:
-        fullname = name
-    module = sys.modules.get(fullname, None)
-    if not module:
-        try:
-            pth = os.path.join(path, f"{name}.py")
-            if not os.path.exists(pth):
-                return
-            spec = importlib.util.spec_from_file_location(fullname, pth)
-            module = importlib.util.module_from_spec(spec)
-            if module:
-                sys.modules[fullname] = module
-                spec.loader.exec_module(module)
-        except Exception as ex:
-            logging.exception(ex)
-    return module
-
-
-def inits(names):
-    modz = []
-    for name in sorted(names):
-        try:
-            module = importer(name, Commands.mod, MODS.__name__)
-            print(module)
-            if not module:
-                continue
-            if "init" in dir(module):
-                thr = launch(module.init)
-                modz.append((module, thr))
-        except Exception as ex:
-            logging.exception(ex)
-            _thread.interrupt_main()
-    return modz
-
-
-def modules():
-    if not os.path.exists(Commands.mod):
-        return []
-    lst = sorted([
-            x[:-3] for x in os.listdir(Commands.mod)
-            if x.endswith(".py") and not x.startswith("__")
-           ])
-    return lst
-
-
-def scanner(names=None, debug=False):
-    res = []
-    for nme in sorted(modules()):
-        if names and nme not in spl(names):
-            continue
-        module = importer(nme, Commands.mod, MODS.__name__)
-        if not module:
-            continue
-        scan(module)
-        if debug and "DENUG" in dir(module):
-            module.DEBUG = True
-        res.append(module)
-    return res
-
-
 "scripts"
 
 
@@ -219,6 +154,7 @@ def control():
     if len(sys.argv) == 1:
         return
     boot()
+    Commands.add(md5)
     Commands.add(srv)
     Commands.add(tbl)
     csl = CLI()
@@ -241,13 +177,12 @@ def service():
 def boot(doparse=True):
     if doparse:
         parse(Config, " ".join(sys.argv[1:]))
-        update(Config, Config.sets)
+        update(Config, Config.sets, empty=False)
     level(Config.level)
     if "v" in Config.opts:
         banner()
     setwd(NAME)
-    scanner()
-    #scanner(Config.mod)
+    table()
     Commands.add(cmd)
     Commands.add(ver)
 
@@ -296,6 +231,11 @@ def cmd(event):
     event.reply(",".join(sorted(Commands.names)))
 
 
+def md5(event):
+    tbl = importer("tbl", Config.mod)
+    event.reply(md5sum(tbl.__file__))
+
+
 TXT = """[Unit]
 Description=%s
 After=network-online.target
@@ -327,6 +267,11 @@ def tbl(event):
     event.reply("")
     event.reply("")
     event.reply(f"NAMES = {json.dumps(Commands.names, indent=4, sort_keys=True)}")
+    event.reply("")
+    event.reply("MD5 = {")
+    for module in scanner():
+        event.reply(f'    "{module.__name__.split(".")[-1]}": "{md5sum(module.__file__)}",')
+    event.reply("}")
 
 
 def ver(event):
