@@ -29,7 +29,7 @@ from nixbot.persist import Workdir, pidname, setwd
 from nixbot.runtime import launch, level
 
 
-CHECKSUM = "7a624d3cab28ba580680391c5ab6247e"
+CHECKSUM = "fa55595514138d4689f34616481a24a8"
 NAME = Workdir.name
 
 
