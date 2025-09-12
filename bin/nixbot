@@ -21,21 +21,16 @@ sys.path.insert(0, os.getcwd())
 
 
 from nixbot.command import Commands, command, importer
-from nixbot.command import inits, md5sum, modules, scanner, table
+from nixbot.command import inits, modules, scanner, table
 from nixbot.handler import Client, Event, Fleet
-from nixbot.methods import parse, spl
+from nixbot.methods import md5sum, parse, spl
 from nixbot.objects import update
 from nixbot.persist import Workdir, pidname, setwd
 from nixbot.runtime import launch, level
 
 
-import nixbot.modules as MODS
-
-
+CHECKSUM = "7a624d3cab28ba580680391c5ab6247e"
 NAME = Workdir.name
-
-
-"config"
 
 
 class Config:
@@ -45,15 +40,12 @@ class Config:
     gets     = {}
     init     = ""
     level    = "warn"
-    mod      = MODS.__path__[0]
+    mod      = ""
     opts     = ""
     otxt     = ""
     sets     = {}
     verbose  = False
-    version  = 413
-
-
-"clients"
+    version  = 170
 
 
 class CLI(Client):
@@ -182,7 +174,9 @@ def boot(doparse=True):
     if "v" in Config.opts:
         banner()
     setwd(NAME)
-    table()
+    if os.path.exists("mods"):
+        Commands.mod = Config.mod = "mods"
+    table(CHECKSUM)
     Commands.add(cmd)
     Commands.add(ver)
 
@@ -193,11 +187,6 @@ def boot(doparse=True):
 def banner():
     tme = time.ctime(time.time()).replace("  ", " ")
     out(f"{NAME.upper()} {Config.version} since {tme} ({Config.level.upper()})")
-    mds = modules()
-    if mds:
-        out(f"loaded {",".join(mds)}")
-    out(f"workdir {Workdir.wdr}")
-    out(f"moddir {Config.mod}")
 
 
 def check(txt):
@@ -232,22 +221,9 @@ def cmd(event):
 
 
 def md5(event):
-    tbl = importer("tbl", Config.mod)
+    tbl = importer("tbl")
     event.reply(md5sum(tbl.__file__))
 
-
-TXT = """[Unit]
-Description=%s
-After=network-online.target
-
-[Service]
-Type=simple
-User=%s
-Group=%s
-ExecStart=/home/%s/.local/bin/%s -s
-
-[Install]
-WantedBy=multi-user.target"""
 
 
 def srv(event):
@@ -318,6 +294,20 @@ def main():
         wrapped(service)
     else:
         wrapped(control)
+
+
+TXT = """[Unit]
+Description=%s
+After=network-online.target
+
+[Service]
+Type=simple
+User=%s
+Group=%s
+ExecStart=/home/%s/.local/bin/%s -s
+
+[Install]
+WantedBy=multi-user.target"""
 
 
 if __name__ == "__main__":

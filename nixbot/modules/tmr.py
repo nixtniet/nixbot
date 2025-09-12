@@ -9,8 +9,8 @@ import re
 import time
 
 
-from nixbot.methods import elapsed
 from nixbot.handler import Fleet
+from nixbot.methods import elapsed, extract_date
 from nixbot.persist import find, write
 from nixbot.runtime import Timed, launch, rlog
 
@@ -34,18 +34,6 @@ def init():
 class NoDate(Exception):
 
     pass
-
-
-def extract_date(daystr):
-    daystr = daystr.encode('utf-8', 'replace').decode("utf-8")
-    res = time.time()
-    for fmt in FORMATS:
-        try:
-            res = time.mktime(time.strptime(daystr, fmt))
-            break
-        except ValueError:
-            pass
-    return res
 
 
 def get_day(daystr):
@@ -212,14 +200,4 @@ MONTHS = [
     'Oct',
     'Nov',
     'Dec'
-]
-
-
-FORMATS = [
-    "%Y-%M-%D %H:%M:%S",
-    "%Y-%m-%d %H:%M:%S",
-    "%Y-%m-%d",
-    "%d-%m-%Y",
-    "%d-%m",
-    "%m-%d",
 ]

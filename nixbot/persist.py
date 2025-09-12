@@ -12,11 +12,10 @@ import threading
 import time
 
 
-from .methods import fqn, search
+from .methods import fqn, j, search
 from .objects import Object, dump, load, update
 
 
-j    = os.path.join
 lock = threading.RLock()
 
 
@@ -66,6 +65,9 @@ def write(obj, path=None):
             dump(obj, fpt, indent=4)
         Cache.update(path, obj)
         return path
+
+
+"paths"
 
 
 class Workdir:
@@ -133,9 +135,7 @@ def wdr(pth):
     return j(Workdir.wdr, pth)
 
 
-class Find:
-
-    pass
+"find"
 
 
 def find(clz, selector=None, deleted=False, matching=False):
@@ -193,12 +193,16 @@ def last(obj, selector=None):
     return res
 
 
+"interface"
+
+
 def __dir__():
     return (
         'Cache',
         'Workdir',
         'cdir',
         'find',
+        'fntime',
         'last',
         'long',
         'pidname',

@@ -4,7 +4,15 @@
 "methods"
 
 
+import hashlib
+import os
+import time
+
+
 from .objects import items, keys
+
+
+j = os.path.join
 
 
 def edit(obj, setter, skip=True):
@@ -156,9 +164,7 @@ def search(obj, selector, matching=False):
     return res
 
 
-class Utils:
-
-    pass
+"utilities"
 
 
 def elapsed(seconds, short=True):
@@ -200,6 +206,24 @@ def elapsed(seconds, short=True):
     return txt
 
 
+def extract_date(daystr):
+    daystr = daystr.encode('utf-8', 'replace').decode("utf-8")
+    res = time.time()
+    for fmt in FORMATS:
+        try:
+            res = time.mktime(time.strptime(daystr, fmt))
+            break
+        except ValueError:
+            pass
+    return res
+
+
+def md5sum(path):
+    with open(path, "r", encoding="utf-8") as file:
+        txt = file.read().encode("utf-8")
+        return hashlib.md5(txt).hexdigest()
+
+
 def spl(txt):
     try:
         result = txt.split(",")
@@ -210,12 +234,28 @@ def spl(txt):
     return [x for x in result if x]
 
 
+FORMATS = [
+    "%Y-%M-%D %H:%M:%S",
+    "%Y-%m-%d %H:%M:%S",
+    "%Y-%m-%d",
+    "%d-%m-%Y",
+    "%d-%m",
+    "%m-%d",
+]
+
+
+"interface"
+
+
 def __dir__():
     return (
         'edit',
         'elapsed',
+        'extract_date',
         'fmt',
         'fqn',
+        'j',
+        'md5sum',
         'name',
         'parse',
         'search',

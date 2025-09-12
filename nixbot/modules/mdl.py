@@ -8,8 +8,8 @@ import datetime
 import time
 
 
+from nixbot.handler import Event, Fleet
 from nixbot.methods import elapsed
-from nixbot.handler import Fleet, Event
 from nixbot.objects import Object, construct, keys
 from nixbot.runtime import Repeater, rlog
 
@@ -73,8 +73,6 @@ jaar["Pvp"] = 20088
 jaar["Wzd"] = 25000
 jaar["Wfz"] = 23820
 jaar["totaal"] = 168678
-
-
 
 
 "utilities"

@@ -14,40 +14,6 @@ from .methods import fqn
 from .runtime import launch
 
 
-class Event:
-
-    def __init__(self):
-        self._ready = threading.Event()
-        self._thr = None
-        self.args = []
-        self.channel = ""
-        self.ctime = time.time()
-        self.rest = ""
-        self.result = {}
-        self.txt = ""
-        self.type = "event"
-
-    def display(self):
-        Fleet.display(self)
-
-    def done(self):
-        self.reply("ok")
-
-    def ready(self):
-        self._ready.set()
-
-    def reply(self, txt):
-        self.result[time.time()] = txt
-
-    def wait(self, timeout=None):
-        try:
-            self._ready.wait()
-            if self._thr:
-                self._thr.join()
-        except (KeyboardInterrupt, EOFError):
-            _thread.interrupt_main()
-
-
 class Handler:
 
     def __init__(self):
@@ -64,6 +30,8 @@ class Handler:
         func = self.cbs.get(event.type, None)
         if func:
             event._thr = launch(func, event, name=event.txt and event.txt.split()[0])
+        else:
+            event.ready()
 
     def loop(self):
         while not self.stopped.is_set():
@@ -95,6 +63,9 @@ class Handler:
 
     def wait(self):
         pass
+
+
+"clients"
 
 
 class Client(Handler):
@@ -153,7 +124,13 @@ class Output(Client):
         super().stop()
 
     def wait(self):
-        self.oqueue.join()
+        try:
+            self.oqueue.join()
+        except Exception:
+            _thread.interrupt_main()
+
+
+"list of clients"
 
 
 class Fleet:
@@ -211,6 +188,44 @@ class Fleet:
         time.sleep(0.1)
         for client in Fleet.all():
             client.wait()
+
+
+"event"
+
+
+class Event:
+
+    def __init__(self):
+        self._ready = threading.Event()
+        self._thr = None
+        self.args = []
+        self.channel = ""
+        self.ctime = time.time()
+        self.orig = ""
+        self.rest = ""
+        self.result = {}
+        self.txt = ""
+        self.type = "event"
+
+    def done(self):
+        self.reply("ok")
+
+    def ready(self):
+        self._ready.set()
+
+    def reply(self, txt):
+        self.result[time.time()] = txt
+
+    def wait(self, timeout=None):
+        try:
+            self._ready.wait()
+            if self._thr:
+                self._thr.join()
+        except (KeyboardInterrupt, EOFError):
+            _thread.interrupt_main()
+
+
+"interface"
 
 
 def __dir__():

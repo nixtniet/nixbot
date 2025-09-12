@@ -5,6 +5,7 @@
 
 
 import logging
+import os
 import queue
 import threading
 import time
@@ -59,6 +60,9 @@ class Thread(threading.Thread):
             _thread.interrupt_main()
 
 
+"timer/repeater"
+
+
 class Timy(threading.Timer):
 
     def __init__(self, sleep, func, *args, **kwargs):
@@ -104,6 +108,9 @@ class Repeater(Timed):
         super().run()
 
 
+"utility"
+
+
 def launch(func, *args, **kwargs):
     thread = Thread(func, *args, **kwargs)
     thread.start()
@@ -127,8 +134,12 @@ def rlog(loglevel, txt, ignore=None):
     logging.log(LEVELS.get(loglevel), txt)
 
 
+"interface"
+
+
 def __dir__():
     return (
+        'Pool',
         'Repeater',
         'Thread',
         'Timed',

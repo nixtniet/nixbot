@@ -9,7 +9,7 @@ import os
 import time
 
 
-from nixbot.methods import elapsed, fmt
+from nixbot.methods import elapsed, extract_date, fmt, spl
 from nixbot.persist import find, write
 from nixbot.objects import Object, keys, update
 
@@ -58,14 +58,13 @@ def todate(date):
 
 
 def eml(event):
-    from .tmr import extract_date
     nrs = -1
     args = ["From", "Subject"]
     if len(event.args) > 1:
         args.extend(event.args[1:])
     if event.gets:
         args.extend(keys(event.gets))
-    for key in keys(event.silent):
+    for key in spl(event.silent):
         if key in args:
             args.remove(key)
     args = set(args)
