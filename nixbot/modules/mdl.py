@@ -9,9 +9,9 @@ import time
 
 
 from nixbot.handler import Event, Fleet
-from nixbot.methods import elapsed
+from nixbot.methods import elapsed, rlog
 from nixbot.objects import Object, construct, keys
-from nixbot.runtime import Repeater, rlog
+from nixbot.runtime import Repeater
 
 
 def init():

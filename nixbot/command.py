@@ -4,19 +4,14 @@
 "commands"
 
 
-import importlib
-import importlib.util
 import inspect
-import logging
 import os
 import sys
 import threading
-import _thread
 
 
-from .methods import j, md5sum, parse, spl
-from .handler import Fleet
-from .runtime import launch, rlog
+from nixbot.methods import importer, j, md5sum, parse, rlog, spl
+from nixbot.handler import Fleet
 
 
 lock = threading.RLock()
@@ -45,7 +40,7 @@ class Commands:
         name = Commands.names.get(cmd, None)
         if not name:
             return
-        module = importer(name)
+        module = getmod(name)
         if not module:
             return
         scan(module)
@@ -63,55 +58,19 @@ def command(evt):
     evt.ready()
 
 
-def scan(module):
-    for key, cmdz in inspect.getmembers(module, inspect.isfunction):
-        if key.startswith("cb"):
-            continue
-        if 'event' in inspect.signature(cmdz).parameters:
-            Commands.add(cmdz)
-
-
-"modules"
-
-
-def importer(name, path=None):
+def getmod(name, path=None):
     with lock:
         module = sys.modules.get(name, None)
-        if not module:
-            if not path:
-                path = Commands.mod
-            try:
-                pth = j(path, f"{name}.py")
-                if not os.path.exists(pth):
-                    return
-                if name != "tbl" and md5sum(pth) != Commands.md5s.get(name, None):
-                    rlog("warn", f"md5 error on {pth.split(os.sep)[-1]}")
-                spec = importlib.util.spec_from_file_location(name, pth)
-                module = importlib.util.module_from_spec(spec)
-                if module:
-                    sys.modules[name] = module
-                    spec.loader.exec_module(module)
-                    rlog("info", f"load {pth}")
-            except Exception as ex:
-                logging.exception(ex)
-                _thread.interrupt_main()
-        return module
-
-
-def inits(names):
-    modz = []
-    for name in sorted(spl(names)):
-        try:
-            module = importer(name, Commands.mod)
-            if not module:
-                continue
-            if "init" in dir(module):
-                thr = launch(module.init)
-                modz.append((module, thr))
-        except Exception as ex:
-            logging.exception(ex)
-            _thread.interrupt_main()
-    return modz
+        if module:
+            return module
+        if not path:
+            path = Commands.mod
+        pth = j(path, f"{name}.py")
+        if not os.path.exists(pth):
+            return
+        if name != "tbl" and md5sum(pth) != Commands.md5s.get(name, None):
+            rlog("warn", f"md5 error on {pth.split(os.sep)[-1]}")
+        return importer(name, pth) 
 
 
 def modules():
@@ -123,12 +82,20 @@ def modules():
            ])
 
 
+def scan(module):
+    for key, cmdz in inspect.getmembers(module, inspect.isfunction):
+        if key.startswith("cb"):
+            continue
+        if 'event' in inspect.signature(cmdz).parameters:
+            Commands.add(cmdz)
+
+
 def scanner(names=None):
     res = []
     for nme in sorted(modules()):
         if names and nme not in spl(names):
             continue
-        module = importer(nme)
+        module = getmod(nme)
         if not module:
             continue
         scan(module)
@@ -141,7 +108,7 @@ def table(checksum=""):
     if os.path.exists(pth):
         if checksum and md5sum(pth) != checksum:
             rlog("warn", "table checksum error.")
-    tbl = importer("tbl")
+    tbl = getmod("tbl")
     if tbl:
         if "NAMES" in dir(tbl):
             Commands.names.update(tbl.NAMES)
@@ -158,8 +125,7 @@ def __dir__():
     return (
         'Commands',
         'command',
-        'importer',
-        'inits',
+        'getmod',
         'modules',
         'scan',
         'scanner',

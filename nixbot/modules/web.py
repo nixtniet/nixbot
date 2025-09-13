@@ -13,8 +13,9 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
+from nixbot.methods import rlog
 from nixbot.objects import Object
-from nixbot.runtime import launch, rlog
+from nixbot.runtime import launch
 
 
 DEBUG = False

@@ -19,12 +19,12 @@ import _thread
 sys.path.insert(0, os.getcwd())
 
 
-from nixbot.command import Commands, command, modules, table
+from nixbot.command import Commands, command, table
 from nixbot.handler import Client, Event, Fleet, Output
-from nixbot.methods import elapsed, parse
+from nixbot.methods import elapsed, level, parse
 from nixbot.objects import Object, keys
 from nixbot.persist import Workdir, skel
-from nixbot.runtime import launch, level
+from nixbot.runtime import launch
 
 
 NAME = Workdir.name
@@ -42,7 +42,7 @@ class Config:
     gets     = {}
     index    = None
     init     = ""
-    level    = "debug"
+    level    = "warn"
     md5      = True
     moddir   = "mods"
     opts     = ""
@@ -109,10 +109,10 @@ class Pool:
         Pool.clients.append(clt)
 
     @staticmethod
-    def init(cls, nr=None):
+    def init(clz, nr=None):
         Pool.nrcpu = nr or os.cpu_count()
         for x in range(Pool.nrcpu):
-            clt = cls()
+            clt = clz()
             clt.start()
             Pool.add(clt)
 
@@ -129,9 +129,6 @@ class Pool:
 def banner():
     tme = time.ctime(time.time()).replace("  ", " ")
     print(f"{NAME.upper()} {Config.version} since {tme} ({Config.level.upper()})")
-    mds = modules()
-    if mds:
-        print(f"loaded {",".join(mds)}")
 
 
 def consume(evts):
@@ -192,7 +189,7 @@ def main():
     if "f" not in Config.opts:
         if os.path.exists(Workdir.wdr):
             shutil.rmtree(Workdir.wdr)
-    level("debug")
+    level(Config.level)
     skel()
     table()
     nrs = Config.index or 1
@@ -222,7 +219,7 @@ def main():
         if nr:
             nrcommand += nr
     launch(consume, events)
-    events.join()    
+    events.join()
     Fleet.shutdown()
     Fleet.wait()
 

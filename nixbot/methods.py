@@ -5,11 +5,16 @@
 
 
 import hashlib
+import importlib
+import importlib.util
+import logging
 import os
+import sys
 import time
+import _thread
 
 
-from .objects import items, keys
+from nixbot.objects import items, keys
 
 
 j = os.path.join
@@ -209,19 +214,55 @@ def elapsed(seconds, short=True):
 def extract_date(daystr):
     daystr = daystr.encode('utf-8', 'replace').decode("utf-8")
     res = time.time()
-    for fmt in FORMATS:
+    for format in FORMATS:
         try:
-            res = time.mktime(time.strptime(daystr, fmt))
+            res = time.mktime(time.strptime(daystr, format))
             break
         except ValueError:
             pass
     return res
 
 
+def importer(name, pth):
+    try:
+        spec = importlib.util.spec_from_file_location(name, pth)
+        if not spec:
+            rlog("info", f"misiing {pth}")
+            return 
+        module = importlib.util.module_from_spec(spec)
+        if not module:
+            rlog("info", f"{pth} not importable")
+            return
+        sys.modules[name] = module
+        spec.loader.exec_module(module)
+        rlog("info", f"load {pth}")
+        return module
+    except Exception as ex:
+        logging.exception(ex)
+        _thread.interrupt_main()
+
+
+def level(loglevel="debug"):
+    if loglevel != "none":
+        format_short = "%(asctime)-8s %(message)-80s"
+        datefmt = "%H:%M:%S"
+        logging.basicConfig(datefmt=datefmt, format=format_short, force=True)
+        logging.getLogger().setLevel(LEVELS.get(loglevel))
+
+
 def md5sum(path):
     with open(path, "r", encoding="utf-8") as file:
         txt = file.read().encode("utf-8")
         return hashlib.md5(txt).hexdigest()
+
+
+def rlog(loglevel, txt, ignore=None):
+    if ignore is None:
+        ignore = []
+    for ign in ignore:
+        if ign in str(txt):
+            return
+    logging.log(LEVELS.get(loglevel), txt)
 
 
 def spl(txt):
@@ -234,6 +275,9 @@ def spl(txt):
     return [x for x in result if x]
 
 
+"data"
+
+
 FORMATS = [
     "%Y-%M-%D %H:%M:%S",
     "%Y-%m-%d %H:%M:%S",
@@ -242,6 +286,16 @@ FORMATS = [
     "%d-%m",
     "%m-%d",
 ]
+
+
+LEVELS = {
+    'debug': logging.DEBUG,
+    'info': logging.INFO,
+    'warning': logging.WARNING,
+    'warn': logging.WARNING,
+    'error': logging.ERROR,
+    'critical': logging.CRITICAL,
+}
 
 
 "interface"
@@ -254,10 +308,13 @@ def __dir__():
         'extract_date',
         'fmt',
         'fqn',
+        'importer',
         'j',
+        'level',
         'md5sum',
         'name',
         'parse',
+        'rlog',
         'search',
         'spl'
     )

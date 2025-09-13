@@ -10,8 +10,8 @@ import time
 import _thread
 
 
-from .methods import fqn
-from .runtime import launch
+from nixbot.methods import fqn
+from nixbot.runtime import launch
 
 
 class Handler:
@@ -113,9 +113,9 @@ class Output(Client):
             self.display(event)
             self.oqueue.task_done()
 
-    def start(self):
+    def start(self, daemon=True):
         self.ostop.clear()
-        launch(self.output)
+        launch(self.output, daemon=daemon)
         super().start()
 
     def stop(self):
