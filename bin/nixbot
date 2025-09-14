@@ -19,15 +19,15 @@ sys.path.insert(0, os.getcwd())
 
 
 from nixbot.command import Commands, command, getmod, importer
-from nixbot.command import modules, scanner, table
+from nixbot.command import md5sum, modules, parse, scanner, table
 from nixbot.handler import Client, Event, Fleet
-from nixbot.methods import level, md5sum, parse, spl
+from nixbot.methods import level, spl
 from nixbot.objects import update
 from nixbot.persist import Workdir, pidname, setwd
 from nixbot.runtime import launch
 
 
-CHECKSUM = "8cf568d1565dff4f265a4f3e78d5a0d6"
+CHECKSUM = "3e3052e12f9ce500876f7e2d3c1cd3db"
 NAME = Workdir.name
 
 

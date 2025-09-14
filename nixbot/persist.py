@@ -12,8 +12,8 @@ import threading
 import time
 
 
-from nixbot.methods import fqn, j, search
-from nixbot.objects import Object, dump, load, update
+from .methods import fqn, j, search
+from .objects import Object, dump, load, update
 
 
 lock = threading.RLock()

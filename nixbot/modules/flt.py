@@ -2,7 +2,8 @@
 
 
 from nixbot.handler import Fleet
-from nixbot.methods import fmt, name
+from nixbot.methods import fmt
+from nixbot.runtime import name
 
 
 def flt(event):

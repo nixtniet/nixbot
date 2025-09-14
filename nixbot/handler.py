@@ -10,8 +10,8 @@ import time
 import _thread
 
 
-from nixbot.methods import fqn
-from nixbot.runtime import launch
+from .methods import fqn
+from .runtime import launch
 
 
 class Handler:
