@@ -19,19 +19,18 @@ import _thread
 sys.path.insert(0, os.getcwd())
 
 
+from nixbot.clients import Client, Fleet, Output
 from nixbot.command import Commands, command, parse, table
-from nixbot.handler import Client, Event, Fleet, Output
 from nixbot.methods import elapsed, level
 from nixbot.objects import Object, keys
 from nixbot.persist import Workdir, skel
-from nixbot.runtime import launch
+from nixbot.runtime import Event, launch
 
 
 NAME = Workdir.name
 STARTTIME = time.time()
 
 
-#Commands.mod = "mods"
 Commands.debug = True
 Workdir.wdr = ".test"
 
@@ -49,7 +48,7 @@ class Config:
     otxt     = ""
     sets     = {}
     verbose  = False
-    version  = 410
+    version  = 172
 
 
 lap = 1
@@ -246,7 +245,7 @@ param.ver = [""]
 
 pre = Object()
 pre.cfg = ["nick=mekker", ""]
-pre.imp = ["testing/feeds.opml", ""]
+pre.imp = ["tests/feeds.opml", ""]
 pre.log = ["bla", ""]
 pre.rss = ["http://hnrss.org/newest", ""]
 pre.tdo = ["mekker", ""]
