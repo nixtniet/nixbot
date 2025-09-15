@@ -7,6 +7,9 @@
 import json
 
 
+"object"
+
+
 class Object:
 
     def __contains__(self, key):
@@ -59,7 +62,7 @@ def values(obj):
     return obj.__dict__.values()
 
 
-"decoder/encoder"
+"serialize"
 
 
 class Encoder(json.JSONEncoder):

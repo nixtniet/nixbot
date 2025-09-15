@@ -9,7 +9,7 @@ import re
 import time
 
 
-from nixbot.handler import Fleet
+from nixbot.clients import Fleet
 from nixbot.methods import elapsed, extract_date, rlog
 from nixbot.persist import find, write
 from nixbot.runtime import Timed, launch

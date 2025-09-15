@@ -21,8 +21,8 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 
 
+from nixbot.clients import Fleet
 from nixbot.methods import elapsed, fmt, rlog, spl
-from nixbot.handler import Fleet
 from nixbot.objects import Object, update
 from nixbot.persist import find, fntime, getpath, last, write
 from nixbot.runtime import Repeater, launch

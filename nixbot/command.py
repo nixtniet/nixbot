@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"commands"
+"loading on demand"
 
 
 import hashlib
@@ -15,11 +15,12 @@ import threading
 import _thread
 
 
-from .methods import j, rlog, spl
-from .handler import Fleet
+from .clients import Fleet
+from .methods import rlog, spl
+from .persist import j
 
 
-lock = threading.RLock()
+"commands"
 
 
 class Commands:
@@ -64,7 +65,18 @@ def command(evt):
     evt.ready()
 
 
+def scan(module):
+    for key, cmdz in inspect.getmembers(module, inspect.isfunction):
+        if key.startswith("cb"):
+            continue
+        if 'event' in inspect.signature(cmdz).parameters:
+            Commands.add(cmdz)
+
+
 "modules"
+
+
+lock = threading.RLock()
 
 
 def getmod(name, path=None):
@@ -90,14 +102,6 @@ def modules():
             x[:-3] for x in os.listdir(Commands.mod)
             if x.endswith(".py") and not x.startswith("__")
            }
-
-
-def scan(module):
-    for key, cmdz in inspect.getmembers(module, inspect.isfunction):
-        if key.startswith("cb"):
-            continue
-        if 'event' in inspect.signature(cmdz).parameters:
-            Commands.add(cmdz)
 
 
 def scanner(names=None):

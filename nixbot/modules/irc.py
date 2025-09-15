@@ -13,12 +13,12 @@ import threading
 import time
 
 
+from nixbot.clients import Fleet, Output
 from nixbot.command import command
-from nixbot.handler import Event as IEvent
-from nixbot.handler import Fleet, Output
 from nixbot.methods import edit, fmt, rlog
 from nixbot.objects import Object, keys
 from nixbot.persist import Workdir, getpath, last, write
+from nixbot.runtime import Event as IEvent
 from nixbot.runtime import launch
 
 

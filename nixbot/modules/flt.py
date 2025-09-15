@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-from nixbot.handler import Fleet
+from nixbot.clients import Fleet
 from nixbot.methods import fmt
 from nixbot.runtime import name
 

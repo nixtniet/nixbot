@@ -7,9 +7,9 @@
 from random import SystemRandom
 
 
-from nixbot.handler import Event, Fleet
+from nixbot.clients import Fleet
 from nixbot.methods import rlog
-from nixbot.runtime import Repeater
+from nixbot.runtime import Event, Repeater
 
 
 rand = SystemRandom()

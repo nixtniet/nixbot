@@ -11,7 +11,7 @@ import threading
 import time
 
 
-from nixbot.handler import Fleet
+from nixbot.clients import Fleet
 from nixbot.methods import rlog
 from nixbot.objects import Object
 from nixbot.runtime import launch

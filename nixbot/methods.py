@@ -4,20 +4,12 @@
 "methods"
 
 
-import hashlib
-import importlib
-import importlib.util
 import logging
 import os
-import sys
 import time
-import _thread
 
 
 from .objects import items, keys
-
-
-j = os.path.join
 
 
 def edit(obj, setter, skip=True):
@@ -148,6 +140,9 @@ def extract_date(daystr):
     return res
 
 
+"logging"
+
+
 def level(loglevel="debug"):
     if loglevel != "none":
         format_short = "%(asctime)-8s %(message)-80s"
@@ -208,7 +203,6 @@ def __dir__():
         'extract_date',
         'fmt',
         'fqn',
-        'j',
         'level',
         'rlog',
         'search',
