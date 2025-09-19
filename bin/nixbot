@@ -9,10 +9,8 @@ import json
 import logging
 import os
 import os.path
-import pathlib
 import sys
 import time
-import _thread
 
 
 sys.path.insert(0, os.getcwd())
@@ -25,8 +23,8 @@ from nixbot.methods import parse
 from nixbot.handler import Event
 from nixbot.objects import update
 from nixbot.package import Mods, getmod, inits, modules, sums
-from nixbot.threads import launch, level
-from nixbot.utility import forever, md5sum, spl
+from nixbot.threads import level
+from nixbot.utility import daemon, forever, md5sum, pidfile, privileges
 from nixbot.workdir import Workdir, pidname, setwd
 
 

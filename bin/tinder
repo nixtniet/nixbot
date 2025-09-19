@@ -5,6 +5,7 @@
 "simulate clients"
 
 
+import logging
 import os
 import random
 import queue
@@ -19,13 +20,11 @@ import _thread
 sys.path.insert(0, os.getcwd())
 
 
-from nixbot.brokers import Fleet
 from nixbot.clients import Client, Output
 from nixbot.command import Commands, command, table
 from nixbot.handler import Event
 from nixbot.methods import parse
 from nixbot.objects import Object, keys
-from nixbot.package import Mods
 from nixbot.threads import launch, level
 from nixbot.utility import elapsed, forever
 from nixbot.workdir import Workdir, skel
