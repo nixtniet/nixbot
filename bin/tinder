@@ -19,208 +19,32 @@ import _thread
 sys.path.insert(0, os.getcwd())
 
 
-from nixbot.clients import Client, Fleet, Output
-from nixbot.command import Commands, command, parse, table
-from nixbot.methods import elapsed, level
+from nixbot.brokers import Fleet
+from nixbot.clients import Client, Output
+from nixbot.command import Commands, command, table
+from nixbot.handler import Event
+from nixbot.methods import parse
 from nixbot.objects import Object, keys
-from nixbot.persist import Workdir, skel
-from nixbot.runtime import Event, launch
+from nixbot.package import Mods
+from nixbot.threads import launch, level
+from nixbot.utility import elapsed, forever
+from nixbot.workdir import Workdir, skel
 
 
-NAME = Workdir.name
+CHECKSUM  = ""
+NAME      = Workdir.name
 STARTTIME = time.time()
 
 
+#Mods.mod   = "mods"
+#Mods.package = "mods"
 Commands.debug = True
-Workdir.wdr = ".test"
+Workdir.wdr    = ".test"
 
 
-class Config:
-
-    debug    = False
-    gets     = {}
-    index    = None
-    init     = ""
-    level    = "warn"
-    md5      = True
-    moddir   = "mods"
-    opts     = ""
-    otxt     = ""
-    sets     = {}
-    verbose  = False
-    version  = 172
-
-
-lap = 1
-nrs = 1
-nrcommand = 1
-percall   = 1
-
-
-events = queue.Queue()
-ignore = [
-    "dbg",
-]
+events  = queue.Queue()
 paylock = _thread.allocate_lock()
-
-
-rand = random.SystemRandom()
-
-
-class CLI(Client):
-
-    def __init__(self):
-        Client.__init__(self)
-        self.register("command", command)
-
-    def dosay(self, channel, txt):
-        self.raw(txt)
-
-    def raw(self, txt):
-        if "v" in Config.opts:
-            print(txt)
-
-
-class Buffer(Output):
-
-
-    def __init__(self):
-        Output.__init__(self)
-        self.register("command", command)
-
-    def dosay(self, channel, txt):
-        self.raw(txt)
-
-    def raw(self, txt):
-        if "v" in Config.opts:
-            print(txt)
-
-
-class Pool:
-
-    clients = []
-    lock = threading.RLock()
-    nrcpu = 1
-    nrlast = 0
-
-    @staticmethod
-    def add(clt):
-        Pool.clients.append(clt)
-
-    @staticmethod
-    def init(clz, nr=None):
-        Pool.nrcpu = nr or os.cpu_count()
-        for x in range(Pool.nrcpu):
-            clt = clz()
-            clt.start()
-            Pool.add(clt)
-
-    @staticmethod
-    def put(evt):
-        with Pool.lock:
-            if Pool.nrlast >= Pool.nrcpu-1:
-                Pool.nrlast = 0
-            clt = Pool.clients[Pool.nrlast]
-            clt.put(evt)
-            Pool.nrlast += 1
-
-
-def banner():
-    tme = time.ctime(time.time()).replace("  ", " ")
-    print(f"{NAME.upper()} {Config.version} since {tme} ({Config.level.upper()})")
-
-
-def consume(evts):
-    while True:
-        try:
-            event = events.get()
-            event.wait()
-            events.task_done()
-        except (KeyboardInterrupt, EOFError):
-            os._exit(0)
-
-
-def payload(cmds):
-    with paylock:
-        nmr = 0
-        cmdz = sorted(keys(cmds))
-        if "s" in Config.opts:
-            rand.shuffle(cmdz)
-        todo = []
-        for cmd in cmdz:
-            if cmd in ignore:
-                continue
-            examples = getattr(cmds, cmd)
-            for example in examples:
-                event = Event()
-                event.txt = cmd + " " + example
-                event.type = "command"
-                todo.append(event)
-        for event in todo:
-            Pool.put(event)
-            events.put(event)
-            nmr += 1
-        return nmr
-
-
-def wrap(function):
-    old3 = None
-    try:
-        old3 = termios.tcgetattr(sys.stdin.fileno())
-    except termios.error:
-        pass
-    try:
-        function()
-    except (KeyboardInterrupt, EOFError):
-        pass
-    finally:
-        if old3:
-            termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old3)
-
-
-def main():
-    global nrs
-    global nrcommand
-    parse(Config, " ".join(sys.argv[1:]))
-    nrcommand = 0
-    if "v" in Config.opts:
-        banner()
-    if "f" not in Config.opts:
-        if os.path.exists(Workdir.wdr):
-            shutil.rmtree(Workdir.wdr)
-    level(Config.level)
-    skel()
-    table()
-    nrs = Config.index or 1
-    thrs = []
-    if "z" in Config.opts:
-        Pool.init(Buffer)
-    else:
-        Pool.init(Buffer, 1)
-    for _nr in range(nrs):
-        thrs.append(launch(payload, pre))
-    for thr in thrs:
-        nr = thr.join()
-        if nr:
-            nrcommand += nr
-    thrs = []
-    for _nr in range(nrs):
-        thrs.append(launch(payload, param))
-    for thr in thrs:
-        nr = thr.join()
-        if nr:
-            nrcommand += nr
-    thrs = []
-    for _nr in range(nrs):
-        thrs.append(launch(payload,  post))
-    for thr in thrs:
-        nr = thr.join()
-        if nr:
-            nrcommand += nr
-    launch(consume, events)
-    events.join()
-    Fleet.shutdown()
-    Fleet.wait()
+rand    = random.SystemRandom()
 
 
 param = Object()
@@ -257,14 +81,194 @@ post.exp = ['']
 post.rem = ["hnrss", ""]
 
 
+class Config:
+
+    debug    = False
+    gets     = {}
+    index    = None
+    init     = ""
+    level    = "warn"
+    md5      = True
+    moddir   = "mods"
+    opts     = ""
+    otxt     = ""
+    sets     = {}
+    verbose  = False
+    version  = 173
+
+
+class CLI(Client):
+
+    def __init__(self):
+        Client.__init__(self)
+        self.register("command", command)
+
+    def dosay(self, channel, txt):
+        self.raw(txt)
+
+    def raw(self, txt):
+        if "v" in Config.opts:
+            print(txt)
+
+
+class Buffer(Output):
+
+    def __init__(self):
+        Output.__init__(self)
+        self.register("command", command)
+
+    def dosay(self, channel, txt):
+        self.raw(txt)
+
+    def raw(self, txt):
+        if "v" in Config.opts:
+            print(txt)
+
+
+class Pool:
+
+    clients = []
+    lock = threading.RLock()
+    nrcpu = 1
+    nrlast = 0
+
+    @staticmethod
+    def add(clt):
+        "add client to pool."
+        Pool.clients.append(clt)
+
+    @staticmethod
+    def init(clz, nr=None):
+        "initialize client pool."
+        Pool.nrcpu = nr or os.cpu_count()
+        for _x in range(Pool.nrcpu):
+            clt = clz()
+            clt.start()
+            Pool.add(clt)
+
+    @staticmethod
+    def put(evt):
+        "dispatch to client."
+        with Pool.lock:
+            if Pool.nrlast >= Pool.nrcpu-1:
+                Pool.nrlast = 0
+            clt = Pool.clients[Pool.nrlast]
+            clt.put(evt)
+            Pool.nrlast += 1
+
+
+def banner():
+    tme = time.ctime(time.time()).replace("  ", " ")
+    print(f"{NAME.upper()} {Config.version} TINDER since {tme} ({Config.level.upper()})")
+
+
+def consume():
+    while True:
+        try:
+            event = events.get()
+            event.wait()
+            if events.qsize() == 0:
+                break
+            events.task_done()
+        except Exception as ex:
+            logging.exception(ex)
+            os._exit(0)
+    _thread.interrupt_main()
+
+def payload(cmds):
+    with paylock:
+        nmr = 0
+        cmdz = sorted(keys(cmds))
+        if "s" in Config.opts:
+            rand.shuffle(cmdz)
+        todo = []
+        for cmd in cmdz:
+            examples = getattr(cmds, cmd)
+            for example in examples:
+                event = Event()
+                event.txt = cmd + " " + example
+                event.type = "command"
+                todo.append(event)
+        for event in todo:
+            Pool.put(event)
+            events.put(event)
+            nmr += 1
+        return nmr
+
+
+def wrap(function):
+    old3 = None
+    try:
+        old3 = termios.tcgetattr(sys.stdin.fileno())
+    except termios.error:
+        pass
+    res = None, None
+    try:
+        res = function()
+    except (KeyboardInterrupt, EOFError):
+        pass
+    finally:
+        if old3:
+            termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old3)
+    return res
+
+
+def main():
+    nrcommand = 0
+    parse(Config, " ".join(sys.argv[1:]))
+    if "v" in Config.opts:
+        banner()
+    if "f" not in Config.opts:
+        if os.path.exists(Workdir.wdr):
+            shutil.rmtree(Workdir.wdr)
+    level(Config.level)
+    skel()
+    table(CHECKSUM)
+    nrs = Config.index or 1
+    thrs = []
+    if "z" in Config.opts:
+        Pool.init(Buffer)
+    else:
+        Pool.init(Buffer, 1)
+    for _nr in range(nrs):
+        thrs.append(launch(payload, pre))
+    for thr in thrs:
+        nr = thr.join()
+        if nr:
+            nrcommand += nr
+    thrs = []
+    for _nr in range(nrs):
+        thrs.append(launch(payload, param))
+    for thr in thrs:
+        nr = thr.join()
+        if nr:
+            nrcommand += nr
+    thrs = []
+    for _nr in range(nrs):
+        thrs.append(launch(payload,  post))
+    for thr in thrs:
+        nr = thr.join()
+        if nr:
+            nrcommand += nr
+    launch(consume)
+    forever()
+    #events.join()
+    #Fleet.shutdown()
+    #Fleet.wait()
+    return nrs, nrcommand
+
+
+
 if __name__ == "__main__":
-    wrap(main)
+    nrz, commandz = wrap(main)
+    if nrz is None and commandz is None:
+       os._exit(1)
     endtime = time.time()
     lap = elapsed(endtime-STARTTIME)
     nrevents = events.qsize()
-    percall = (endtime-STARTTIME)/(nrcommand)
+    percall = (endtime-STARTTIME)/(commandz)
     if "v" in Config.opts:
         print(f"{Pool.nrcpu} cpu's used")
         print(f"{nrevents} events left.")
-        print(f"total: {lap} nrs: {nrs} cmds: {nrcommand} call: %.6fs" % percall)
+        print(f"total: {lap} nrs: {nrz} cmds: {commandz} call: %.6fs" % percall)
     sys.exit()

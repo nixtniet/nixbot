@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nixbot"
-version = "172"
+version = "173"
 authors = [
     {name = "Bart Thate", email = "nixtniet@gmail.com" },
 ]
@@ -32,6 +32,7 @@ classifiers=[
 [tool.setuptools]
 packages = [
     'nixbot',
-    'nixbot.modules'
+    'nixbot.modules',
+    'nixbot.network'
 ]
 include-package-data = false
