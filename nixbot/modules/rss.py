@@ -7,6 +7,7 @@
 import html
 import html.parser
 import http.client
+import logging
 import os
 import re
 import time
@@ -21,18 +22,20 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 
 
-from nixbot.clients import Fleet
-from nixbot.methods import elapsed, fmt, rlog, spl
-from nixbot.objects import Object, update
-from nixbot.persist import find, fntime, getpath, last, write
-from nixbot.runtime import Repeater, launch
+from ..caching import find, last, write
+from ..clients import Fleet
+from ..methods import fmt
+from ..objects import Object, update
+from ..threads import Repeater, launch
+from ..utility import elapsed, fntime, spl
+from ..workdir import getpath
 
 
 def init():
     fetcher = Fetcher()
     fetcher.start()
     if fetcher.seenfn:
-        rlog("warn", f"rss since {elapsed(time.time()-fntime(fetcher.seenfn))}")
+        logging.warning(f"since {elapsed(time.time()-fntime(fetcher.seenfn))}")
     return fetcher
 
 
@@ -286,7 +289,7 @@ def getfeed(url, items):
     try:
         rest = geturl(url)
     except (http.client.HTTPException, ValueError, HTTPError, URLError) as ex:
-        rlog("error", f"{url} {ex}")
+        logging.error(f"{url} {ex}")
         errors[url] = time.time()
         return result
     if rest:
@@ -384,13 +387,13 @@ def imp(event):
     if not os.path.exists(fnm):
         event.reply(f"no {fnm} file found.")
         return
-    with open(fnm, "r", encoding="utf-8") as file:
-        txt = file.read()
-    prs = OPML()
-    nrs = 0
-    nrskip = 0
-    insertid = shortid()
     with importlock:
+        with open(fnm, "r", encoding="utf-8") as file:
+            txt = file.read()
+        prs = OPML()
+        nrs = 0
+        nrskip = 0
+        insertid = shortid()
         for obj in prs.parse(txt, "outline", "name,display_list,xmlUrl"):
             url = obj.xmlUrl
             if url in skipped:

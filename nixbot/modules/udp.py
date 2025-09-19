@@ -4,6 +4,7 @@
 "UDP to IRC relay"
 
 
+import logging
 import select
 import socket
 import sys
@@ -11,10 +12,9 @@ import threading
 import time
 
 
-from nixbot.clients import Fleet
-from nixbot.methods import rlog
-from nixbot.objects import Object
-from nixbot.runtime import launch
+from ..clients import Fleet
+from ..objects import Object
+from ..threads import launch
 
 
 DEBUG = False
@@ -23,7 +23,7 @@ DEBUG = False
 def init():
     udpd = UDP()
     udpd.start()
-    rlog("warn", f"udp at http://{Cfg.host}:{Cfg.port}")
+    logging.warning(f"http://{Cfg.host}:{Cfg.port}")
     return udpd
 
 

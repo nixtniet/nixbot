@@ -5,13 +5,15 @@
 
 
 import datetime
+import logging
 import time
 
 
-from nixbot.clients import Fleet
-from nixbot.methods import elapsed, rlog
-from nixbot.objects import Object, construct, keys
-from nixbot.runtime import Event, Repeater
+from ..clients import Fleet
+from ..handler import Event
+from ..objects import Object, construct, keys
+from ..threads import Repeater
+from ..utility import elapsed
 
 
 def init():
@@ -27,7 +29,7 @@ def init():
             name = aliases.get(key)
             repeater = Repeater(sec, cbstats, evt, thrname=name)
             repeater.start()
-            rlog("warn", f"{name} since {STARTDATE} {elapsed(time.time()-STARTTIME)}")
+            logging.warning(f"since {elapsed(time.time()-STARTTIME)}")
 
 
 "defines"

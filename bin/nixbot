@@ -18,32 +18,42 @@ import _thread
 sys.path.insert(0, os.getcwd())
 
 
-from nixbot.clients import Client, Fleet
-from nixbot.command import Commands, command, getmod, importer
-from nixbot.command import md5sum, modules, parse, scanner, table
-from nixbot.methods import level, spl
+from nixbot.brokers import Fleet
+from nixbot.clients import Client
+from nixbot.command import Commands, command, scanner, table
+from nixbot.methods import parse
+from nixbot.handler import Event
 from nixbot.objects import update
-from nixbot.persist import Workdir, pidname, setwd
-from nixbot.runtime import Event, launch
+from nixbot.package import Mods, getmod, inits, modules, sums
+from nixbot.threads import launch, level
+from nixbot.utility import forever, md5sum, spl
+from nixbot.workdir import Workdir, pidname, setwd
 
 
-CHECKSUM = "f70ed8a14dccd564a02f25635c8722f5"
+CHECKSUM = "6309a0932b2b919ebcebdd99f6383c48"
 NAME = Workdir.name
+
+
+"config"
 
 
 class Config:
 
-    debug    = False
-    default  = "irc,mdl,rss"
-    gets     = {}
-    init     = ""
-    level    = "warn"
-    mod      = ""
-    opts     = ""
-    otxt     = ""
-    sets     = {}
-    verbose  = False
-    version  = 172
+    debug = False
+    default = "irc,mdl,rss"
+    gets = {}
+    init  = ""
+    level = "warn"
+    mod = ""
+    opts = ""
+    otxt = ""
+    sets = {}
+    verbose = False
+    version = 432
+    wdr = ""
+
+
+"clients"
 
 
 class CLI(Client):
@@ -128,73 +138,29 @@ def boot(doparse=True):
     if doparse:
         parse(Config, " ".join(sys.argv[1:]))
         update(Config, Config.sets, empty=False)
-    if "m" in Config.opts:
-        Commands.mod = Config.mod = "mods"
-    if "a" in Config.opts:
-        Config.init = ",".join(modules())
+        Mods.mod = Config.mod or Mods.mod
+        Workdir.wdr = Config.wdr or Workdir.wdr
     level(Config.level)
     if "v" in Config.opts:
         banner()
+    if 'e' in Config.opts:
+        pkg = sys.modules.get(NAME)
+        pth = pkg.__path__[0]
+        pth = os.sep.join(pth.split(os.sep)[:-4])
+        pth = os.path.join(pth, 'share', NAME,  'examples')
+        Mods.mod = Config.mod = pth
+        Mods.package = "mods"
+    if "m" in Config.opts:
+        Mods.mod = Config.mod = "mods"
+        Mods.package = "mods"
+    if "a" in Config.opts:
+        Config.init = ",".join(modules())
     setwd(NAME)
+    sums(CHECKSUM)
     table(CHECKSUM)
     Commands.add(cmd)
     Commands.add(ver)
-
-
-"daemon"
-
-
-def daemon(verbose=False):
-    pid = os.fork()
-    if pid != 0:
-        os._exit(0)
-    os.setsid()
-    pid2 = os.fork()
-    if pid2 != 0:
-        os._exit(0)
-    if not verbose:
-        with open('/dev/null', 'r', encoding="utf-8") as sis:
-            os.dup2(sis.fileno(), sys.stdin.fileno())
-        with open('/dev/null', 'a+', encoding="utf-8") as sos:
-            os.dup2(sos.fileno(), sys.stdout.fileno())
-        with open('/dev/null', 'a+', encoding="utf-8") as ses:
-            os.dup2(ses.fileno(), sys.stderr.fileno())
-    os.umask(0)
-    os.chdir("/")
-    os.nice(10)
-
-
-def inits(names):
-    modz = []
-    for name in sorted(spl(names)):
-        try:
-            module = getmod(name)
-            if not module:
-                continue
-            if "init" in dir(module):
-                thr = launch(module.init)
-                modz.append((module, thr))
-        except Exception as ex:
-            logging.exception(ex)
-            _thread.interrupt_main()
-    return modz
-
-
-def pidfile(filename):
-    if os.path.exists(filename):
-        os.unlink(filename)
-    path2 = pathlib.Path(filename)
-    path2.parent.mkdir(parents=True, exist_ok=True)
-    with open(filename, "w", encoding="utf-8") as fds:
-        fds.write(str(os.getpid()))
-
-
-def privileges():
-    import getpass
-    import pwd
-    pwnam2 = pwd.getpwnam(getpass.getuser())
-    os.setgid(pwnam2.pw_gid)
-    os.setuid(pwnam2.pw_uid)
+    logging.info("workdir is %s", Workdir.wdr)
 
 
 "commands"
@@ -212,6 +178,20 @@ def md5(event):
         event.reply("table is not there.")
 
 
+TXT = """[Unit]
+Description=%s
+After=network-online.target
+
+[Service]
+Type=simple
+User=%s
+Group=%s
+ExecStart=/home/%s/.local/bin/%s -s
+
+[Install]
+WantedBy=multi-user.target"""
+
+
 def srv(event):
     import getpass
     name = getpass.getuser()
@@ -219,8 +199,7 @@ def srv(event):
 
 
 def tbl(event):
-    if not check("f"):
-        Commands.names = {}
+    Commands.names = {}
     scanner()
     event.reply("# This file is placed in the Public Domain.")
     event.reply("")
@@ -259,34 +238,10 @@ def check(txt):
     return False
 
 
-def forever():
-    while True:
-        try:
-            time.sleep(0.1)
-        except (KeyboardInterrupt, EOFError):
-            break
-
-
 def out(txt):
     print(txt)
     sys.stdout.flush()
 
-
-"data"
-
-
-TXT = """[Unit]
-Description=%s
-After=network-online.target
-
-[Service]
-Type=simple
-User=%s
-Group=%s
-ExecStart=/home/%s/.local/bin/%s -s
-
-[Install]
-WantedBy=multi-user.target"""
 
 
 "runtime"

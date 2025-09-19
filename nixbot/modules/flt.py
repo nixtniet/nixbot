@@ -1,9 +1,9 @@
 # This file is placed in the Public Domain.
 
 
-from nixbot.clients import Fleet
-from nixbot.methods import fmt
-from nixbot.runtime import name
+from ..clients import Fleet
+from ..methods import fmt
+from ..threads import name
 
 
 def flt(event):

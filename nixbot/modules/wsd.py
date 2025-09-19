@@ -4,12 +4,15 @@
 "wijs, wijsheid, wijs!"
 
 
+import logging
+
+
 from random import SystemRandom
 
 
-from nixbot.clients import Fleet
-from nixbot.methods import rlog
-from nixbot.runtime import Event, Repeater
+from ..clients import Fleet
+from ..handler import Event
+from ..threads import Repeater
 
 
 rand = SystemRandom()
@@ -19,7 +22,7 @@ def init():
     event = Event()
     repeater = Repeater(3600.0,  wsd, event)
     repeater.start()
-    rlog("warn", f"wisdom has {len(TXT.split("\n"))} wise.")
+    logging.warning(f"{len(TXT.split("\n"))} wise.")
 
 
 def wsd(event):

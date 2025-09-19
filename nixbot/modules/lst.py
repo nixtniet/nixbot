@@ -4,7 +4,7 @@
 "available types"
 
 
-from nixbot.persist import types
+from ..workdir import types
 
 
 def ls(event):

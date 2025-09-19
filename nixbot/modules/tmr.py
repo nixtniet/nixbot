@@ -5,14 +5,15 @@
 
 
 import datetime
+import logging
 import re
 import time
 
 
-from nixbot.clients import Fleet
-from nixbot.methods import elapsed, extract_date, rlog
-from nixbot.persist import find, write
-from nixbot.runtime import Timed, launch
+from ..caching import find, write
+from ..clients import Fleet
+from ..threads import Timed, launch
+from ..utility import elapsed, extract_date
 
 
 def init():
@@ -28,7 +29,7 @@ def init():
         else:
             obj.__deleted__ = True
             write(obj, fnm)
-    rlog("warn", f"timers {nrs}")
+    logging.warning(f"{nrs} timers")
 
 
 class NoDate(Exception):

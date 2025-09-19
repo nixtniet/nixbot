@@ -13,9 +13,8 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
-from nixbot.methods import rlog
-from nixbot.objects import Object
-from nixbot.runtime import launch
+from ..objects import Object
+from ..threads import launch
 
 
 DEBUG = False
@@ -25,10 +24,10 @@ def init():
     try:
         server = HTTP((Cfg.hostname, int(Cfg.port)), HTTPHandler)
         server.start()
-        rlog("warn", f"web at http://{Cfg.hostname}:{Cfg.port}")
+        logging.warning(f"http://{Cfg.hostname}:{Cfg.port}")
         return server
     except OSError as ex:
-        rlog("warn", f"web abort {ex}")
+        logging.warning(str(ex))
 
 
 class Cfg:

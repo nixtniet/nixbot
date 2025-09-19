@@ -13,10 +13,9 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
-from nixbot.methods import rlog
-from nixbot.objects import Object
-from nixbot.persist import Workdir, types
-from nixbot.runtime import launch
+from ..objects import Object
+from ..threads import launch
+from ..workdir import Workdir, types
 
 
 DEBUG = False
@@ -26,10 +25,10 @@ def init():
     try:
         rest = REST((Config.hostname, int(Config.port)), RESTHandler)
         rest.start()
-        rlog("warn", f"rest at http://{Config.hostname}:{Config.port}")
+        logging.warning(f"http://{Config.hostname}:{Config.port}")
         return rest
     except OSError as ex:
-        rlog("warn", f"rest abort {ex}")
+        logging.error(str(ex))
 
 
 class Config:
