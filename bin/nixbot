@@ -12,9 +12,6 @@ import time
 import _thread
 
 
-sys.path.insert(0, os.getcwd())
-
-
 from nixbot.brokers import Fleet
 from nixbot.clients import Client
 from nixbot.command import Commands, command, scanner, table
@@ -23,11 +20,12 @@ from nixbot.handler import Event
 from nixbot.objects import update
 from nixbot.package import Mods, getmod, inits, modules, sums
 from nixbot.threads import launch, level
-from nixbot.utility import forever, md5sum, spl
+from nixbot.utility import daemon, forever, md5sum, pidfile, privileges, spl
 from nixbot.workdir import Workdir, pidname, setwd
 
 
-CHECKSUM = "9bbaa1c04f7668358d78bb72d8b4b43a"
+CHECKSUM = "586f2034b2206ef964bbc9832d439225"
+
 NAME = Workdir.name
 
 
@@ -43,7 +41,7 @@ class Config:
     otxt = ""
     sets = {}
     verbose = False
-    version = 433
+    version = 174
     wdr = ""
 
 
@@ -118,6 +116,7 @@ def service():
     privileges()
     boot(False)
     pidfile(pidname(NAME))
+    banner()
     inits(Config.init or Config.default)
     forever()
 
@@ -126,7 +125,6 @@ def boot(doparse=True):
     if doparse:
         parse(Config, " ".join(sys.argv[1:]))
         update(Config, Config.sets, empty=False)
-        Mods.mod = Config.mod
         Workdir.wdr = Config.wdr
     level(Config.level)
     if "v" in Config.opts:
@@ -149,6 +147,9 @@ def boot(doparse=True):
     Commands.add(cmd)
     Commands.add(ver)
     logging.info("workdir is %s", Workdir.wdr)
+
+
+"commands"
 
 
 def cmd(event):
@@ -209,7 +210,7 @@ def ver(event):
 
 def banner():
     tme = time.ctime(time.time()).replace("  ", " ")
-    out(f"{NAME.upper()} {Config.version} since {tme} ({Config.level.upper()})")
+    logging.warning("%s %s since %s %s", NAME.upper(), Config.version, tme, Config.level.upper())
 
 
 def check(txt):
@@ -228,7 +229,6 @@ def out(txt):
     sys.stdout.flush()
 
 
-
 "runtime"
 
 
@@ -237,7 +237,6 @@ def wrapped(func):
         func()
     except (KeyboardInterrupt, EOFError):
         out("")
-    Fleet.shutdown()
 
 
 def wrap(func):
