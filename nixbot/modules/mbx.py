@@ -9,10 +9,10 @@ import os
 import time
 
 
-from ..caching import find, write
-from ..methods import fmt
-from ..objects import Object, keys, update
-from ..utility import elapsed, extract_date, spl
+from nixbot.caching import find, write
+from nixbot.methods import fmt
+from nixbot.objects import Object, keys, update
+from nixbot.utility import elapsed, extract_date, spl
 
 
 class Email(Object):

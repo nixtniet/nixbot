@@ -10,9 +10,9 @@ import logging
 from random import SystemRandom
 
 
-from ..clients import Fleet
-from ..handler import Event
-from ..threads import Repeater
+from nixbot.clients import Fleet
+from nixbot.handler import Event
+from nixbot.threads import Repeater
 
 
 rand = SystemRandom()

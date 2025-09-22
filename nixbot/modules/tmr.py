@@ -10,10 +10,10 @@ import re
 import time
 
 
-from ..caching import find, write
-from ..clients import Fleet
-from ..threads import Timed, launch
-from ..utility import elapsed, extract_date
+from nixbot.caching import find, write
+from nixbot.clients import Fleet
+from nixbot.threads import Timed, launch
+from nixbot.utility import elapsed, extract_date
 
 
 def init():

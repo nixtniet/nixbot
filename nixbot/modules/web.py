@@ -13,8 +13,8 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
-from ..objects import Object
-from ..threads import launch
+from nixbot.objects import Object
+from nixbot.threads import launch
 
 
 DEBUG = False

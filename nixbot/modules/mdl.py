@@ -9,11 +9,11 @@ import logging
 import time
 
 
-from ..clients import Fleet
-from ..handler import Event
-from ..objects import Object, construct, keys
-from ..threads import Repeater
-from ..utility import elapsed
+from nixbot.clients import Fleet
+from nixbot.handler import Event
+from nixbot.objects import Object, construct, keys
+from nixbot.threads import Repeater
+from nixbot.utility import elapsed
 
 
 def init():

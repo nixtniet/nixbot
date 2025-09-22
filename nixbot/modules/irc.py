@@ -14,14 +14,14 @@ import threading
 import time
 
 
-from ..caching import last, write
-from ..clients import Fleet, Output
-from ..command import command
-from ..handler import Event as IEvent
-from ..methods import edit, fmt
-from ..objects import Object, keys
-from ..threads import LEVELS, launch
-from ..workdir import Workdir, getpath
+from nixbot.caching import last, write
+from nixbot.clients import Fleet, Output
+from nixbot.command import command
+from nixbot.handler import Event as IEvent
+from nixbot.methods import edit, fmt
+from nixbot.objects import Object, keys
+from nixbot.threads import LEVELS, launch
+from nixbot.workdir import Workdir, getpath
 
 
 IGNORE = ["PING", "PONG", "PRIVMSG"]
@@ -38,7 +38,7 @@ def init():
         irc.start()
         irc.events.joined.wait(30.0)
         if irc.events.joined.is_set():
-            logging.warning(f"{fmt(irc.cfg, skip=["password", "realname", "username"])} channels {",".join(irc.channels)}")
+            logging.warning(f"{fmt(irc.cfg, skip=["password", "realname", "username"])}")
         else:
             irc.stop()
         return irc

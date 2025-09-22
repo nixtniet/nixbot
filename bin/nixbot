@@ -2,15 +2,14 @@
 # This file is placed in the Public Domain.
 
 
-"main program"
-
-
 import json
 import logging
 import os
 import os.path
+import pathlib
 import sys
 import time
+import _thread
 
 
 sys.path.insert(0, os.getcwd())
@@ -23,16 +22,13 @@ from nixbot.methods import parse
 from nixbot.handler import Event
 from nixbot.objects import update
 from nixbot.package import Mods, getmod, inits, modules, sums
-from nixbot.threads import level
-from nixbot.utility import daemon, forever, md5sum, pidfile, privileges
+from nixbot.threads import launch, level
+from nixbot.utility import forever, md5sum, spl
 from nixbot.workdir import Workdir, pidname, setwd
 
 
-CHECKSUM = "6309a0932b2b919ebcebdd99f6383c48"
+CHECKSUM = "9bbaa1c04f7668358d78bb72d8b4b43a"
 NAME = Workdir.name
-
-
-"config"
 
 
 class Config:
@@ -47,11 +43,8 @@ class Config:
     otxt = ""
     sets = {}
     verbose = False
-    version = 173
+    version = 433
     wdr = ""
-
-
-"clients"
 
 
 class CLI(Client):
@@ -83,9 +76,6 @@ class Console(CLI):
         evt.txt = input("> ")
         evt.type = "command"
         return evt
-
-
-"scripts"
 
 
 def background():
@@ -136,8 +126,8 @@ def boot(doparse=True):
     if doparse:
         parse(Config, " ".join(sys.argv[1:]))
         update(Config, Config.sets, empty=False)
-        Mods.mod = Config.mod or Mods.mod
-        Workdir.wdr = Config.wdr or Workdir.wdr
+        Mods.mod = Config.mod
+        Workdir.wdr = Config.wdr
     level(Config.level)
     if "v" in Config.opts:
         banner()
@@ -159,9 +149,6 @@ def boot(doparse=True):
     Commands.add(cmd)
     Commands.add(ver)
     logging.info("workdir is %s", Workdir.wdr)
-
-
-"commands"
 
 
 def cmd(event):

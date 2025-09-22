@@ -7,9 +7,9 @@
 import time
 
 
-from ..caching import find, write
-from ..objects import Object
-from ..utility import elapsed, fntime
+from nixbot.caching import find, write
+from nixbot.objects import Object
+from nixbot.utility import elapsed, fntime
 
 
 class Log(Object):

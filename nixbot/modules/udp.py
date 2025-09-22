@@ -12,9 +12,9 @@ import threading
 import time
 
 
-from ..clients import Fleet
-from ..objects import Object
-from ..threads import launch
+from nixbot.clients import Fleet
+from nixbot.objects import Object
+from nixbot.threads import launch
 
 
 DEBUG = False

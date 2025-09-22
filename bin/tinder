@@ -5,7 +5,6 @@
 "simulate clients"
 
 
-import logging
 import os
 import random
 import queue
@@ -20,64 +19,32 @@ import _thread
 sys.path.insert(0, os.getcwd())
 
 
+from nixbot.brokers import Fleet
 from nixbot.clients import Client, Output
 from nixbot.command import Commands, command, table
 from nixbot.handler import Event
 from nixbot.methods import parse
 from nixbot.objects import Object, keys
+from nixbot.package import Mods
 from nixbot.threads import launch, level
-from nixbot.utility import elapsed, forever
+from nixbot.utility import elapsed
 from nixbot.workdir import Workdir, skel
 
 
-CHECKSUM  = ""
-NAME      = Workdir.name
+CHECKSUM = ""
+NAME = Workdir.name
 STARTTIME = time.time()
 
 
-#Mods.mod   = "mods"
+Mods.debug = True
+#Mods.mod = "mods"
 #Mods.package = "mods"
-Commands.debug = True
-Workdir.wdr    = ".test"
+Workdir.wdr = ".test"
 
 
 events  = queue.Queue()
 paylock = _thread.allocate_lock()
 rand    = random.SystemRandom()
-
-
-param = Object()
-param.cmd = [""]
-param.dis = [""]
-param.dpl = ["hnrss title,url", ""]
-param.flt = [""]
-param.fnd = ["log", "rss", "config", "todo", ""]
-param.man = [""]
-param.mod = [""]
-param.mre = [""]
-param.nme = ["hnrss hackernews", ""]
-param.now = [""]
-param.pwd = ["bla mekker", ""]
-param.req = [""]
-param.res = ["hnrss", ""]
-param.srv = [""]
-param.thr = [""]
-param.upt = [""]
-param.ver = [""]
-
-
-pre = Object()
-pre.cfg = ["nick=mekker", ""]
-pre.imp = ["tests/feeds.opml", ""]
-pre.log = ["bla", ""]
-pre.rss = ["http://hnrss.org/newest", ""]
-pre.tdo = ["mekker", ""]
-
-
-post = Object()
-post.dne = ["hnrss", ""]
-post.exp = ['']
-post.rem = ["hnrss", ""]
 
 
 class Config:
@@ -93,7 +60,7 @@ class Config:
     otxt     = ""
     sets     = {}
     verbose  = False
-    version  = 173
+    version  = 433
 
 
 class CLI(Client):
@@ -166,13 +133,10 @@ def consume():
         try:
             event = events.get()
             event.wait()
-            if events.qsize() == 0:
-                break
             events.task_done()
-        except Exception as ex:
-            logging.exception(ex)
+        except (KeyboardInterrupt, EOFError):
             os._exit(0)
-    _thread.interrupt_main()
+
 
 def payload(cmds):
     with paylock:
@@ -250,11 +214,44 @@ def main():
         if nr:
             nrcommand += nr
     launch(consume)
-    forever()
-    #events.join()
-    #Fleet.shutdown()
-    #Fleet.wait()
+    events.join()
+    Fleet.shutdown()
+    Fleet.wait()
     return nrs, nrcommand
+
+
+param = Object()
+param.cmd = [""]
+param.dis = [""]
+param.dpl = ["hnrss title,url", ""]
+param.flt = [""]
+param.fnd = ["log", "rss", "config", "todo", ""]
+param.man = [""]
+param.mod = [""]
+param.mre = [""]
+param.nme = ["hnrss hackernews", ""]
+param.now = [""]
+param.pwd = ["bla mekker", ""]
+param.req = [""]
+param.res = ["hnrss", ""]
+param.srv = [""]
+param.thr = [""]
+param.upt = [""]
+param.ver = [""]
+
+
+pre = Object()
+pre.cfg = ["nick=mekker", ""]
+pre.imp = ["testing/feeds.opml", ""]
+pre.log = ["bla", ""]
+pre.rss = ["http://hnrss.org/newest", ""]
+pre.tdo = ["mekker", ""]
+
+
+post = Object()
+post.dne = ["hnrss", ""]
+post.exp = ['']
+post.rem = ["hnrss", ""]
 
 
 
