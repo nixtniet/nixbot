@@ -442,7 +442,7 @@ def rem(event):
             continue
         if feed:
             feed.__deleted__ = True
-            write(feed)
+            write(feed, fnm)
             event.done()
             break
 
