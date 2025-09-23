@@ -109,7 +109,7 @@ def launch(func, *args, **kwargs):
 def level(loglevel="debug"):
     if loglevel != "none":
         datefmt = "%H:%M:%S"
-        format_short = "%(asctime)-8s %(module).3s %(message)-67s"
+        format_short = "%(module).3s %(message)-76s"
         ch = logging.StreamHandler()
         ch.setLevel(LEVELS.get(loglevel))
         formatter = Formatter(fmt=format_short, datefmt=datefmt)

@@ -12,6 +12,9 @@ import time
 import _thread
 
 
+sys.path.insert(0, os.getcwd())
+
+
 from nixbot.brokers import Fleet
 from nixbot.clients import Client
 from nixbot.command import Commands, command, scanner, table
