@@ -3,6 +3,7 @@
 
 "lookup tables"
 
+
 NAMES = {
     "cfg": "irc",
     "dis": "mdl",
@@ -43,7 +44,7 @@ MD5 = {
     "mbx": "f7b0aeb25ab21aee7d080c0e4181cbe9",
     "mdl": "f1309c9b046f3fd852e28a7ca35d3525",
     "req": "793704d64443c4f19512924e294943ea",
-    "rss": "a16808b8f76082ab5ffd3d02d5dfdeb3",
+    "rss": "6f31a253f0f8b94129a5f3f683bba655",
     "rst": "792df24d986ad2584b6bc144be97896e",
     "slg": "0b71453a0d4dd3b21618c7df3c8cd6a4",
     "tbl": "d41d8cd98f00b204e9800998ecf8427e",

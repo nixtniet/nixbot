@@ -44,11 +44,6 @@ class Fleet:
     def shutdown():
         for client in Fleet.all():
             client.stop()
-
-    @staticmethod
-    def wait():
-        time.sleep(0.1)
-        for client in Fleet.all():
             client.wait()
 
 

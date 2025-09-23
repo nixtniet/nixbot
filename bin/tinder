@@ -216,7 +216,6 @@ def main():
     launch(consume)
     events.join()
     Fleet.shutdown()
-    Fleet.wait()
     return nrs, nrcommand
 
 

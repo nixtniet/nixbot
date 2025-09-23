@@ -24,8 +24,7 @@ from nixbot.utility import daemon, forever, md5sum, pidfile, privileges, spl
 from nixbot.workdir import Workdir, pidname, setwd
 
 
-CHECKSUM = "586f2034b2206ef964bbc9832d439225"
-
+CHECKSUM = "f6c45ec8a3d50c6c35f1158f825b512f"
 NAME = Workdir.name
 
 

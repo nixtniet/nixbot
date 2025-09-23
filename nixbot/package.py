@@ -35,12 +35,9 @@ def getmod(name, path=None):
         if not path:
             path = Mods.mod
         pth = os.path.join(path, f"{name}.py")
-        if os.path.exists(pth):
-            if name != "tbl" and (Mods.md5s and md5sum(pth) != Mods.md5s.get(name, None)):
-                logging.warning(
-                                "md5 error on %s",
-                                pth.split(os.sep)[-1]
-                               )
+        if os.path.exists(pth) and name != "tbl":
+            if Mods.md5s and md5sum(pth) != Mods.md5s.get(name, None):
+                logging.warning("md5 error on %s", pth.split(os.sep)[-1])
         return importer(mname, pth)
 
 
@@ -83,11 +80,11 @@ def inits(names):
 
 def modules():
     if not os.path.exists(Mods.mod):
-        return {}
-    return {
+        return []
+    return list({
             x[:-3] for x in os.listdir(Mods.mod)
             if x.endswith(".py") and not x.startswith("__")
-           }
+           })
 
 
 def sums(checksum):
