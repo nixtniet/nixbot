@@ -4,12 +4,11 @@
 "working directory"
 
 
-import datetime
 import os
 import pathlib
 
 
-from .methods import fqn
+from .methods import fqn, ident
 
 
 class Workdir:
@@ -20,10 +19,6 @@ class Workdir:
 
 def getpath(obj):
     return store(ident(obj))
-
-
-def ident(obj):
-    return os.path.join(fqn(obj), *str(datetime.datetime.now()).split())
 
 
 def long(name):
@@ -85,13 +80,13 @@ def wdr(pth):
 def __dir__():
     return (
         'Workdir',
-        'find',
-        'fntime',
-        'last',
+        'getpath',
         'long',
+        'moddir',
         'pidname',
         'setwd',
         'store',
         'strip',
-        'types'
+        'types',
+        'wdr'
     )

@@ -4,6 +4,10 @@
 "object functions"
 
 
+import datetime
+import os
+
+
 from .objects import items, keys
 
 
@@ -63,6 +67,26 @@ def fqn(obj):
     if kin == "type":
         kin = f"{obj.__module__}.{obj.__name__}"
     return kin
+
+
+def ident(obj):
+    return os.path.join(fqn(obj), *str(datetime.datetime.now()).split())
+
+
+def name(obj):
+    typ = type(obj)
+    if "__builtins__" in dir(typ):
+        return obj.__name__
+    if "__self__" in dir(obj):
+        return f"{obj.__self__.__class__.__name__}.{obj.__name__}"
+    if "__class__" in dir(obj) and "__name__" in dir(obj):
+        return f"{obj.__class__.__name__}.{obj.__name__}"
+    if "__class__" in dir(obj):
+        return f"{obj.__class__.__module__}.{obj.__class__.__name__}"
+    if "__name__" in dir(obj):
+        return f"{obj.__class__.__name__}.{obj.__name__}"
+    return ""
+
 
 
 def parse(obj, txt=None):
@@ -149,6 +173,8 @@ def __dir__():
         'edit',
         'fmt',
         'fqn',
+        'ident',
+        'name',
         'parse',
         'search'
     )

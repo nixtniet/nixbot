@@ -26,8 +26,8 @@ from nixbot.handler import Event
 from nixbot.methods import parse
 from nixbot.objects import Object, keys
 from nixbot.package import Mods
-from nixbot.threads import launch, level
-from nixbot.utility import elapsed
+from nixbot.threads import launch
+from nixbot.utility import elapsed, level
 from nixbot.workdir import Workdir, skel
 
 

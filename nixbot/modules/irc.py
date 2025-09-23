@@ -20,7 +20,8 @@ from nixbot.command import command
 from nixbot.handler import Event as IEvent
 from nixbot.methods import edit, fmt
 from nixbot.objects import Object, keys
-from nixbot.threads import LEVELS, launch
+from nixbot.threads import launch
+from nixbot.utility import LEVELS
 from nixbot.workdir import Workdir, getpath
 
 

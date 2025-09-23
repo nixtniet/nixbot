@@ -5,10 +5,38 @@
 
 
 import hashlib
+import logging
 import os
 import pathlib
 import sys
 import time
+
+
+FORMATS = [
+    "%Y-%M-%D %H:%M:%S",
+    "%Y-%m-%d %H:%M:%S",
+    "%Y-%m-%d",
+    "%d-%m-%Y",
+    "%d-%m",
+    "%m-%d",
+]
+
+
+LEVELS = {
+    'debug': logging.DEBUG,
+    'info': logging.INFO,
+    'warning': logging.WARNING,
+    'warn': logging.WARNING,
+    'error': logging.ERROR,
+    'critical': logging.CRITICAL,
+}
+
+
+class Formatter(logging.Formatter):
+
+    def format(self, record):
+        record.module = record.module.upper()
+        return logging.Formatter.format(self, record)
 
 
 def cdir(path):
@@ -108,6 +136,18 @@ def forever():
             break
 
 
+def level(loglevel="debug"):
+    if loglevel != "none":
+        datefmt = "%H:%M:%S"
+        format_short = "%(module).3s %(message)-76s"
+        ch = logging.StreamHandler()
+        ch.setLevel(LEVELS.get(loglevel))
+        formatter = Formatter(fmt=format_short, datefmt=datefmt)
+        ch.setFormatter(formatter)
+        logger = logging.getLogger()
+        logger.addHandler(ch)
+
+
 def md5sum(path):
     with open(path, "r", encoding="utf-8") as file:
         txt = file.read().encode("utf-8")
@@ -141,16 +181,6 @@ def spl(txt):
     return [x for x in result if x]
 
 
-FORMATS = [
-    "%Y-%M-%D %H:%M:%S",
-    "%Y-%m-%d %H:%M:%S",
-    "%Y-%m-%d",
-    "%d-%m-%Y",
-    "%d-%m",
-    "%m-%d",
-]
-
-
 def __dir__():
     return (
         'cdir',
@@ -159,6 +189,7 @@ def __dir__():
         'extract_date',
         'fntime',
         'forever',
+        'level',
         'md5sum',
         'pidfile',
         'privileges',

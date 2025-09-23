@@ -22,12 +22,13 @@ from nixbot.methods import parse
 from nixbot.handler import Event
 from nixbot.objects import update
 from nixbot.package import Mods, getmod, inits, modules, sums
-from nixbot.threads import launch, level
-from nixbot.utility import daemon, forever, md5sum, pidfile, privileges, spl
+from nixbot.threads import launch
+from nixbot.utility import daemon, forever, level, md5sum, pidfile
+from nixbot.utility import level, privileges, spl
 from nixbot.workdir import Workdir, pidname, setwd
 
 
-CHECKSUM = "f6c45ec8a3d50c6c35f1158f825b512f"
+CHECKSUM = "d37f7fe4d889c0c87bd4326b2b58e7d7"
 NAME = Workdir.name
 
 
@@ -76,6 +77,9 @@ class Console(CLI):
         evt.txt = input("> ")
         evt.type = "command"
         return evt
+
+
+"scripts"
 
 
 def background():
@@ -212,7 +216,7 @@ def ver(event):
 
 def banner():
     tme = time.ctime(time.time()).replace("  ", " ")
-    logging.warning("%s %s since %s %s", NAME.upper(), Config.version, tme, Config.level.upper())
+    out("%s %s since %s %s" % (NAME.upper(), Config.version, tme, Config.level.upper()))
 
 
 def check(txt):
