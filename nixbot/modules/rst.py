@@ -13,9 +13,9 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
+from nixbot.caching import Workdir, types
 from nixbot.objects import Object
 from nixbot.threads import launch
-from nixbot.workdir import Workdir, types
 
 
 DEBUG = False

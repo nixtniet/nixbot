@@ -4,7 +4,7 @@
 "available types"
 
 
-from nixbot.workdir import types
+from nixbot.caching import types
 
 
 def ls(event):

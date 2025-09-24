@@ -22,13 +22,12 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 
 
-from nixbot.caching import find, last, write
+from nixbot.caching import find, getpath, last, write
 from nixbot.clients import Fleet
 from nixbot.methods import fmt
 from nixbot.objects import Object, update
 from nixbot.threads import Repeater, launch
 from nixbot.utility import elapsed, fntime, spl
-from nixbot.workdir import getpath
 
 
 def init():
