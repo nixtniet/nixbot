@@ -63,7 +63,7 @@ def values(obj):
 
 
 def difference(obj, other):
-
+    pass
 
 def intersection(obj, other):
     pass
@@ -91,7 +91,7 @@ def __dir__():
     return (
         'Object',
         'construct',
-        'difference'.
+        'difference',
         'intersection',
         'items',
         'keys',
