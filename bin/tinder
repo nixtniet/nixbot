@@ -27,7 +27,7 @@ from nixbot.methods import parse
 from nixbot.objects import Object, keys
 from nixbot.package import Mods
 from nixbot.threads import launch
-from nixbot.utility import elapsed, level
+from nixbot.utility import DEBUG, elapsed, level
 from nixbot.workdir import Workdir, skel
 
 
@@ -36,7 +36,7 @@ NAME = Workdir.name
 STARTTIME = time.time()
 
 
-Mods.debug = True
+DEBUG = True
 #Mods.mod = "mods"
 #Mods.package = "mods"
 Workdir.wdr = ".test"
