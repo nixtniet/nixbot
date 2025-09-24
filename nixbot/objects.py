@@ -19,9 +19,6 @@ class Object:
         return str(self.__dict__)
 
 
-"methods"
-
-
 def construct(obj, *args, **kwargs):
     if args:
         val = args[0]
@@ -59,46 +56,12 @@ def values(obj):
     return obj.__dict__.values()
 
 
-"sets"
-
-
-def difference(obj, other):
-    pass
-
-def intersection(obj, other):
-    pass
-
-def subset(obj, other):
-    pass
-
-
-def superset(obj, other):
-    pass
-
-
-def symetric_difference(obj, other):
-    pass
-
-
-def union(obj, other):
-    pass
-
-
-"interface"
-
-
 def __dir__():
     return (
         'Object',
         'construct',
-        'difference',
-        'intersection',
         'items',
         'keys',
-        'subset',
-        'superset',
-        'symetric_differnce',
-        'union',
         'update',
         'values'
     )
