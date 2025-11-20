@@ -1,9 +1,6 @@
 # This file is placed in the Public Domain.
 
 
-"threading"
-
-
 import logging
 import queue
 import threading
@@ -32,75 +29,12 @@ class Thread(threading.Thread):
         yield from dir(self)
 
     def join(self, timeout=None):
-        result = None
-        try:
-            super().join(timeout)
-            result = self.result
-        except (KeyboardInterrupt, EOFError):
-            _thread.interrupt_main()
-        return result
+        super().join(timeout)
+        return  self.result
 
     def run(self):
         func, args = self.queue.get()
-        try:
-            self.result = func(*args)
-        except (KeyboardInterrupt, EOFError):
-            _thread.interrupt_main()
-        except Exception as ex:
-            logging.exception(ex)
-            _thread.interrupt_main()
-
-
-class Timy(threading.Timer):
-
-    def __init__(self, sleep, func, *args, **kwargs):
-        super().__init__(sleep, func)
-        self.name = kwargs.get("name", name(func))
-        self.sleep = sleep
-        self.state = {}
-        self.state["latest"] = time.time()
-        self.state["starttime"] = time.time()
-        self.starttime = time.time()
-
-
-class Timed:
-
-    def __init__(self, sleep, func, *args, thrname="", **kwargs):
-        self.args = args
-        self.func = func
-        self.kwargs = kwargs
-        self.sleep = sleep
-        self.name = thrname or kwargs.get("name", name(func))
-        self.target = time.time() + self.sleep
-        self.timer = None
-
-    def run(self):
-        self.timer.latest = time.time()
-        self.func(*self.args)
-
-    def start(self):
-        self.kwargs["name"] = self.name
-        timer = Timy(self.sleep, self.run, *self.args, **self.kwargs)
-        timer.start()
-        self.timer = timer
-
-    def stop(self):
-        if self.timer:
-            self.timer.cancel()
-
-
-class Repeater(Timed):
-
-    def run(self):
-        launch(self.start)
-        super().run()
-
-
-class Formatter(logging.Formatter):
-
-    def format(self, record):
-        record.module = record.module.upper()
-        return logging.Formatter.format(self, record)
+        self.result = func(*args)
 
 
 def launch(func, *args, **kwargs):
@@ -109,9 +43,17 @@ def launch(func, *args, **kwargs):
     return thread
 
 
+def threadhook(args):
+    kind, value, trace, _thr = args
+    exc = value.with_traceback(trace)
+    if kind not in (KeyboardInterrupt, EOFError):
+        logging.exception(exc)
+    _thread.interrupt_main()
+
+
 def __dir__():
     return (
-        'Repeater',
         'Thread',
-        'launch'
+        'launch',
+        'threadhook'
    )

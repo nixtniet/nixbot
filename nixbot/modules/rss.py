@@ -1,9 +1,6 @@
 # This file is placed in the Public Domain.
 
 
-"rich site syndicate"
-
-
 import html
 import html.parser
 import http.client
@@ -22,28 +19,33 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 
 
-from nixbot.caching import find, getpath, last, write
-from nixbot.clients import Fleet
+from nixbot.brokers import Broker
+from nixbot.locater import find, fntime, last
 from nixbot.methods import fmt
 from nixbot.objects import Object, update
-from nixbot.threads import Repeater, launch
-from nixbot.utility import elapsed, fntime, spl
-
-
-def init():
-    fetcher = Fetcher()
-    fetcher.start()
-    if fetcher.seenfn:
-        logging.warning(f"since {elapsed(time.time()-fntime(fetcher.seenfn))}")
-    return fetcher
+from nixbot.persist import write
+from nixbot.repeats import Repeater
+from nixbot.threads import launch
+from nixbot.utility import elapsed, spl
+from nixbot.workdir import getpath
 
 
 DEBUG = False
 
 
+def init(cfg):
+    fetcher = Fetcher()
+    fetcher.start()
+    if fetcher.seenfn:
+        logging.warning("since %s", elapsed(time.time()-fntime(fetcher.seenfn)))
+    else:
+        logging.warning("since %s", time.ctime(time.time()))
+    return fetcher
+
+
 fetchlock = _thread.allocate_lock()
 importlock = _thread.allocate_lock()
-errors = {}
+errors: dict[str, float] = {}
 skipped = []
 
 
@@ -130,13 +132,13 @@ class Fetcher(Object):
             txt = f"[{feedname}] "
         for obj in result:
             txt2 = txt + self.display(obj)
-            for bot in Fleet.all():
+            for bot in Broker.all():
                 bot.announce(txt2)
         return counter
 
     def run(self, silent=False):
         thrs = []
-        for _fn, feed in find("rss"):
+        for _fn, feed in find("rss.Rss"):
             thrs.append(launch(self.fetch, feed, silent))
         return thrs
 
@@ -288,7 +290,7 @@ def getfeed(url, items):
     try:
         rest = geturl(url)
     except (http.client.HTTPException, ValueError, HTTPError, URLError) as ex:
-        logging.error(f"{url} {ex}")
+        logging.error("%s %s", url, ex)
         errors[url] = time.time()
         return result
     if rest:
@@ -355,18 +357,18 @@ def dpl(event):
         event.reply("dpl <stringinurl> <item1,item2>")
         return
     setter = {"display_list": event.args[1]}
-    for fnm, feed in find("rss", {"rss": event.args[0]}):
+    for fnm, feed in find("rss.Rss", {"rss": event.args[0]}):
         if feed:
             update(feed, setter)
             write(feed, fnm)
-    event.done()
+    event.reply("ok")
 
 
 def exp(event):
     with importlock:
         event.reply(TEMPLATE)
         nrs = 0
-        for _fn, ooo in find("rss"):
+        for _fn, ooo in find("rss.Rss"):
             nrs += 1
             obj = Rss()
             update(obj, ooo)
@@ -399,7 +401,7 @@ def imp(event):
                 continue
             if not url.startswith("http"):
                 continue
-            has = list(find("rss", {"rss": url}, matching=True))
+            has = list(find("rss.Rss", {"rss": url}, matching=True))
             if has:
                 skipped.append(url)
                 nrskip += 1
@@ -421,20 +423,20 @@ def nme(event):
         event.reply("nme <stringinurl> <name>")
         return
     selector = {"rss": event.args[0]}
-    for fnm, fed in find("rss", selector):
+    for fnm, fed in find("rss.Rss", selector):
         feed = Rss()
         update(feed, fed)
         if feed:
             feed.name = str(event.args[1])
             write(feed, fnm)
-    event.done()
+    event.reply("ok")
 
 
 def rem(event):
     if len(event.args) != 1:
         event.reply("rem <stringinurl>")
         return
-    for fnm, fed in find("rss"):
+    for fnm, fed in find("rss.Rss"):
         feed = Rss()
         update(feed, fed)
         if event.args[0] not in feed.rss:
@@ -442,7 +444,7 @@ def rem(event):
         if feed:
             feed.__deleted__ = True
             write(feed, fnm)
-            event.done()
+            event.reply("ok")
             break
 
 
@@ -450,7 +452,7 @@ def res(event):
     if len(event.args) != 1:
         event.reply("res <stringinurl>")
         return
-    for fnm, fed in find("rss", removed=True):
+    for fnm, fed in find("rss.Rss", removed=True):
         feed = Rss()
         update(feed, fed)
         if event.args[0] not in feed.rss:
@@ -458,13 +460,13 @@ def res(event):
         if feed:
             feed.__deleted__ = False
             write(feed, fnm)
-    event.done()
+    event.reply("ok")
 
 
 def rss(event):
     if not event.rest:
         nrs = 0
-        for fnm, fed in find("rss"):
+        for fnm, fed in find("rss.Rss"):
             nrs += 1
             elp = elapsed(time.time() - fntime(fnm))
             txt = fmt(fed)
@@ -476,14 +478,14 @@ def rss(event):
     if "http://" not in url and "https://" not in url:
         event.reply("i need an url")
         return
-    for fnm, result in find("rss", {"rss": url}):
+    for fnm, result in find("rss.Rss", {"rss": url}):
         if result:
             event.reply(f"{url} is known")
             return
     feed = Rss()
     feed.rss = event.args[0]
     write(feed)
-    event.done()
+    event.reply("ok")
 
 
 def syn(event):

@@ -1,53 +1,33 @@
 # This file is placed in the Public Domain.
 
 
-"brokers"
+class Broker:
 
-
-import time
-
-
-class Fleet:
-
-    clients = {}
+    objects = {}
 
     @staticmethod
-    def add(client):
-        if not client:
-            return
-        Fleet.clients[repr(client)] = client
+    def add(obj):
+        Broker.objects[repr(obj)] = obj
 
     @staticmethod
-    def all():
-        return list(Fleet.clients.values())
+    def all(attr=None):
+        for obj in Broker.objects.values():
+            if attr and attr not in dir(obj):
+                continue
+            yield obj
 
     @staticmethod
-    def announce(txt):
-        for client in Fleet.all():
-            client.announce(txt)
+    def get(origin):
+        return Broker.objects.get(origin, None)
 
     @staticmethod
-    def display(evt):
-        client = Fleet.get(evt.orig)
-        client.display(evt)
-
-    @staticmethod
-    def get(orig):
-        return Fleet.clients.get(orig, None)
-
-    @staticmethod
-    def say(orig, channel, txt):
-        client = Fleet.get(orig)
-        client.say(channel, txt)
-
-    @staticmethod
-    def shutdown():
-        for client in Fleet.all():
-            client.stop()
-            client.wait()
+    def like(origin):
+        for orig in Broker.objects:
+            if origin.split()[0] in orig.split()[0]:
+                yield orig
 
 
 def __dir__():
     return (
-        'Fleet',
-   )
+        'Broker',
+    )

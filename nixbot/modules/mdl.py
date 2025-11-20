@@ -1,35 +1,32 @@
 # This file is placed in the Public Domain.
 
 
-"Genocide model of the Netherlands since 4 March 2019."
-
-
 import datetime
 import logging
 import time
 
 
-from nixbot.clients import Fleet
-from nixbot.handler import Event
+from nixbot.brokers import Broker
+from nixbot.message import Message
 from nixbot.objects import Object, construct, keys
-from nixbot.threads import Repeater
+from nixbot.repeats import Repeater
 from nixbot.utility import elapsed
 
 
-def init():
+def init(cfg):
     for key in keys(oorzaken):
         if "Psych" not in key:
             continue
         val = getattr(oorzaken, key, None)
         if val and int(val) > 10000:
-            evt = Event()
-            evt.txt = ""
+            evt = Message()
+            evt.text = ""
             evt.rest = key
             sec = seconds(val)
             name = aliases.get(key)
             repeater = Repeater(sec, cbstats, evt, thrname=name)
             repeater.start()
-            logging.warning(f"since {elapsed(time.time()-STARTTIME)}")
+            logging.warning("since %s", elapsed(time.time()-STARTTIME))
 
 
 "defines"
@@ -37,7 +34,7 @@ def init():
 
 DAY = 24*60*60
 YEAR = 365*DAY
-SOURCE = "https://github.com/bthate/genocide"
+SOURCE = "https://github.com/bthate/."
 STARTDATE = "2019-03-04 00:00:00"
 STARTTIME = time.mktime(time.strptime(STARTDATE, "%Y-%m-%d %H:%M:%S"))
 
@@ -62,11 +59,11 @@ aliases["Zwangerschap"] = "pregnancy"
 aliases["Suicide"] = "suicide"
 
 
-demo = Object()
-demo.gehandicapten = 2000000
-demo.ggz = 800000
-demo.population = 17440000
-demo.part = 7000000000 / demo.population
+demo = {}
+demo["gehandicapten"] = 2000000
+demo["ggz"] = 800000
+demo["population"] = 17440000
+demo["part"] = int(7000000000 / demo["population"])
 
 
 jaar = {}
@@ -117,14 +114,14 @@ def iswanted(k, line):
 def daily():
     while 1:
         time.sleep(24*60*60)
-        evt = Event()
+        evt = Message()
         cbnow(evt)
 
 
 def hourly():
     while 1:
         time.sleep(60*60)
-        evt = Event()
+        evt = Message()
         cbnow(evt)
 
 
@@ -140,8 +137,9 @@ def cbnow(_evt):
             continue
         nrtimes = int(delta/needed)
         txt += f"{getalias(nme)} {nrtimes} | "
-    txt += "https://pypi.org/project/genocide"
-    Fleet.announce(txt)
+    txt += "https://pypi.org/project/."
+    for bot in Broker.all("announce"):
+        bot.announce(txt)
 
 
 def cbstats(evt):
@@ -163,7 +161,8 @@ def cbstats(evt):
             nryear,
             elapsed(needed)
         )
-        Fleet.announce(txt)
+        for bot in Broker.all("announce"):
+            bot.announce(txt)
 
 
 "commands"
@@ -178,7 +177,7 @@ def dis(event):
             continue
         nrtimes = int(delta/needed)
         txt += f"{getalias(nme)} {nrtimes} | "
-    txt += "https://pypi.org/project/genocide"
+    txt += "https://pypi.org/project/."
     event.reply(txt)
 
 
@@ -208,7 +207,7 @@ def now(event):
 
 oor = """"Totaal onderliggende doodsoorzaken (aantal)";
          "1 Infectieuze en parasitaire ziekten/Totaal infectieuze en parasitaire zktn (aantal)";
-         "1 Infectieuze en parasitaire ziekten/1.1 Tuberculose (aantal)";
+         "1 Infectieuze en parasitaire ziekten/1.1 Tubercunixbote (aantal)";
          "1 Infectieuze en parasitaire ziekten/1.2 Meningokokkeninfecties (aantal)";
          "1 Infectieuze en parasitaire ziekten/1.3 Virale hepatitis (aantal)";
          "1 Infectieuze en parasitaire ziekten/1.4 AIDS (aantal)";

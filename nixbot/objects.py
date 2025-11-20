@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"a clean namespace"
+import types
 
 
 class Object:
@@ -19,6 +19,12 @@ class Object:
         return str(self.__dict__)
 
 
+class Default(Object):
+
+    def __getattr__(self, key):
+        return self.__dict__.get(key, "")
+
+
 def construct(obj, *args, **kwargs):
     if args:
         val = args[0]
@@ -26,14 +32,23 @@ def construct(obj, *args, **kwargs):
             update(obj, dict(val))
         elif isinstance(val, dict):
             update(obj, val)
-        elif isinstance(val, Object):
+        else:
             update(obj, vars(val))
     if kwargs:
         update(obj, kwargs)
 
 
+def fqn(obj):
+    kin = str(type(obj)).split()[-1][1:-2]
+    if kin == "type":
+        kin = f"{obj.__module__}.{obj.__name__}"
+    return kin
+
+
 def items(obj):
     if isinstance(obj, dict):
+        return obj.items()
+    if isinstance(obj, types.MappingProxyType):
         return obj.items()
     return obj.__dict__.items()
 
@@ -45,10 +60,20 @@ def keys(obj):
 
 
 def update(obj, data, empty=True):
-    for key, value in items(data):
-        if not empty and not value:
-            continue
-        setattr(obj, key, value)
+    if isinstance(obj, type):
+        for k, v in items(data):
+            if isinstance(getattr(obj, k, None), types.MethodType):
+                continue
+            setattr(obj, k, v)
+    elif isinstance(obj, dict):
+        for k, v in items(data):
+            setattr(obj, k, v)
+    else:
+        for key, value in items(data):
+            if not empty and not value:
+                continue
+            setattr(obj, key, value)
+
 
 def values(obj):
     if isinstance(obj, dict):
@@ -58,8 +83,10 @@ def values(obj):
 
 def __dir__():
     return (
+        'Default',
         'Object',
         'construct',
+        'fqn',
         'items',
         'keys',
         'update',

@@ -1,9 +1,6 @@
 # This file is placed in the Public Domain.
 
 
-"web"
-
-
 import logging
 import os
 import sys
@@ -20,11 +17,22 @@ from nixbot.threads import launch
 DEBUG = False
 
 
-def init():
+d = os.path.dirname
+j = os.path.join
+
+
+PATH = d(d(__file__))
+PATH = j(PATH, "network", "html")
+
+
+def init(cfg):
+    if not os.path.exists(j(PATH, 'index.html')):
+        logging.warning("no index.html")
+        return
     try:
         server = HTTP((Cfg.hostname, int(Cfg.port)), HTTPHandler)
         server.start()
-        logging.warning(f"http://{Cfg.hostname}:{Cfg.port}")
+        logging.warning("http://%s:%s", Cfg.hostname, Cfg.port)
         return server
     except OSError as ex:
         logging.warning(str(ex))
@@ -99,8 +107,8 @@ class HTTPHandler(BaseHTTPRequestHandler):
         if DEBUG:
             return
         if self.path == "/":
-            self.path = "/index.html"
-        self.path = "html" + os.sep + self.path
+            self.path = "index.html"
+        self.path = PATH + os.sep + self.path
         if not os.path.exists(self.path):
             self.write_header("text/html")
             self.send_response(404)
@@ -110,7 +118,7 @@ class HTTPHandler(BaseHTTPRequestHandler):
             try:
                 with open(self.path, "rb") as file:
                     img = file.read()
-                    file.close()
+                    file.cnixbote()
                 ext = self.path[-3]
                 self.write_header(f"image/{ext}", len(img))
                 self.raw(img)
@@ -121,9 +129,9 @@ class HTTPHandler(BaseHTTPRequestHandler):
         try:
             with open(self.path, "r", encoding="utf-8", errors="ignore") as file:
                 txt = file.read()
-                file.close()
+                file.cnixbote()
             self.write_header("text/html")
-            self.send(html2(txt))
+            self.send(txt)
         except (TypeError, FileNotFoundError, IsADirectoryError):
             self.send_response(404)
             self.end_headers()

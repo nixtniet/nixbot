@@ -1,18 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"object functions"
-
-
-import datetime
-import os
-
-
-from .objects import items, keys
-
-
-def deleted(obj):
-    return "__deleted__" in dir(obj) and obj.__deleted__
+from .objects import fqn, items
 
 
 def edit(obj, setter, skip=True):
@@ -39,7 +28,7 @@ def edit(obj, setter, skip=True):
 
 def fmt(obj, args=None, skip=None, plain=False, empty=False):
     if args is None:
-        args = keys(obj)
+        args = obj.__dict__.keys()
     if skip is None:
         skip = []
     txt = ""
@@ -57,59 +46,50 @@ def fmt(obj, args=None, skip=None, plain=False, empty=False):
             txt += f"{value} "
         elif isinstance(value, str):
             txt += f'{key}="{value}" '
-        else:
+        elif isinstance(value, (int, float, dict, bool, list)):
             txt += f"{key}={value} "
+        else:
+            txt += f"{key}={fqn(value)}((value))"
     return txt.strip()
 
 
-def fqn(obj):
-    kin = str(type(obj)).split()[-1][1:-2]
-    if kin == "type":
-        kin = f"{obj.__module__}.{obj.__name__}"
-    return kin
-
-
-def ident(obj):
-    return os.path.join(fqn(obj), *str(datetime.datetime.now()).split())
-
-
-def name(obj):
+def name(obj, short=False):
     typ = type(obj)
+    res = ""
     if "__builtins__" in dir(typ):
-        return obj.__name__
-    if "__self__" in dir(obj):
-        return f"{obj.__self__.__class__.__name__}.{obj.__name__}"
-    if "__class__" in dir(obj) and "__name__" in dir(obj):
-        return f"{obj.__class__.__name__}.{obj.__name__}"
-    if "__class__" in dir(obj):
-        return f"{obj.__class__.__module__}.{obj.__class__.__name__}"
-    if "__name__" in dir(obj):
-        return f"{obj.__class__.__name__}.{obj.__name__}"
-    return ""
+        res = obj.__name__
+    elif "__self__" in dir(obj):
+        res = f"{obj.__self__.__class__.__name__}.{obj.__name__}"
+    elif "__class__" in dir(obj) and "__name__" in dir(obj):
+        res = f"{obj.__class__.__name__}.{obj.__name__}"
+    elif "__class__" in dir(obj):
+        res =  f"{obj.__class__.__module__}.{obj.__class__.__name__}"
+    elif "__name__" in dir(obj):
+        res = f"{obj.__class__.__name__}.{obj.__name__}"
+    if short:
+        res = res.split(".")[-1]
+    return res
 
 
-
-def parse(obj, txt=None):
-    if txt is None:
-        if "txt" in dir(obj):
-            txt = obj.txt
-        else:
-            txt = ""
+def parse(obj, text):
+    data = {
+        "args": [],
+        "cmd": "",
+        "gets": {},
+        "index": None,
+        "init": "",
+        "opts": "",
+        "otxt": text,
+        "rest": "",
+        "silent": {},
+        "sets": {},
+        "text": text
+    }
+    for k, v in data.items():
+        setattr(obj, k, getattr(obj, k, v) or v)
     args = []
-    obj.args   = getattr(obj, "args", [])
-    obj.cmd    = getattr(obj, "cmd", "")
-    obj.gets   = getattr(obj, "gets", "")
-    obj.index  = getattr(obj, "index", None)
-    obj.inits  = getattr(obj, "inits", "")
-    obj.mod    = getattr(obj, "mod", "")
-    obj.opts   = getattr(obj, "opts", "")
-    obj.result = getattr(obj, "result", "")
-    obj.sets   = getattr(obj, "sets", {})
-    obj.silent = getattr(obj, "silent", "")
-    obj.txt    = txt or getattr(obj, "txt", "")
-    obj.otxt   = obj.txt or getattr(obj, "otxt", "")
-    _nr = -1
-    for spli in obj.otxt.split():
+    nr = -1
+    for spli in text.split():
         if spli.startswith("-"):
             try:
                 obj.index = int(spli[1:])
@@ -127,54 +107,26 @@ def parse(obj, txt=None):
             continue
         if "=" in spli:
             key, value = spli.split("=", maxsplit=1)
-            if key == "mod":
-                if obj.mod:
-                    obj.mod += f",{value}"
-                else:
-                    obj.mod = value
-                continue
             obj.sets[key] = value
             continue
-        _nr += 1
-        if _nr == 0:
+        nr += 1
+        if nr == 0:
             obj.cmd = spli
             continue
         args.append(spli)
     if args:
         obj.args = args
-        obj.txt  = obj.cmd or ""
+        obj.text  = obj.cmd or ""
         obj.rest = " ".join(obj.args)
-        obj.txt  = obj.cmd + " " + obj.rest
+        obj.text  = obj.cmd + " " + obj.rest
     else:
-        obj.txt = obj.cmd or ""
-
-
-def search(obj, selector, matching=False):
-    res = False
-    if not selector:
-        return res
-    for key, value in items(selector):
-        val = getattr(obj, key, None)
-        if not val:
-            continue
-        if matching and value == val:
-            res = True
-        elif str(value).lower() in str(val).lower() or value == "match":
-            res = True
-        else:
-            res = False
-            break
-    return res
+        obj.text = obj.cmd or ""
 
 
 def __dir__():
     return (
-        'deleted',
         'edit',
         'fmt',
-        'fqn',
-        'ident',
         'name',
-        'parse',
-        'search'
+        'parse'
     )

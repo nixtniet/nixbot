@@ -1,88 +1,83 @@
 # This file is placed in the Public Domain.
 
 
-"modules management"
-
-
-import logging
+import importlib
+import importlib.util
 import os
 import sys
-import threading
-import _thread
 
 
-from .threads import launch
-from .utility import importer, md5sum, spl
-
-
-lock = threading.RLock()
+from .utility import spl
 
 
 class Mods:
-    md5s = {}
-    mod = os.path.join(os.path.dirname(__file__), "modules")
-    package = __name__.split(".", maxsplit=1)[0] + "." + "modules"
+
+    dirs = {}
+    ignore = []
+
+    @staticmethod
+    def add(name, path):
+        Mods.dirs[name] = path
+
+    @staticmethod
+    def init(name=None, ignore="", local=False):
+        if name:
+            pkg = importer(name)
+            if pkg:
+                Mods.add(name, pkg.__path__[0])
+        if ignore:
+            Mods.ignore = spl(ignore)
+        if local:
+            Mods.add("mods", "mods")
 
 
-def getmod(name, path=None):
-    with lock:
-        mname = Mods.package + "." +  name
-        module = sys.modules.get(mname, None)
-        if module:
-            return module
-        if not path:
-            path = Mods.mod
-        pth = os.path.join(path, f"{name}.py")
-        if os.path.exists(pth) and name != "tbl":
-            if Mods.md5s and md5sum(pth) != Mods.md5s.get(name, None):
-                logging.warning("md5 error on %s", pth.split(os.sep)[-1])
-        return importer(mname, pth)
+def getmod(name):
+    mname = ""
+    pth = ""
+    if name in Mods.ignore:
+        return
+    for packname, path in Mods.dirs.items():
+        modpath = os.path.join(path, name + ".py")
+        if os.path.exists(modpath):
+            pth = modpath
+            mname = f"{packname}.{name}"
+            break
+    return sys.modules.get(mname, None) or importer(mname, pth)
 
 
-def inits(names):
-    modz = []
-    for name in sorted(spl(names)):
-        try:
-            module = getmod(name)
-            if not module:
-                continue
-            if "init" in dir(module):
-                thr = launch(module.init)
-                modz.append((module, thr))
-        except Exception as ex:
-            logging.exception(ex)
-            _thread.interrupt_main()
-    return modz
+def importer(name, pth=None):
+    if pth and os.path.exists(pth):
+        spec = importlib.util.spec_from_file_location(name, pth)
+    else:
+        spec = importlib.util.find_spec(name)
+    if not spec:
+        return
+    mod = importlib.util.module_from_spec(spec)
+    if not mod:
+        return
+    sys.modules[name] = mod
+    spec.loader.exec_module(mod)
+    return mod
 
 
 def modules():
-    if not os.path.exists(Mods.mod):
-        return []
-    return list({
-            x[:-3] for x in os.listdir(Mods.mod)
-            if x.endswith(".py") and not x.startswith("__")
-           })
-
-
-def sums(checksum):
-    pth = os.path.join(Mods.mod, "tbl.py")
-    if not os.path.exists(pth):
-        logging.info("table is not there.")
-        return
-    elif checksum and md5sum(pth) != checksum:
-        logging.warning("table checksum error.")
-        return
-    tbl = getmod("tbl")
-    if tbl:
-        if "MD5" in dir(tbl):
-            Mods.md5s.update(tbl.MD5)
+    mods = []
+    for name, path in Mods.dirs.items():
+        if name in Mods.ignore:
+            continue
+        if not os.path.exists(path):
+            continue
+        mods.extend([
+            x[:-3] for x in os.listdir(path)
+            if x.endswith(".py") and not x.startswith("__") and x not in Mods.ignore
+        ])
+    return sorted(mods)
 
 
 def __dir__():
     return (
         'Mods',
         'getmod',
-        'init',
-        'modules',
-        'sums'
+        'importer',
+        'modules'
     )

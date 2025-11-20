@@ -2,50 +2,35 @@
 # This file is placed in the Public Domain.
 
 
-import json
 import logging
 import os
-import os.path
-import pathlib
 import sys
+import threading
 import time
-import _thread
 
 
 sys.path.insert(0, os.getcwd())
 
 
-from nixbot.brokers import Fleet
+from nixbot.command import Commands, command, parse, scan
 from nixbot.clients import Client
-from nixbot.command import Commands, command, scanner, table
-from nixbot.methods import parse
-from nixbot.handler import Event
-from nixbot.objects import update
-from nixbot.package import Mods, getmod, inits, modules, sums
-from nixbot.threads import launch
-from nixbot.utility import daemon, forever, level, md5sum, pidfile
-from nixbot.utility import level, privileges, spl
-from nixbot.workdir import Workdir, pidname, setwd
+from nixbot.configs import Config, configure
+from nixbot.defines import SYSTEMD
+from nixbot.message import Message
+from nixbot.package import Mods, getmod, modules
+from nixbot.threads import launch, threadhook
+from nixbot.utility import daemon, forever, pidfile, privileges, wrap
+from nixbot.utility import check, level, spl, wrapped
+from nixbot.workdir import Workdir, pidname
 
 
-CHECKSUM = "d37f7fe4d889c0c87bd4326b2b58e7d7"
-NAME = Workdir.name
+NAME = "nixbot" ; VERSION = 440 # noqa: E702
 
 
-class Config:
+threading.excepthook = threadhook
 
-    debug = False
-    default = "irc,mdl,rss"
-    gets = {}
-    init  = ""
-    level = "warn"
-    mod = ""
-    opts = ""
-    otxt = ""
-    sets = {}
-    verbose = False
-    version = 174
-    wdr = ""
+
+"clients"
 
 
 class CLI(Client):
@@ -54,212 +39,132 @@ class CLI(Client):
         Client.__init__(self)
         self.register("command", command)
 
-    def announce(self, txt):
-        self.raw(txt)
-
-    def raw(self, txt):
-        out(txt.encode('utf-8', 'replace').decode("utf-8"))
+    def raw(self, text):
+        print(text.encode('utf-8', 'replace').decode("utf-8"))
 
 
 class Console(CLI):
 
-    def announce(self, txt):
-        pass
-
     def callback(self, event):
-        if not event.txt:
+        if not event.text:
             return
         super().callback(event)
         event.wait()
 
     def poll(self):
-        evt = Event()
-        evt.txt = input("> ")
-        evt.type = "command"
+        evt = Message()
+        evt.text = input("> ")
+        evt.kind = "command"
         return evt
+
+
+"in the beginning"
+
+
+def banner(name, version):
+    tme = time.ctime(time.time()).replace("  ", " ")
+    logger = logging.getLogger()
+    print("%s %s since %s (%s)" % (
+                                   name.upper(),
+                                   version,
+                                   tme,
+                                   logging.getLevelName(logger.getEffectiveLevel())
+                                  ))
+    sys.stdout.flush()
+
+
+
+def scanner(names, init=False):
+    mods = []
+    for name in names:
+        mod = getmod(name)
+        if mod:
+            scan(mod)
+        if init and "init" in dir(mod):
+            thr = launch(mod.init, Config())
+            mods.append((mod, thr))
+    return mods
 
 
 "scripts"
 
 
 def background():
-    daemon("-v" in sys.argv)
+    daemon(check("v"))
     privileges()
-    boot(False)
-    pidfile(pidname(NAME))
-    inits(Config.init or Config.default)
+    level("info")
+    scanner(modules(), False)
+    Commands.add(cmd, ver)
+    pidfile(pidname(Config.name))
     forever()
 
 
 def console():
     import readline # noqa: F401
-    boot()
-    for _mod, thr in inits(Config.init):
-        if "w" in Config.opts:
-            thr.join(30.0)
+    parse(Config, " ".join(sys.argv[1:]))
+    level(Config.sets.get("level", "info"))
+    if "v" in Config.opts:
+        banner(Config.name, Config.version)
+    mods = []
+    if "a" in Config.opts:
+        mods = modules()
+    else:
+        mods = spl(Config.sets.get("init", ""))
+    Commands.add(cmd, ver)
     csl = Console()
-    csl.start(daemon=True)
+    for _mod, thr in scanner(mods, True):
+        thr.join(30.0)
+    csl.start()
     forever()
 
 
 def control():
     if len(sys.argv) == 1:
         return
-    boot()
-    Commands.add(md5)
-    Commands.add(srv)
-    Commands.add(tbl)
+    scanner(modules(), False)
+    Commands.add(cmd, srv, ver)
     csl = CLI()
-    evt = Event()
+    csl.silent = False
+    evt = Message()
     evt.orig = repr(csl)
+    evt.text = " ".join(sys.argv[1:])
     evt.type = "command"
-    evt.txt = Config.otxt
     command(evt)
     evt.wait()
 
 
 def service():
     privileges()
-    boot(False)
-    pidfile(pidname(NAME))
-    banner()
-    inits(Config.init or Config.default)
+    level("info")
+    banner(Config.name, Config.version)
+    scanner(modules(), False)
+    Commands.add(cmd, ver)
+    pidfile(pidname(Config.name))
     forever()
-
-
-def boot(doparse=True):
-    if doparse:
-        parse(Config, " ".join(sys.argv[1:]))
-        update(Config, Config.sets, empty=False)
-        Workdir.wdr = Config.wdr
-    level(Config.level)
-    if "v" in Config.opts:
-        banner()
-    if 'e' in Config.opts:
-        pkg = sys.modules.get(NAME)
-        pth = pkg.__path__[0]
-        pth = os.sep.join(pth.split(os.sep)[:-4])
-        pth = os.path.join(pth, 'share', NAME,  'examples')
-        Mods.mod = Config.mod = pth
-        Mods.package = "mods"
-    if "m" in Config.opts:
-        Mods.mod = Config.mod = "mods"
-        Mods.package = "mods"
-    if "a" in Config.opts:
-        Config.init = ",".join(modules())
-    setwd(NAME)
-    sums(CHECKSUM)
-    table(CHECKSUM)
-    Commands.add(cmd)
-    Commands.add(ver)
-    logging.info("workdir is %s", Workdir.wdr)
 
 
 "commands"
 
 
 def cmd(event):
-    event.reply(",".join(sorted(Commands.names)))
-
-
-def md5(event):
-    tbl = getmod("tbl")
-    if tbl:
-        event.reply(md5sum(tbl.__file__))
-    else:
-        event.reply("table is not there.")
-
-
-TXT = """[Unit]
-Description=%s
-After=network-online.target
-
-[Service]
-Type=simple
-User=%s
-Group=%s
-ExecStart=/home/%s/.local/bin/%s -s
-
-[Install]
-WantedBy=multi-user.target"""
+    event.reply(",".join(sorted(Commands.names or Commands.cmds)))
 
 
 def srv(event):
     import getpass
     name = getpass.getuser()
-    event.reply(TXT % (NAME.upper(), name, name, name, NAME))
-
-
-def tbl(event):
-    Commands.names = {}
-    scanner()
-    event.reply("# This file is placed in the Public Domain.")
-    event.reply("")
-    event.reply("")
-    event.reply('"lookup tables"')
-    event.reply("")
-    event.reply("")
-    event.reply(f"NAMES = {json.dumps(Commands.names, indent=4, sort_keys=True)}")
-    event.reply("")
-    event.reply("MD5 = {")
-    for module in scanner():
-        event.reply(f'    "{module.__name__.split(".")[-1]}": "{md5sum(module.__file__)}",')
-    event.reply("}")
+    event.reply(SYSTEMD % (Config.name.upper(), name, name, name, Config.name))
 
 
 def ver(event):
-    event.reply(f"{NAME.upper()} {Config.version}")
-
-
-"utilities"
-
-
-def banner():
-    tme = time.ctime(time.time()).replace("  ", " ")
-    out("%s %s since %s %s" % (NAME.upper(), Config.version, tme, Config.level.upper()))
-
-
-def check(txt):
-    args = sys.argv[1:]
-    for arg in args:
-        if not arg.startswith("-"):
-            continue
-        for char in txt:
-            if char in arg:
-                return True
-    return False
-
-
-def out(txt):
-    print(txt)
-    sys.stdout.flush()
+    event.reply(f"{Config.name.upper()} {Config.version}")
 
 
 "runtime"
 
 
-def wrapped(func):
-    try:
-        func()
-    except (KeyboardInterrupt, EOFError):
-        out("")
-
-
-def wrap(func):
-    import termios
-    old = None
-    try:
-        old = termios.tcgetattr(sys.stdin.fileno())
-    except termios.error:
-        pass
-    try:
-        wrapped(func)
-    finally:
-        if old:
-            termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old)
-
-
 def main():
+    configure(NAME, VERSION)
     if check("c"):
         wrap(console)
     elif check("d"):

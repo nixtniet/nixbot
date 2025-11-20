@@ -1,53 +1,54 @@
 # This file is placed in the Public Domain.
 
 
-"utilities"
 
-
-import hashlib
 import logging
-import importlib
-import importlib.util
 import os
 import pathlib
 import sys
 import time
-import _thread
 
 
-DEBUG = False
+from .defines import LEVELS, TIMES
 
 
-FORMATS = [
-    "%Y-%M-%D %H:%M:%S",
-    "%Y-%m-%d %H:%M:%S",
-    "%Y-%m-%d",
-    "%d-%m-%Y",
-    "%d-%m",
-    "%m-%d",
-]
+class Logging:
+
+    datefmt = "%H:%M:%S"
+    format = "%(module).3s %(message)s"
 
 
-LEVELS = {
-    'debug': logging.DEBUG,
-    'info': logging.INFO,
-    'warning': logging.WARNING,
-    'warn': logging.WARNING,
-    'error': logging.ERROR,
-    'critical': logging.CRITICAL,
-}
-
-
-class Formatter(logging.Formatter):
+class Format(logging.Formatter):
 
     def format(self, record):
         record.module = record.module.upper()
         return logging.Formatter.format(self, record)
 
 
-def cdir(path):
-    pth = pathlib.Path(path)
-    pth.parent.mkdir(parents=True, exist_ok=True)
+def level(loglevel="debug"):
+    if loglevel != "none":
+        lvl = LEVELS.get(loglevel)
+        if not lvl:
+            return
+        logger = logging.getLogger()
+        for handler in logger.handlers:
+            logger.removeHandler(handler)
+        logger.setLevel(lvl)
+        formatter = Format(Logging.format, datefmt=Logging.datefmt)
+        ch = logging.StreamHandler()
+        ch.setFormatter(formatter)
+        logger.addHandler(ch)
+
+
+def check(text):
+    args = sys.argv[1:]
+    for arg in args:
+        if not arg.startswith("-"):
+            continue
+        for char in text:
+            if char in arg:
+                return True
+    return False
 
 
 def daemon(verbose=False):
@@ -112,26 +113,13 @@ def elapsed(seconds, short=True):
 def extract_date(daystr):
     daystr = daystr.encode('utf-8', 'replace').decode("utf-8")
     res = time.time()
-    for fmat in FORMATS:
+    for fmat in TIMES:
         try:
             res = time.mktime(time.strptime(daystr, fmat))
             break
         except ValueError:
             pass
     return res
-
-
-def fntime(daystr):
-    datestr = " ".join(daystr.split(os.sep)[-2:])
-    datestr = datestr.replace("_", " ")
-    if "." in datestr:
-        datestr, rest = datestr.rsplit(".", 1)
-    else:
-        rest = ""
-    timed = time.mktime(time.strptime(datestr, "%Y-%m-%d %H:%M:%S"))
-    if rest:
-        timed += float("." + rest)
-    return float(timed)
 
 
 def forever():
@@ -142,43 +130,16 @@ def forever():
             break
 
 
-def importer(name, pth):
-    module = None
-    if not os.path.exists(pth):
-        return module
-    try:
-        spec = importlib.util.spec_from_file_location(name, pth)
-        if spec:
-            module = importlib.util.module_from_spec(spec)
-            if module:
-                sys.modules[name] = module
-                if spec.loader:
-                    spec.loader.exec_module(module)
-                if DEBUG:
-                    module.DEBUG = True
-                logging.info("load %s", pth)
-    except Exception as ex:
-        logging.exception(ex)
-        _thread.interrupt_main()
-    return module
-
-
-def level(loglevel="debug"):
-    if loglevel != "none":
-        datefmt = "%H:%M:%S"
-        format_short = "%(module).3s %(message)-76s"
-        ch = logging.StreamHandler()
-        ch.setLevel(LEVELS.get(loglevel))
-        formatter = Formatter(fmt=format_short, datefmt=datefmt)
-        ch.setFormatter(formatter)
-        logger = logging.getLogger()
-        logger.addHandler(ch)
+def getmain(name):
+    main = sys.modules.get("__main__")
+    return getattr(main, name, None)
 
 
 def md5sum(path):
+    import hashlib
     with open(path, "r", encoding="utf-8") as file:
         txt = file.read().encode("utf-8")
-        return hashlib.md5(txt).hexdigest()
+        return hashlib.md5(txt, usedforsecurity=False).hexdigest()
 
 
 def pidfile(filename):
@@ -202,23 +163,51 @@ def spl(txt):
     try:
         result = txt.split(",")
     except (TypeError, ValueError):
-        result = [
-            txt,
-        ]
+        result = []
     return [x for x in result if x]
+
+
+def where(obj):
+    import inspect
+    return os.path.dirname(inspect.getfile(obj))
+
+
+def wrap(func):
+    import termios
+    old = None
+    try:
+        old = termios.tcgetattr(sys.stdin.fileno())
+    except termios.error:
+        pass
+    try:
+        wrapped(func)
+    finally:
+        if old:
+            termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old)
+
+
+def wrapped(func):
+    try:
+        func()
+    except (KeyboardInterrupt, EOFError):
+        pass
 
 
 def __dir__():
     return (
-        'cdir',
+        'Logging',
+        'check',
         'daemon',
         'elapsed',
         'extract_date',
-        'fntime',
         'forever',
+        'getmain',
         'level',
         'md5sum',
         'pidfile',
         'privileges',
-        'spl'
-    )
+        'spl',
+        'where',
+        'wrap',
+        'wrapped'
+   )

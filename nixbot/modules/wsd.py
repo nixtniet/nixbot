@@ -1,32 +1,30 @@
 # This file is placed in the Public Domain.
 
 
-"wijs, wijsheid, wijs!"
-
-
 import logging
 
 
 from random import SystemRandom
 
 
-from nixbot.clients import Fleet
-from nixbot.handler import Event
-from nixbot.threads import Repeater
+from nixbot.brokers import Broker
+from nixbot.message import Message
+from nixbot.repeats import Repeater
 
 
 rand = SystemRandom()
 
 
-def init():
-    event = Event()
+def init(cfg):
+    event = Message()
     repeater = Repeater(3600.0,  wsd, event)
     repeater.start()
-    logging.warning(f"{len(TXT.split("\n"))} wise.")
+    logging.warning("%s wise", len(TXT.split("\n")))
 
 
 def wsd(event):
-    Fleet.announce(rand.choice(TXT.split("\n")).strip()[2:])
+    for bot in Broker.all():
+        bot.announce(rand.choice(TXT.split("\n")).strip()[2:])
 
 
 TXT = """| wijsheid, wijs !

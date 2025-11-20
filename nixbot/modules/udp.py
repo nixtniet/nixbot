@@ -1,9 +1,6 @@
 # This file is placed in the Public Domain.
 
 
-"UDP to IRC relay"
-
-
 import logging
 import select
 import socket
@@ -12,7 +9,7 @@ import threading
 import time
 
 
-from nixbot.clients import Fleet
+from nixbot.brokers import Broker
 from nixbot.objects import Object
 from nixbot.threads import launch
 
@@ -20,11 +17,11 @@ from nixbot.threads import launch
 DEBUG = False
 
 
-def init():
-    udpd = UDP()
-    udpd.start()
-    logging.warning(f"http://{Cfg.host}:{Cfg.port}")
-    return udpd
+def init(cfg):
+    udp = UDP()
+    udp.start()
+    logging.warning("http://%s:%s", Cfg.host, Cfg.port)
+    return udp
 
 
 class Cfg(Object):
@@ -49,7 +46,8 @@ class UDP(Object):
     def output(self, txt, addr=None):
         if addr:
             Cfg.addr = addr
-        Fleet.announce(txt.replace("\00", ""))
+        for bot in Broker.all():
+            bot.announce(txt.replace("\00", ""))
 
     def loop(self):
         try:
