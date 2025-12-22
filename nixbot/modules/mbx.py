@@ -6,11 +6,8 @@ import os
 import time
 
 
-from nixbot.locater import find
-from nixbot.methods import fmt
-from nixbot.objects import Object, keys, update
-from nixbot.persist import write
-from nixbot.utility import elapsed, extract_date
+from nixbot.defines import MONTH, Object, date, elapsed, find, keys, update
+from nixbot.defines import write
 
 
 class Email(Object):
@@ -67,18 +64,21 @@ def eml(event):
         if key in args:
             args.remove(key)
     args = set(args)
-    result = sorted(find("email", event.gets), key=lambda x: extract_date(todate(getattr(x[1], "Date", ""))))
+    result = sorted(
+                    find("email", event.gets),
+                    key=lambda x: date(todate(getattr(x[1], "Date", "")))
+                   )
     if event.index:
         obj = result[event.index]
         if obj:
             obj = obj[-1]
             tme = getattr(obj, "Date", "")
-            event.reply(f'{event.index} {fmt(obj, args, plain=True)} {elapsed(time.time() - extract_date(todate(tme)))}')
+            event.reply(f'{event.index} {fmt(obj, args, plain=True)} {elapsed(time.time() - date(todate(tme)))}')
     else:
         for _fn, obj in result:
             nrs += 1
             tme = getattr(obj, "Date", "")
-            event.reply(f'{nrs} {fmt(obj, args, plain=True)} {elapsed(time.time() - extract_date(todate(tme)))}')
+            event.reply(f'{nrs} {fmt(obj, args, plain=True)} {elapsed(time.time() - date(todate(tme)))}')
     if not result:
         event.reply("no emails found.")
 
@@ -112,19 +112,3 @@ def mbx(event):
         nrs += 1
     if nrs:
         event.reply("ok %s" % nrs)
-
-
-MONTH = {
-    'Jan': 1,
-    'Feb': 2,
-    'Mar': 3,
-    'Apr': 4,
-    'May': 5,
-    'Jun': 6,
-    'Jul': 7,
-    'Aug': 8,
-    'Sep': 9,
-    'Oct': 10,
-    'Nov': 11,
-    'Dec': 12
-}

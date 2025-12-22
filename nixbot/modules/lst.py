@@ -1,7 +1,7 @@
 # This file is been placed in the Public Domain.
 
 
-from nixbot.workdir import types
+from nixbot.defines import types
 
 
 def lst(event):

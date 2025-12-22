@@ -1,18 +1,16 @@
 # This file is placed in the Public Domain.
 
 
-from nixbot.brokers import Broker
-from nixbot.methods import fmt
-from nixbot.threads import name
+from nixbot.defines import fmt, name, objs
 
 
 def flt(event):
+    clts = objs("announce")
     if event.args:
-        clts = Broker.all()
         index = int(event.args[0])
         if index < len(clts):
-            event.reply(fmt(list(Broker.all())[index], empty=True))
+            event.reply(fmt(list(clts)[index]), empty=True)
         else:
             event.reply(f"only {len(clts)} clients in fleet.")
         return
-    event.reply(' | '.join([name(o) for o in Broker.all()]))
+    event.reply(' | '.join([name(o) for o in clts]))

@@ -6,14 +6,14 @@ import logging
 import time
 
 
-from nixbot.brokers import Broker
+from nixbot.brokers import objs
 from nixbot.message import Message
 from nixbot.objects import Object, construct, keys
 from nixbot.repeats import Repeater
-from nixbot.utility import elapsed
+from nixbot.timings import elapsed
 
 
-def init(cfg):
+def init():
     for key in keys(oorzaken):
         if "Psych" not in key:
             continue
@@ -34,7 +34,7 @@ def init(cfg):
 
 DAY = 24*60*60
 YEAR = 365*DAY
-SOURCE = "https://github.com/bthate/."
+SOURCE = "https://github.com/bthate/genocide"
 STARTDATE = "2019-03-04 00:00:00"
 STARTTIME = time.mktime(time.strptime(STARTDATE, "%Y-%m-%d %H:%M:%S"))
 
@@ -137,8 +137,8 @@ def cbnow(_evt):
             continue
         nrtimes = int(delta/needed)
         txt += f"{getalias(nme)} {nrtimes} | "
-    txt += "https://pypi.org/project/."
-    for bot in Broker.all("announce"):
+    txt += "https://pypi.org/project/genocide"
+    for bot in objs("announce"):
         bot.announce(txt)
 
 
@@ -161,7 +161,7 @@ def cbstats(evt):
             nryear,
             elapsed(needed)
         )
-        for bot in Broker.all("announce"):
+        for bot in objs("announce"):
             bot.announce(txt)
 
 
@@ -177,7 +177,7 @@ def dis(event):
             continue
         nrtimes = int(delta/needed)
         txt += f"{getalias(nme)} {nrtimes} | "
-    txt += "https://pypi.org/project/."
+    txt += "https://pypi.org/project/genocide"
     event.reply(txt)
 
 

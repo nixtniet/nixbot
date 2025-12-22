@@ -7,15 +7,13 @@ import logging
 from random import SystemRandom
 
 
-from nixbot.brokers import Broker
-from nixbot.message import Message
-from nixbot.repeats import Repeater
+from nixbot.defines import Message, Repeater, objs
 
 
 rand = SystemRandom()
 
 
-def init(cfg):
+def init():
     event = Message()
     repeater = Repeater(3600.0,  wsd, event)
     repeater.start()
@@ -23,7 +21,7 @@ def init(cfg):
 
 
 def wsd(event):
-    for bot in Broker.all():
+    for bot in objs("announce"):
         bot.announce(rand.choice(TXT.split("\n")).strip()[2:])
 
 

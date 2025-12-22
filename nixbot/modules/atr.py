@@ -4,20 +4,19 @@
 "fields"
 
 
-from nixbot.locater import attrs
-from nixbot.workdir import types
+from nixbot.defines import attrs, types
 
 
 def atr(event):
     if not event.rest:
-        res = sorted([x.split('.')[-1].lower() for x in types()])
+        res = sorted({x.split('.')[-1].lower() for x in types()})
         if res:
             event.reply(",".join(res))
         else:
             event.reply("no types")
         return
-    items = attrs(event.args[0])
-    if not items:
+    itms = attrs(event.args[0])
+    if not itms:
         event.reply("no fields")
     else:
-        event.reply(",".join(items))
+        event.reply(",".join(itms))

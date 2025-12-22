@@ -1,11 +1,14 @@
 # This file is placed in the Public Domain.
 
 
+"write your own commands."
+
+
 import inspect
 
 
-from .brokers import Broker
 from .methods import parse
+from .utility import spl
 
 
 class Commands:
@@ -13,39 +16,56 @@ class Commands:
     cmds = {}
     names = {}
 
-    @staticmethod
-    def add(*args):
-        for func in args:
-            name = func.__name__
-            Commands.cmds[name] = func
-            Commands.names[name] = func.__module__.split(".")[-1]
 
-    @staticmethod
-    def get(cmd):
-        return Commands.cmds.get(cmd, None)
+def cmds(cmd):
+    "return command."
+    return Commands.cmds.get(cmd, None)
 
 
 def command(evt):
+    "command callback."
     parse(evt, evt.text)
-    func = Commands.get(evt.cmd)
+    func = cmds(evt.cmd)
     if func:
         func(evt)
-        bot = Broker.get(evt.orig)
-        bot.display(evt)
+        evt.display()
     evt.ready()
 
 
+def enable(*args):
+    "add functions to commands."
+    for func in args:
+        name = func.__name__
+        Commands.cmds[name] = func
+        Commands.names[name] = func.__module__.split(".")[-1]
+
+
 def scan(module):
+    "scan a module for command, function with event as first argument."
     for key, cmdz in inspect.getmembers(module, inspect.isfunction):
-        if key.startswith("cb"):
+        if 'event' not in inspect.signature(cmdz).parameters:
             continue
-        if 'event' in inspect.signature(cmdz).parameters:
-            Commands.add(cmdz)
+        enable(cmdz)
+
+
+def scanner(pkg, names=None):
+    "scan package for commands."
+    if names is None:
+        names = ",".join(dir(pkg))
+    mods = []
+    for name in spl(names):
+        module = getattr(pkg, name, None)
+        if not module:
+            continue
+        scan(module)
+    return mods
 
 
 def __dir__():
     return (
-        'Comamnds',
+        'Commands',
+        'cmds',
         'command',
+        'enable',
         'scan'
     )

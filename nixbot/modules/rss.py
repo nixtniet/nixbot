@@ -19,33 +19,26 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 
 
-from nixbot.brokers import Broker
-from nixbot.locater import find, fntime, last
-from nixbot.methods import fmt
-from nixbot.objects import Object, update
-from nixbot.persist import write
-from nixbot.repeats import Repeater
-from nixbot.threads import launch
-from nixbot.utility import elapsed, spl
-from nixbot.workdir import getpath
+from nixbot.defines import Config, Object, Repeater
+from nixbot.defines import elapsed, fmt, find, last, launch, objs
+from nixbot.defines import fntime, getpath, spl, update, write
 
 
-DEBUG = False
-
-
-def init(cfg):
+def init():
     fetcher = Fetcher()
     fetcher.start()
     if fetcher.seenfn:
         logging.warning("since %s", elapsed(time.time()-fntime(fetcher.seenfn)))
     else:
-        logging.warning("since %s", time.ctime(time.time()))
+        logging.warning("since %s", time.ctime(time.time()).replace("  ", " "))
     return fetcher
 
 
 fetchlock = _thread.allocate_lock()
 importlock = _thread.allocate_lock()
-errors: dict[str, float] = {}
+
+
+errors = {}
 skipped = []
 
 
@@ -132,7 +125,7 @@ class Fetcher(Object):
             txt = f"[{feedname}] "
         for obj in result:
             txt2 = txt + self.display(obj)
-            for bot in Broker.all():
+            for bot in objs("announce"):
                 bot.announce(txt2)
         return counter
 
@@ -285,7 +278,7 @@ def cdata(line):
 
 def getfeed(url, items):
     result = [Object(), Object()]
-    if DEBUG or url in errors and (time.time() - errors[url]) < 600:
+    if Config.debug or url in errors and (time.time() - errors[url]) < 600:
         return result
     try:
         rest = geturl(url)
@@ -489,7 +482,7 @@ def rss(event):
 
 
 def syn(event):
-    if DEBUG:
+    if Config.debug:
         return
     fetcher = Fetcher()
     fetcher.start(False)

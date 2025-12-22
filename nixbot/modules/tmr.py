@@ -1,50 +1,41 @@
 # This file is placed in the Public Domain.
 
 
-import datetime
 import logging
 import random
-import re
 import time
 
 
-from nixbot.brokers import Broker
-from nixbot.locater import last
-from nixbot.objects import Object, items
-from nixbot.persist import write
-from nixbot.repeats import Timed
-from nixbot.utility import elapsed, extract_date
-from nixbot.workdir import getpath
+from nixbot.defines import NoDate, Object, Timed
+from nixbot.defines import extract, hour, items, today, write
+from nixbot.defines import broker, elapsed, day, getpath, last, like
 
 
 rand = random.SystemRandom()
 
 
-def init(cfg):
+def init():
     Timers.path = last(Timers.timers) or getpath(Timers.timers)
     remove = []
     for tme, args in items(Timers.timers):
+        if not args:
+            continue
         orig, channel, txt = args
-        for origin in Broker.like(orig):
+        for origin in like(orig):
             if not origin:
                 continue
             diff = float(tme) - time.time()
             if diff > 0:
-                bot = Broker.get(origin)
+                bot = broker(origin)
                 timer = Timed(diff, bot.say, channel, txt)
                 timer.start()
             else:
                 remove.append(tme)
     for tme in remove:
-        delete(tme)
+        Timers.delete(tme)
     if Timers.timers:
         write(Timers.timers, Timers.path)
     logging.warning("%s timers", len(Timers.timers))
-
-
-class NoDate(Exception):
-
-    pass
 
 
 class Timer(Object):
@@ -57,114 +48,13 @@ class Timers(Object):
     path = ""
     timers = Timer()
 
+    @staticmethod
+    def add(tme, orig, channel,  txt):
+        setattr(Timers.timers, str(tme), (orig, channel, txt))
 
-
-def add(tme, orig, channel,  txt):
-    setattr(Timers.timers, str(tme), (orig, channel, txt))
-
-
-def delete(tme):
-     delattr(Timers.timers, str(tme))
-
-
-def get_day(daystr):
-    day = None
-    month = None
-    yea = None
-    try:
-        ymdre = re.search(r'(\d+)-(\d+)-(\d+)', daystr)
-        if ymdre:
-            (day, month, yea) = ymdre.groups()
-    except ValueError:
-        try:
-            ymre = re.search(r'(\d+)-(\d+)', daystr)
-            if ymre:
-                (day, month) = ymre.groups()
-                yea = time.strftime("%Y", time.localtime())
-        except Exception as ex:
-            raise NoDate(daystr) from ex
-    if day:
-        day = int(day)
-        month = int(month)
-        yea = int(yea)
-        date = f"{day} {MONTHS[month]} {yea}"
-        return time.mktime(time.strptime(date, r"%d %b %Y"))
-    raise NoDate(daystr)
-
-
-def get_hour(daystr):
-    try:
-        hmsre = re.search(r'(\d+):(\d+):(\d+)', str(daystr))
-        hours = 60 * 60 * (int(hmsre.group(1)))
-        hoursmin = hours  + int(hmsre.group(2)) * 60
-        hmsres = hoursmin + int(hmsre.group(3))
-    except AttributeError:
-        pass
-    except ValueError:
-        pass
-    try:
-        hmre = re.search(r'(\d+):(\d+)', str(daystr))
-        hours = 60 * 60 * (int(hmre.group(1)))
-        hmsres = hours + int(hmre.group(2)) * 60
-    except AttributeError:
-        return 0
-    except ValueError:
-        return 0
-    return hmsres
-
-
-def get_time(txt):
-    try:
-        target = get_day(txt)
-    except NoDate:
-        target = to_day(today())
-    hour =  get_hour(txt)
-    if hour:
-        target += hour
-    return target
-
-
-def parse_time(txt):
-    seconds = 0
-    target = 0
-    txt = str(txt)
-    for word in txt.split():
-        if word.startswith("+"):
-            seconds = int(word[1:])
-            return time.time() + seconds
-        if word.startswith("-"):
-            seconds = int(word[1:])
-            return time.time() - seconds
-    if not target:
-        try:
-            target = get_day(txt)
-        except NoDate:
-            target = to_day(today())
-        hour =  get_hour(txt)
-        if hour:
-            target += hour
-    return target
-
-
-def to_day(daystr):
-    previous = ""
-    line = ""
-    daystr = str(daystr)
-    res = None
-    for word in daystr.split():
-        line = previous + " " + word
-        previous = word
-        try:
-            res = extract_date(line.strip())
-            break
-        except ValueError:
-            res = None
-        line = ""
-    return res
-
-
-def today():
-    return str(datetime.datetime.today()).split()[0]
+    @staticmethod
+    def delete(tme):
+         delattr(Timers.timers, str(tme))
 
 
 def tmr(event):
@@ -194,38 +84,21 @@ def tmr(event):
         target = time.time() + seconds
     else:
         try:
-            target = get_day(event.rest)
+            target = day(event.rest)
         except NoDate:
-            target = to_day(today())
-        hour =  get_hour(event.rest)
-        if hour:
-            target += hour
+            target = extract(today())
+        hours =  hour(event.rest)
+        if hours:
+            target += hours
     target += rand.random() 
     if not target or time.time() > target:
         event.reply("already passed given time.")
         return result
     diff = target - time.time()
     txt = " ".join(event.args[1:])
-    add(target, event.orig, event.channel, txt)
+    Timers.add(target, event.orig, event.channel, txt)
     write(Timers.timers, Timers.path or getpath(Timers.timers))
-    bot = Broker.get(event.orig)
+    bot = broker(event.orig)
     timer = Timed(diff, bot.say, event.orig, event.channel, txt)
     timer.start()
-    event.reply("ok " +  elapsed(diff))
-
-
-MONTHS = [
-    'Bo',
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec'
-]
+    event.reply("ok " + elapsed(diff))

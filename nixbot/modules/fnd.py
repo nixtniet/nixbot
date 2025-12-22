@@ -4,10 +4,7 @@
 import time
 
 
-from nixbot.locater import find, fntime
-from nixbot.methods import fmt
-from nixbot.utility import elapsed
-from nixbot.workdir import types
+from nixbot.defines import elapsed, find, fmt, fntime, types
 
 
 def fnd(event):
@@ -20,7 +17,7 @@ def fnd(event):
         return
     otype = event.args[0]
     nmr = 0
-    for fnm, obj in list(find(otype, event.gets)):
+    for fnm, obj in sorted(find(otype, event.gets), key=lambda x: fntime(x[0])):
         event.reply(f"{nmr} {fmt(obj)} {elapsed(time.time()-fntime(fnm))}")
         nmr += 1
     if not nmr:

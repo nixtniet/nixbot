@@ -4,13 +4,10 @@
 import os
 
 
-a = os.path.abspath
-d = os.path.dirname
-p = os.path.join
-
-
-PATH = p(d(d(__file__)), "network", "html","index.html")
+from nixbot.defines import Config, where
 
 
 def pth(event):
-    event.reply(f"file://{PATH}")
+    fn = where(Config)
+    path = os.path.join(fn, 'network', 'html', "index.html")
+    event.reply(f"file://{path}")

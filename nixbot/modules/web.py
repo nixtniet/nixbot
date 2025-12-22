@@ -10,23 +10,13 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
-from nixbot.objects import Object
-from nixbot.threads import launch
+from nixbot.defines import Config, Object, launch, where
 
 
-DEBUG = False
-
-
-d = os.path.dirname
-j = os.path.join
-
-
-PATH = d(d(__file__))
-PATH = j(PATH, "network", "html")
-
-
-def init(cfg):
-    if not os.path.exists(j(PATH, 'index.html')):
+def init():
+    Cfg.path = where(Config)
+    #Cfg.path = os.path.join(Mods.path, "network", "html")
+    if not os.path.exists(os.path.join(Cfg.path, 'index.html')):
         logging.warning("no index.html")
         return
     try:
@@ -35,13 +25,14 @@ def init(cfg):
         logging.warning("http://%s:%s", Cfg.hostname, Cfg.port)
         return server
     except OSError as ex:
-        logging.warning(str(ex))
+        logging.warning("%s", str(ex))
 
 
 class Cfg:
 
     hostname = "localhost"
-    port     = 8000
+    path = ""
+    port = 8000
 
 
 class HTTP(HTTPServer, Object):
@@ -104,11 +95,11 @@ class HTTPHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if "favicon" in self.path:
             return
-        if DEBUG:
+        if Config.debug:
             return
         if self.path == "/":
             self.path = "index.html"
-        self.path = PATH + os.sep + self.path
+        self.path = Cfg.path + os.sep + self.path
         if not os.path.exists(self.path):
             self.write_header("text/html")
             self.send_response(404)
@@ -118,7 +109,7 @@ class HTTPHandler(BaseHTTPRequestHandler):
             try:
                 with open(self.path, "rb") as file:
                     img = file.read()
-                    file.cnixbote()
+                    file.close()
                 ext = self.path[-3]
                 self.write_header(f"image/{ext}", len(img))
                 self.raw(img)
@@ -129,7 +120,7 @@ class HTTPHandler(BaseHTTPRequestHandler):
         try:
             with open(self.path, "r", encoding="utf-8", errors="ignore") as file:
                 txt = file.read()
-                file.cnixbote()
+                file.close()
             self.write_header("text/html")
             self.send(txt)
         except (TypeError, FileNotFoundError, IsADirectoryError):

@@ -11,32 +11,21 @@ import threading
 import time
 
 
-from nixbot.brokers import Broker
-from nixbot.command import command
-from nixbot.configs import Config as Main
-from nixbot.defines import LEVELS
-from nixbot.locater import last
-from nixbot.message import Message
-from nixbot.methods import edit, fmt
-from nixbot.objects import Object, keys
-from nixbot.outputs import Output
-from nixbot.persist import write
-from nixbot.threads import launch
-from nixbot.workdir import getpath
-
-
-IGNORE = ["PING", "PONG", "PRIVMSG"] 
-
-
+from nixbot.defines import Config as Main
+from nixbot.defines import Message, Object, Output
+from nixbot.defines import broker, command, edit, fmt, getpath, last, launch
+from nixbot.defines import keys, write
+ 
+ 
 lock = threading.RLock()
 
 
-def init(cfg):
+def init():
     irc = IRC()
     irc.start()
     irc.events.joined.wait(30.0)
     if irc.events.joined.is_set():
-        logging.warning(fmt(irc.cfg, skip=["name", "word", "realname", "username"]))
+        logging.warning("%s", fmt(irc.cfg, skip=["name", "word", "realname", "username"]))
     else:
         irc.stop()
     return irc
@@ -47,6 +36,7 @@ class Config(Object):
     channel = f"#{Main.name}"
     commands = True
     control = "!"
+    ignore = ["PING", "PONG", "PRIVMSG"] 
     name = Main.name
     nick = Main.name
     word = ""
@@ -75,7 +65,6 @@ class Config(Object):
         if name not in self:
             return ""
         return self.__getattribute__(name)
-            
 
 
 class Event(Message):
@@ -95,7 +84,7 @@ class Event(Message):
         self.text = ""
 
     def dosay(self, txt):
-        bot = Broker.get(self.orig)
+        bot = broker(self.orig)
         bot.dosay(self.channel, txt)
 
 
@@ -198,7 +187,7 @@ class IRC(Output):
             pass
 
     def display(self, event):
-        for key in sorted(event.result, key=lambda x: x):
+        for key in sorted(event.result):
             txt = event.result.get(key)
             if not txt:
                 continue
@@ -331,7 +320,7 @@ class IRC(Output):
         rawstr = str(txt)
         rawstr = rawstr.replace("\u0001", "")
         rawstr = rawstr.replace("\001", "")
-        rlog("debug", txt, IGNORE)
+        rlog(txt)
         obj = Event()
         obj.args = []
         obj.rawstr = rawstr
@@ -418,7 +407,7 @@ class IRC(Output):
 
     def raw(self, text):
         text = text.rstrip()
-        rlog("debug", text, IGNORE)
+        rlog(text)
         text = text[:500]
         text += "\r\n"
         text = bytes(text, "utf-8")
@@ -484,6 +473,7 @@ class IRC(Output):
         self.state.lastline = splitted[-1]
 
     def start(self):
+        last(self.cfg)
         if self.cfg.channel not in self.channels:
             self.channels.append(self.cfg.channel)
         self.events.ready.clear()
@@ -511,12 +501,12 @@ class IRC(Output):
 
 
 def cb_auth(evt):
-    bot = Broker.get(evt.orig)
+    bot = broker(evt.orig)
     bot.docommand(f"AUTHENTICATE {bot.cfg.word or bot.cfg.password}")
 
 
 def cb_cap(evt):
-    bot = Broker.get(evt.orig)
+    bot = broker(evt.orig)
     if (bot.cfg.word or bot.cfg.password) and "ACK" in evt.arguments:
         bot.direct("AUTHENTICATE PLAIN")
     else:
@@ -524,20 +514,20 @@ def cb_cap(evt):
 
 
 def cb_error(evt):
-    bot = Broker.get(evt.orig)
+    bot = broker(evt.orig)
     bot.state.nrerror += 1
     bot.state.error = evt.text
     logging.debug(fmt(evt))
 
 
 def cb_h903(evt):
-    bot = Broker.get(evt.orig)
+    bot = broker(evt.orig)
     bot.direct("CAP END")
     bot.events.authed.set()
 
 
 def cb_h904(evt):
-    bot = Broker.get(evt.orig)
+    bot = broker(evt.orig)
     bot.direct("CAP END")
     bot.events.authed.set()
 
@@ -551,24 +541,24 @@ def cb_log(evt):
 
 
 def cb_ready(evt):
-    bot = Broker.get(evt.orig)
+    bot = broker(evt.orig)
     bot.events.ready.set()
 
 
 def cb_001(evt):
-    bot = Broker.get(evt.orig)
+    bot = broker(evt.orig)
     bot.events.logon.set()
 
 
 def cb_notice(evt):
-    bot = Broker.get(evt.orig)
+    bot = broker(evt.orig)
     if evt.text.startswith("VERSION"):
         txt = f"\001VERSION {Config.name.upper()} {Config.version} - {bot.cfg.username}\001"
         bot.docommand("NOTICE", evt.channel, txt)
 
 
 def cb_privmsg(evt):
-    bot = Broker.get(evt.orig)
+    bot = broker(evt.orig)
     if not bot.cfg.commands:
         return
     if evt.text:
@@ -587,7 +577,7 @@ def cb_privmsg(evt):
 
 
 def cb_quit(evt):
-    bot = Broker.get(evt.orig)
+    bot = broker(evt.orig)
     logging.debug("quit from %s", bot.cfg.server)
     bot.state.nrerror += 1
     bot.state.error = evt.text
@@ -606,7 +596,7 @@ def cfg(event):
             fmt(
                 config,
                 keys(config),
-                skip="control,name,word,realname,sleep,username".split(","),
+                skip="control,name,word,realname,sleep,username".split(",")
             )
         )
     else:
@@ -619,7 +609,7 @@ def mre(event):
     if not event.channel:
         event.reply("channel is not set.")
         return
-    bot = Broker.get(event.orig)
+    bot = broker(event.orig)
     if "cache" not in dir(bot):
         event.reply("bot is missing cache")
         return
@@ -650,10 +640,8 @@ def pwd(event):
 "utility"
 
 
-def rlog(loglevel, txt, ignore=None):
-    if ignore is None:
-        ignore = []
-    for ign in ignore:
+def rlog(txt):
+    for ign in Config.ignore:
         if ign in str(txt):
             return
-    logging.log(LEVELS.get(loglevel), txt)
+    logging.debug(txt)

@@ -1,16 +1,16 @@
 # This file is placed in the Public Domain.
 
 
-from nixbot.brokers import Broker
+from nixbot.defines import broker
 
 
 def sil(event):
-    bot = Broker.get(event.orig)
+    bot = broker(event.orig)
     bot.silent = True
     event.reply("ok")
 
 
 def lou(event):
-    bot = Broker.get(event.orig)
+    bot = broker(event.orig)
     bot.silent = False
     event.reply("ok")

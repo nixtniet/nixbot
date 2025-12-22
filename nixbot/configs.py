@@ -1,22 +1,23 @@
 # This file is placed in the Public Domain.
 
 
+"configuration"
+
+
 from .objects import Default
-from .package import Mods
-from .workdir import Workdir
 
 
 class Config(Default):
 
-    name = "nixt"
-    version = 440
-
-
-def configure(name, version):
-    Config.name = name
-    Config.version = version
-    Workdir.init(name)
-    Mods.init(f"{name}.modules", local=True)
+    debug = False
+    gets = Default()
+    ignore = ""
+    init = ""
+    level = "info"
+    name = ""
+    opts = ""
+    sets = Default()
+    version = 0
 
 
 def __dir__():
