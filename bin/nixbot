@@ -22,7 +22,7 @@ from nixbot.defines import moddir, pidname, skel, where, wrapped
 
 Config.ignore = "udp"
 Config.level = "info"
-Config.name = "nixt" 
+Config.name = "nixbot" 
 Config.version = 451
 
 
