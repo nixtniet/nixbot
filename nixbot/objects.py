@@ -70,7 +70,7 @@ def keys(obj):
     if isinstance(obj, dict):
         return obj.keys()
     return obj.__dict__.keys()
-
+    
 
 def update(obj, data, empty=True):
     "update object,"

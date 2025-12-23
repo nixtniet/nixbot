@@ -11,7 +11,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
 from nixbot.defines import Config, Object
-from nixbot.defines import launch, storage, types
+from nixbot.defines import launch, storage, kinds
 
 
 def init():
@@ -86,7 +86,7 @@ class RESTHandler(BaseHTTPRequestHandler):
         if self.path == "/":
             self.write_header("text/html")
             txt = ""
-            for fnm in types():
+            for fnm in kinds():
                 txt += f'<a href="http://{Cfg.hostname}:{Cfg.port}/{fnm}">{fnm}</a><br>\n'
             self.send(html(txt.strip()))
             return

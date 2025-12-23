@@ -4,12 +4,12 @@
 import time
 
 
-from nixbot.defines import elapsed, find, fmt, fntime, types
+from nixbot.defines import elapsed, find, fmt, fntime, kinds
 
 
 def fnd(event):
     if not event.rest:
-        res = sorted([x.split('.')[-1].lower() for x in types()])
+        res = sorted([x.split('.')[-1].lower() for x in kinds()])
         if res:
             event.reply(",".join(res))
         else:

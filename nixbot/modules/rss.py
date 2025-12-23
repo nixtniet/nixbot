@@ -477,7 +477,7 @@ def rss(event):
             return
     feed = Rss()
     feed.rss = event.args[0]
-    write(feed)
+    fnm = write(feed)
     event.reply("ok")
 
 

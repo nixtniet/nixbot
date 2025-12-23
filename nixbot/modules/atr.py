@@ -4,12 +4,12 @@
 "fields"
 
 
-from nixbot.defines import attrs, types
+from nixbot.defines import attrs, kinds
 
 
 def atr(event):
     if not event.rest:
-        res = sorted({x.split('.')[-1].lower() for x in types()})
+        res = sorted({x.split('.')[-1].lower() for x in kinds()})
         if res:
             event.reply(",".join(res))
         else:

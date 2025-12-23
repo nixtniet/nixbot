@@ -22,8 +22,8 @@ from nixbot.defines import moddir, pidname, skel, where, wrapped
 
 Config.ignore = "udp"
 Config.level = "info"
-Config.name = "nixbot" 
-Config.version = 180
+Config.name = "nixt" 
+Config.version = 451
 
 
 TXT = " ".join(sys.argv[1:])
@@ -92,7 +92,6 @@ def check(text):
         for char in text:
                if char in arg:
                    return True
-
         return False
 
 
@@ -201,7 +200,7 @@ class Mods:
     dirs = {}
     modules = {}
     path = where(scan)
-    package = os.path.dirname(path).split(".")[-1]
+    package = os.path.dirname(path).split(os.sep)[-1]
 
 
 def configure():

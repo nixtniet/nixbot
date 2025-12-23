@@ -22,7 +22,7 @@ from .threads import launch, name
 from .timings import NoDate, date, day, elapsed, extract, fntime, hour, time
 from .timings import parsetxt, today
 from .utility import cdir, ident, md5sum, spl, where, wrapped
-from .workdir import Workdir, getpath, long, moddir, pidname, skel, storage, types
+from .workdir import Workdir, getpath, long, moddir, pidname, skel, storage, kinds
 
 
 def __dir__():
