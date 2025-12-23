@@ -7,7 +7,7 @@ import time
 
 
 from nixbot.defines import MONTH, Object, date, elapsed, find, keys, update
-from nixbot.defines import write
+from nixbot.defines import fmt, write
 
 
 class Email(Object):
