@@ -1,0 +1,1 @@
+ruff check nixbot bin/nixbot bin/tinder
