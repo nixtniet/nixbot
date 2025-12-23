@@ -1,7 +1,3 @@
-N I X B O T
-===========
-
-
 **NAME**
 
 
@@ -23,12 +19,12 @@ N I X B O T
 **DESCRIPTION**
 
 
-``NIXT`` has all you need to program a unix cli program, such as disk
+``NIXBOT`` has all you need to program a unix cli program, such as disk
 perisistence for configuration files, event handler to handle the
 client/server connection, deferred exception handling to not crash
 on an error, etc.
 
-``NIXT`` contains python3 code to program objects in a functional way.
+``NIXBOT`` contains python3 code to program objects in a functional way.
 it provides an "clean namespace" Object class that only has dunder
 methods, so the namespace is not cluttered with method names. This
 makes storing and reading to/from json possible.
@@ -36,7 +32,6 @@ makes storing and reading to/from json possible.
 ``NIXBOT`` is a python3 IRC bot, it can connect to IRC, fetch and
 display RSS feeds, take todo notes, keep a shopping list and log
 text. You can run it under systemd for 24/7 presence in a IRC channel.
-
 
 ``NIXBOT`` is Public Domain.
 
@@ -175,9 +170,11 @@ opml
 
 **PROGRAMMING**
 
-
-``nixbot`` has it's modules in the package, so edit a file in nixbot/modules/<name>.py
-and add the following for ``hello world``
+|
+| nixbot has it's user modules in the ~/.nixbot/mods directory so for a
+| hello world command you would  edit a file in ~/.nixbot/mods/hello.py
+| and add the following
+|
 
 ::
 
@@ -185,31 +182,21 @@ and add the following for ``hello world``
         event.reply("hello world !!")
 
 
-``nixbot`` uses loading on demand of modules and has a ``tbl`` command to
-generate a table for this.
+|
+| typing the hello command would result into a nice hello world !!
+|
+
+::
+
+    $ nixbot hello
+    hello world !!
 
 
 |
-| ``$ nixbot tbl > nixbot/modules/tbl.py``
+| commands run in their own thread and the program borks on exit to enable a
+| short debug cycle, output gets flushed on print so exceptions appear in the
+| systemd logs. modules can contain your own written python3 code.
 |
-
-a md5sum can be added to verify the modules md5sums are matching.
-
-|
-| ``$ nixbot md5``
-|
-
-put this value in nixbot/modules/__init__.py and ``nixbot`` can execute the ``hello``
-command now.
-
-|
-| ``$ nixbot hello``
-| ``hello world !!``
-|
-
-Commands run in their own thread and the program borks on exit, output gets
-flushed on print so exceptions appear in the systemd logs. Modules can contain
-your own written python3 code, see the nixbot/modules directory for examples.
 
 
 **FILES**
@@ -223,7 +210,7 @@ your own written python3 code, see the nixbot/modules directory for examples.
 **AUTHOR**
 
 |
-| ``Bart Thate`` <``nixtniet@gmail.com``>
+| ``Bart Thate`` <``bthate@dds.nl``>
 |
 
 **COPYRIGHT**
@@ -231,3 +218,4 @@ your own written python3 code, see the nixbot/modules directory for examples.
 |
 | ``NIXBOT`` is Public Domain.
 |
+
