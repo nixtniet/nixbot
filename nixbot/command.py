@@ -1,13 +1,15 @@
 # This file is placed in the Public Domain.
 
 
-"write your own commands."
+"write your commands"
 
 
 import inspect
 
 
+from .brokers import getobj
 from .methods import parse
+from .package import getmod
 from .utility import spl
 
 
@@ -17,22 +19,7 @@ class Commands:
     names = {}
 
 
-def cmds(cmd):
-    "return command."
-    return Commands.cmds.get(cmd, None)
-
-
-def command(evt):
-    "command callback."
-    parse(evt, evt.text)
-    func = cmds(evt.cmd)
-    if func:
-        func(evt)
-        evt.display()
-    evt.ready()
-
-
-def enable(*args):
+def addcmd(*args):
     "add functions to commands."
     for func in args:
         name = func.__name__
@@ -40,32 +27,57 @@ def enable(*args):
         Commands.names[name] = func.__module__.split(".")[-1]
 
 
-def scan(module):
-    "scan a module for command, function with event as first argument."
+def getcmd(cmd):
+    "get function for command."
+    func =  Commands.cmds.get(cmd, None)
+    if func:
+        return func
+    name = Commands.names.get(cmd, None)
+    if name:
+        mod = getmod(name)
+        if mod:
+            scancmd(mod)
+    return Commands.cmds.get(cmd, None)
+        
+
+def command(evt):
+    "command callback."
+    parse(evt, evt.text)
+    func = getcmd(evt.cmd)
+    if func:
+        func(evt)
+        bot = getobj(evt.orig)
+        bot.display(evt)
+    evt.ready()
+
+
+def scancmd(module):
+    "scan a module for functions with event as argument."
     for key, cmdz in inspect.getmembers(module, inspect.isfunction):
         if 'event' not in inspect.signature(cmdz).parameters:
             continue
-        enable(cmdz)
+        addcmd(cmdz)
 
 
-def scanner(pkg, names=None):
-    "scan package for commands."
-    if names is None:
-        names = ",".join(dir(pkg))
+def scanner(names):
+    "scan named modules for commands."
     mods = []
+    if Commands.names:
+        return mods
     for name in spl(names):
-        module = getattr(pkg, name, None)
+        module = getmod(name)
         if not module:
             continue
-        scan(module)
+        scancmd(module)
     return mods
 
 
 def __dir__():
     return (
         'Commands',
-        'cmds',
+        'addcmd',
         'command',
-        'enable',
-        'scan'
+        'getcmd',
+        'scancmd',
+        'scanner'
     )
