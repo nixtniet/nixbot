@@ -4,10 +4,12 @@
 import time
 
 
-from nixt.locater import find
 from nixt.objects import Object
-from nixt.persist import write
 from nixt.timings import elapsed, fntime
+
+
+from nixbot.locater import find
+from nixbot.persist import write
 
 
 class Todo(Object):

@@ -224,7 +224,7 @@ opml
 """
 
 
-from nixt.configs import Cfg
+from nixbot.configs import Cfg
 
 
 def man(event):

@@ -13,15 +13,17 @@ import time
 
 from nixt.brokers import getobj
 from nixt.clients import Output
-from nixt.command import command
-from nixt.configs import Cfg
-from nixt.locater import last
 from nixt.message import Message
 from nixt.methods import edit, fmt
 from nixt.objects import Object, keys
-from nixt.persist import write
 from nixt.threads import launch
-from nixt.workdir import getident
+
+
+from nixbot.command import command
+from nixbot.configs import Cfg
+from nixbot.locater import last
+from nixbot.persist import write
+from nixbot.workdir import getident
 
  
 lock = threading.RLock()
