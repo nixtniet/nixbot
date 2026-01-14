@@ -14,15 +14,21 @@ sys.path.insert(0, os.getcwd())
 
 
 from nixt.clients import Output
-from nixt.command import command
-from nixt.configs import Cfg
 from nixt.message import Message
 from nixt.methods import fmt, parse
-from nixt.package import adddir, modules, scanner
 from nixt.threads import launch
 from nixt.timings import elapsed
 from nixt.utility import where, wrapped
-from nixt.workdir import Workdir, skel
+
+
+from nixbot.command import command, scanner
+from nixbot.configs import Cfg
+from nixbot.package import adddir, modules
+from nixbot.workdir import Workdir, skel
+
+
+import nixbot.modules
+
 
 
 Cfg.debug = True
@@ -189,7 +195,7 @@ def main():
         shutil.rmtree(Workdir.wdr)
     skel()
     parse(Cfg, " ".join(sys.argv[1:]))
-    adddir(f"{Cfg.name}.modules", os.path.join(where(Message), "modules"))
+    adddir(f"{Cfg.name}.modules", os.path.join(where(nixbot.modules), "modules"))
     scanner(modules())
     if "v" in Cfg.opts:
         banner(Cfg.name, Cfg.version)

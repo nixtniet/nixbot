@@ -4,11 +4,12 @@
 "module management"
 
 
+import importlib.util
 import os
 
 
-from .threads import launch
-from .utility import importer, spl
+from nixt.threads import launch
+from nixt.utility import spl
 
 
 class Mods:
@@ -43,6 +44,21 @@ def getmod(name):
     mod = importer(mname, pth)
     if mod:
         Mods.modules[name] = mod
+    return mod
+
+
+def importer(name, pth=""):
+    "import module by path."
+    if pth and os.path.exists(pth):
+        spec = importlib.util.spec_from_file_location(name, pth)
+    else:
+        spec = importlib.util.find_spec(name)
+    if not spec or not spec.loader:
+        return None
+    mod = importlib.util.module_from_spec(spec)
+    if not mod:
+        return None
+    spec.loader.exec_module(mod)
     return mod
 
 
@@ -89,6 +105,7 @@ def __dir__():
         'Mods',
         'adddir',
         'addpkg',
+        'importer',
         'init',
         'mods',
         'modules'

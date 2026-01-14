@@ -14,39 +14,48 @@ import unittest
 sys.path.insert(0, os.getcwd())
 
 
+import nixt
 import nixbot
-import nixbot.brokers
-import nixbot.clients
+
+
+import nixt.brokers
+import nixt.clients
+import nixt.handler
+import nixt.message
+import nixt.methods
+import nixt.objects
+import nixt.serials
+import nixt.threads
+import nixt.timings
+import nixt.utility
+
+
 import nixbot.command
-import nixbot.configs
-import nixbot.defines
-import nixbot.handler
-import nixbot.message
-import nixbot.methods
-import nixbot.objects
+import nixbot.package
 import nixbot.persist
-import nixbot.repeats
-import nixbot.threads
-import nixbot.utility
+import nixbot.workdir
 
 
-from nixbot.objects import *
+
+
+from nixt.objects import *
 
 
 PACKAGE = [
     'brokers',
     'clients',
     'command',
-    'configs',
-    'defines',
     'handler',
     'message',
     'methods',
     'objects',
+    'package',
     'persist',
-    'repeats',
+    'serials',
     'threads',
-    'utility'
+    'timings',
+    'utility',
+    'workdir'
 ]
 
 
@@ -86,11 +95,13 @@ class TestInterface(unittest.TestCase):
     def test_package(self):
         okd = True
         for mod in PACKAGE:
-            mod1 = getattr(nixbot, mod, None)
+            mod1 = getattr(nixt, mod, None)
             if not mod1:
-                okd = False
-                print(mod)
-                break
+                mod1 = getattr(nixbot, mod, None)
+                if not mod1:
+                    okd = False
+                    print(mod)
+                    break
         self.assertTrue(okd)
 
     def test_objects(self):

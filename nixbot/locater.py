@@ -7,10 +7,12 @@
 import os
 
 
-from .methods import deleted, fqn, search
-from .objects import Object, keys, update
+from nixt.methods import deleted, fqn, search
+from nixt.objects import Object, keys, update
+from nixt.timings import fntime
+
+
 from .persist import addpath, getpath, read
-from .timings import fntime
 from .workdir import getstore, long
 
 

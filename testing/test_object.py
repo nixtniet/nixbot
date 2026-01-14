@@ -7,15 +7,14 @@
 import unittest
 
 
-from nixbot.methods import fmt
-from nixbot.objects import Object, items, keys, update, values
+from nixt.objects import Object, items, keys, update, values
 
 
-import nixbot.objects
+import nixt.objects
 
 
 OBJECT = Object()
-PACKAGE = nixbot.objects
+PACKAGE = nixt.objects
 VALIDJSON = "{'test': 'bla'}"
 VALIDPYTHON = '{"test": "bla"}'
 
@@ -103,7 +102,7 @@ class TestObject(unittest.TestCase):
 
     def test_fmt(self):
         obj = Object()
-        self.assertEqual(fmt(obj), "{}")
+        self.assertEqual(format(obj), "{}")
 
     def test_format(self):
         obj = Object()
@@ -162,7 +161,7 @@ class TestObject(unittest.TestCase):
         self.assertTrue(okd)
 
     def test_module(self):
-        self.assertEqual(Object().__module__, "nixbot.objects")
+        self.assertEqual(Object().__module__, "nixt.objects")
 
     def test_register(self):
         obj = Object()

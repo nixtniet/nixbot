@@ -4,8 +4,8 @@
 "configuration"
 
 
-from .objects import Default
-from .utility import pkgname
+from nixt.objects import Default
+from nixt.utility import pkgname
 
 
 class Config(Default):

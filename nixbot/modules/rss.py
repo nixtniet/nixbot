@@ -20,15 +20,18 @@ from urllib.parse import quote_plus, urlencode
 
 
 from nixt.brokers import objs
-from nixt.configs import Cfg
-from nixt.locater import find, last
 from nixt.methods import fmt
 from nixt.objects import Object, update
-from nixt.persist import write
 from nixt.threads import launch
 from nixt.timings import Repeater, elapsed, fntime
 from nixt.utility import spl
-from nixt.workdir import getident
+
+
+
+from nixbot.configs import Cfg
+from nixbot.locater import find, last
+from nixbot.persist import write
+from nixbot.workdir import getident
 
 
 def init():

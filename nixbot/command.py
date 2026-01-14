@@ -7,10 +7,12 @@
 import inspect
 
 
-from .brokers import getobj
-from .methods import parse
+from nixt.brokers import getobj
+from nixt.methods import parse
+from nixt.utility import spl
+
+
 from .package import getmod
-from .utility import spl
 
 
 class Commands:

@@ -9,8 +9,11 @@ import unittest
 sys.path.insert(0, ".")
 
 
-from nixbot.defines import Object, Workdir, write
-from nixbot.persist import Cache
+from nixt.objects import Object
+
+
+from nixbot.persist import Cache, write
+from nixbot.workdir import Workdir
 
 
 import nixbot.persist
@@ -21,14 +24,10 @@ Workdir.wdr = '.test'
 
 ATTRS1 = (
     'Cache',
-    'attrs',
-    'cache',
-    'find',
-    'fns',
-    'last',
-    'put',
+    'addpath',
+    'getpath',
     'read',
-    'sync',
+    'syncpath',
     'write'
 )
 
@@ -56,4 +55,5 @@ class TestStorage(unittest.TestCase):
     def test_save(self):
         obj = Object()
         opath = write(obj)
+        print(opath)
         self.assertTrue(os.path.exists(opath))

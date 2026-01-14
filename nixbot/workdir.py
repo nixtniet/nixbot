@@ -8,7 +8,7 @@ import os
 import pathlib
 
 
-from .utility import ident
+from nixt.utility import ident
 
 
 class Workdir:

@@ -15,15 +15,17 @@ sys.path.insert(0, os.getcwd())
 
 
 from nixt.clients import Client
-from nixt.command import Commands, addcmd, command, scanner
-from nixt.configs import Cfg
 from nixt.loggers import level
 from nixt.message import Message
 from nixt.methods import parse
-from nixt.package import adddir, init, modules
 from nixt.serials import dumps
 from nixt.utility import forever, where, wrapped
-from nixt.workdir import Workdir, moddir, pidfile, pidname, skel
+
+
+from nixbot.command import Commands, addcmd, command, scanner
+from nixbot.configs import Cfg
+from nixbot.package import adddir, init, modules
+from nixbot.workdir import Workdir, moddir, pidfile, pidname, skel
 
 
 import nixbot.modules

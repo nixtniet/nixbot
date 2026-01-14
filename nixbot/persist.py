@@ -8,9 +8,11 @@ import json
 import threading
 
 
-from .objects import update
-from .serials import dump, load
-from .utility import cdir
+from nixt.objects import update
+from nixt.serials import dump, load
+from nixt.utility import cdir
+
+
 from .workdir import getident
 
 
