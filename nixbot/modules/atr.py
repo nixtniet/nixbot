@@ -1,10 +1,8 @@
 # This file is placed in the Public Domain.
 
 
-"fields"
-
-
-from nixbot.defines import attrs, kinds
+from nixt.locater import attrs
+from nixt.workdir import kinds
 
 
 def atr(event):
@@ -17,6 +15,6 @@ def atr(event):
         return
     itms = attrs(event.args[0])
     if not itms:
-        event.reply("no fields")
+        event.reply("no attributes")
     else:
         event.reply(",".join(itms))

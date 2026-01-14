@@ -3,30 +3,34 @@
 
 import logging
 import random
+import threading
 import time
 
 
-from nixbot.defines import NoDate, Object, Timed
-from nixbot.defines import extract, hour, items, today, write
-from nixbot.defines import broker, elapsed, day, getpath, last, like
+from nixt.brokers import getobj, likeobj
+from nixt.locater import last
+from nixt.objects import Object, items
+from nixt.persist import write
+from nixt.timings import NoDate, Timed, day, elapsed, extract, hour, today
+from nixt.workdir import getident
 
 
 rand = random.SystemRandom()
 
 
 def init():
-    Timers.path = last(Timers.timers) or getpath(Timers.timers)
+    Timers.path = last(Timers.timers) or getident(Timers.timers)
     remove = []
     for tme, args in items(Timers.timers):
         if not args:
             continue
         orig, channel, txt = args
-        for origin in like(orig):
+        for origin in likeobj(orig):
             if not origin:
                 continue
             diff = float(tme) - time.time()
             if diff > 0:
-                bot = broker(origin)
+                bot = getobj(origin)
                 timer = Timed(diff, bot.say, channel, txt)
                 timer.start()
             else:
@@ -47,14 +51,17 @@ class Timers(Object):
 
     path = ""
     timers = Timer()
-
+    lock = threading.RLock()
+    
     @staticmethod
     def add(tme, orig, channel,  txt):
-        setattr(Timers.timers, str(tme), (orig, channel, txt))
+        with Timers.lock:
+            setattr(Timers.timers, str(tme), (orig, channel, txt))
 
     @staticmethod
     def delete(tme):
-         delattr(Timers.timers, str(tme))
+        with Timers.lock:
+            delattr(Timers.timers, str(tme))
 
 
 def tmr(event):
@@ -97,8 +104,8 @@ def tmr(event):
     diff = target - time.time()
     txt = " ".join(event.args[1:])
     Timers.add(target, event.orig, event.channel, txt)
-    write(Timers.timers, Timers.path or getpath(Timers.timers))
-    bot = broker(event.orig)
+    write(Timers.timers, Timers.path or getident(Timers.timers))
+    bot = getobj(event.orig)
     timer = Timed(diff, bot.say, event.orig, event.channel, txt)
     timer.start()
     event.reply("ok " + elapsed(diff))

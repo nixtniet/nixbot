@@ -4,7 +4,7 @@
 import time
 
 
-from nixbot.defines import elapsed
+from nixt.timings import elapsed
 
 
 STARTTIME = time.time()

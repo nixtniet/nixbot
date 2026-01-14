@@ -19,9 +19,16 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 
 
-from nixbot.defines import Config, Object, Repeater
-from nixbot.defines import elapsed, fmt, find, last, launch, objs
-from nixbot.defines import fntime, getpath, spl, update, write
+from nixt.brokers import objs
+from nixt.configs import Cfg
+from nixt.locater import find, last
+from nixt.methods import fmt
+from nixt.objects import Object, update
+from nixt.persist import write
+from nixt.threads import launch
+from nixt.timings import Repeater, elapsed, fntime
+from nixt.utility import spl
+from nixt.workdir import getident
 
 
 def init():
@@ -115,7 +122,7 @@ class Fetcher(Object):
                 result.append(fed)
             setattr(self.seen, feed.rss, urls)
             if not self.seenfn:
-                self.seenfn = getpath(self.seen)
+                self.seenfn = getident(self.seen)
             write(self.seen, self.seenfn)
         if silent:
             return counter
@@ -278,7 +285,7 @@ def cdata(line):
 
 def getfeed(url, items):
     result = [Object(), Object()]
-    if Config.debug or url in errors and (time.time() - errors[url]) < 600:
+    if Cfg.debug or url in errors and (time.time() - errors[url]) < 600:
         return result
     try:
         rest = geturl(url)
@@ -482,7 +489,7 @@ def rss(event):
 
 
 def syn(event):
-    if Config.debug:
+    if Cfg.debug:
         return
     fetcher = Fetcher()
     fetcher.start(False)
