@@ -9,10 +9,10 @@ import logging
 import time
 
 
-from ..brokers import objs
-from ..message import Message
-from ..objects import Object, construct, keys
-from ..timings import Repeater, elapsed
+from nixt.brokers import objs
+from nixt.message import Message
+from nixt.objects import Object, construct, keys
+from nixt.timings import Repeater, elapsed
 
 
 def init():

@@ -11,15 +11,17 @@ import threading
 import time
 
 
-from ..brokers import getobj
-from ..clients import Output
-from ..command import command
-from ..message import Message
-from ..methods import edit, fmt
-from ..objects import Object, keys
-from ..storage import last, write
-from ..threads import launch
-from ..utility import ident
+from nixt.brokers import getobj
+from nixt.clients import Output
+from nixt.message import Message
+from nixt.methods import edit, fmt
+from nixt.objects import Object, keys
+from nixt.threads import launch
+from nixt.utility import ident
+
+
+from nixbot.command import command
+from nixbot.storage import last, write
 
 
 NAME = "nixbot"

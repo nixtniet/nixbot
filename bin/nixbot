@@ -15,13 +15,15 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from nixbot.clients import Client
+from nixt.clients import Client
+from nixt.message import Message
+from nixt.methods import fmt, parse
+from nixt.objects import Config
+from nixt.utility import forever, level, wrapped
+
+
 from nixbot.command import Commands, addcmd, command, modules, scanner
-from nixbot.message import Message
-from nixbot.methods import fmt, parse
-from nixbot.objects import Config
 from nixbot.storage import persist
-from nixbot.utility import forever, level, wrapped
 
 
 import nixbot.modules as MODS

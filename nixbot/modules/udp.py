@@ -9,9 +9,9 @@ import threading
 import time
 
 
-from ..brokers import objs
-from ..objects import Object
-from ..threads import launch
+from nixt.brokers import objs
+from nixt.objects import Object
+from nixt.threads import launch
 
 
 DEBUG = False

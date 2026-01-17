@@ -1,8 +1,8 @@
 # This file is placed in the Public Domain.
 
 
-from ..brokers import objs
-from ..methods import fqn
+from nixt.brokers import objs
+from nixt.methods import fqn
 
 
 def flt(event):
