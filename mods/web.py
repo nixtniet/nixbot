@@ -10,12 +10,12 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
-from nixt.objects import Object
-from nixt.threads import launch
-from nixt.utility import where
+from nixbot.objects import Object
+from nixbot.threads import launch
+from nixbot.utility import where
 
 
-from nixbot.configs import Cfg
+DEBUG = False
 
 
 def init():
@@ -99,7 +99,7 @@ class HTTPHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if "favicon" in self.path:
             return
-        if Cfg.debug:
+        if DEBUG:
             return
         if self.path == "/":
             self.path = "index.html"

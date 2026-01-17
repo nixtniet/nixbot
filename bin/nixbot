@@ -27,6 +27,12 @@ from nixbot.utility import forever, level, wrapped
 import nixbot.modules as MODS
 
 
+try:
+    import mods as MODS2
+except ModuleNotFoundError:
+    MODS2 = None
+
+
 "defines"
 
 
@@ -202,7 +208,7 @@ def background():
     privileges()
     pidfile(pidname(Cfg.name))
     addcmd(cmd, mod, ver)
-    boot(MODS, inits=Cfg.init or "irc,rss")
+    boot(MODS, MODS2, inits=Cfg.init or "irc,rss")
     forever()
 
 
@@ -210,7 +216,7 @@ def console():
     "console script."
     import readline
     readline.redisplay()
-    boot(MODS)
+    boot(MODS, MODS2)
     addcmd(cmd, mod, ver)
     docmd(TXT)
     csl = Console()
@@ -222,7 +228,7 @@ def control():
     "cli script."
     if len(sys.argv) == 1:
         return
-    boot(MODS)
+    boot(MODS, MODS2)
     addcmd(cmd, mod, ver)
     docmd(TXT)
 
@@ -233,7 +239,7 @@ def service():
     banner()
     pidfile(pidname(Cfg.name))
     addcmd(cmd, mod, ver)
-    boot(MODS, inits=Cfg.init or "irc,rss")
+    boot(MODS, MODS2, inits=Cfg.init or "irc,rss")
     forever()
 
 

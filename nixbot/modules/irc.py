@@ -22,7 +22,7 @@ from ..threads import launch
 from ..utility import ident
 
 
-NAME = ".nixbot"
+NAME = "nixbot"
 
 
 lock = threading.RLock()

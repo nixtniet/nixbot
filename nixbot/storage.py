@@ -155,6 +155,11 @@ def syncpath(path, obj):
         addpath(path, obj)
 
 
+def workdir(path=""):
+    "return wokrkdir."
+    return os.path.join(Cache.workdir, path)    
+
+
 def write(obj, path=""):
     "write object to disk."
     with lock:
@@ -181,5 +186,6 @@ def __dir__():
         'skel',
         'strip',
         'syncpath',
+        'workdir',
         'write'
     )

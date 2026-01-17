@@ -10,12 +10,12 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
-from nixt.objects import Object
-from nixt.threads import launch
+from nixbot.objects import Object
+from nixbot.storage import kinds, workdir
+from nixbot.threads import launch
 
 
-from nixbot.configs import Cfg
-from nixbot.workdir import getstore, kinds
+DEBUG = False
 
 
 def init():
@@ -94,7 +94,7 @@ class RESTHandler(BaseHTTPRequestHandler):
                 txt += f'<a href="http://{Cfg.hostname}:{Cfg.port}/{fnm}">{fnm}</a><br>\n'
             self.send(html(txt.strip()))
             return
-        fnm = getstore() + self.path
+        fnm = workdir(self.path)
         fnm = os.path.abspath(fnm)
         if os.path.isdir(fnm):
             self.write_header("text/html")
