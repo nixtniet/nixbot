@@ -12,21 +12,26 @@ sys.path.insert(0, ".")
 from nixt.objects import Object
 
 
-from nixbot.persist import Cache, write
-from nixbot.workdir import Workdir
+from nixbot.storage import Cache, write
 
 
-import nixbot.persist
+import nixbot.storage
 
 
-Workdir.wdr = '.test'
+Cache.workdir = '.test'
 
 
 ATTRS1 = (
     'Cache',
     'addpath',
+    'find',
     'getpath',
+    'kinds',
+    'last',
+    'persist',
     'read',
+    'skel',
+    'strip',
     'syncpath',
     'write'
 )
@@ -45,7 +50,7 @@ class TestStorage(unittest.TestCase):
 
     def test_dirmodule(self):
         self.assertEqual(
-                         dir(nixbot.persist),
+                         dir(nixbot.storage),
                          list(ATTRS1)
                         )
 
@@ -56,4 +61,4 @@ class TestStorage(unittest.TestCase):
         obj = Object()
         opath = write(obj)
         print(opath)
-        self.assertTrue(os.path.exists(opath))
+        self.assertTrue(os.path.exists(os.path.join(Cache.workdir, "store", opath)))

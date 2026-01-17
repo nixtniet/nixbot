@@ -6,6 +6,7 @@
 
 
 import os
+import pathlib
 import sys
 import threading
 import time
@@ -14,37 +15,31 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from nixt.clients import Client
-from nixt.loggers import level
-from nixt.message import Message
-from nixt.methods import parse
-from nixt.serials import dumps
-from nixt.utility import forever, where, wrapped
+from nixbot.clients import Client
+from nixbot.command import Commands, addcmd, command, modules, scanner
+from nixbot.message import Message
+from nixbot.methods import fmt, parse
+from nixbot.objects import Config
+from nixbot.storage import persist
+from nixbot.utility import forever, level, wrapped
 
 
-from nixbot.command import Commands, addcmd, command, scanner
-from nixbot.configs import Cfg
-from nixbot.package import adddir, init, modules
-from nixbot.workdir import Workdir, moddir, pidfile, pidname, skel
-
-
-import nixbot.modules
+import nixbot.modules as MODS
 
 
 "defines"
 
 
-TARGET = nixbot.modules
 TXT = " ".join(sys.argv[1:])
 
 
-"config"
-
-
-Cfg.ignore = "udp"
+Cfg = Config()
+Cfg.debug = False
+Cfg.init = ""
 Cfg.level = "info"
-Cfg.name = "nixbot" 
+Cfg.name = "nixbot"
 Cfg.version = 453
+Cfg.wdr = os.path.expanduser(f"~/.{Cfg.name}")
 
 
 "clients"
@@ -63,34 +58,20 @@ class Line(Client):
 
 class Console(Line):
 
-    def __init__(self):
-        super().__init__()
-        self.done = threading.Event()
-        self.done.set()
-
     def callback(self, event):
         "wait for callback result."
         if not event.text:
             event.ready()
-            self.done.set()
             return
         super().callback(event)
-        event.wait()
-        self.done.set()
 
     def poll(self):
         "poll for an event."
-        self.done.wait()
-        self.done.clear()
         evt = Message()
         evt.text = input("> ")
         evt.kind = "command"
+        evt.waiting = True
         return evt
-
-    def raw(self, txt):
-        "add newline if waiting."
-        if not self.done.is_set():
-            super().raw(txt)
 
 
 "utility"
@@ -99,30 +80,35 @@ class Console(Line):
 def banner():
     "hello."
     tme = time.ctime(time.time()).replace("  ", " ")
-    print("%s %s %s since %s (%s)" % (
+    print("%s %s since %s %s in %s" % (
         Cfg.name.upper(),
         Cfg.version,
-        Cfg.opts.strip().upper(),
         tme,
-        Cfg.level.upper() or 'INFO'
+        Cfg.level.upper(),
+        Cfg.wdr
     ))
     sys.stdout.flush()
 
 
-def boot(cfg):
+def boot(*pkgs, inits=""):
     "in the beginning."
-    Workdir.wdr = Workdir.wdr or os.path.expanduser(f"~/.{cfg.name}")
-    skel()
-    parse(cfg, TXT)
-    level(cfg.sets.level or "info")
-    adddir(f"{Cfg.name}.modules", where(TARGET))
-    adddir("modules", moddir())
-    if os.path.exists('examples'):
-        adddir("modz", "examples")
-    if check("m"):
-        if os.path.exists('mods'):
-            adddir("mods", "mods")
-
+    parse(Cfg, TXT)
+    Cfg.init = Cfg.sets.init or Cfg.init or ""
+    Cfg.level = Cfg.sets.level or Cfg.level or "info"
+    Cfg.wdr = Cfg.sets.wdr or Cfg.wdr or ""
+    level(Cfg.level)
+    if "v" in Cfg.opts:
+        banner()
+    if 'p' not in Cfg.opts:
+        persist(Cfg.wdr)
+    if 'a' in Cfg.opts:
+        mds = modules(*pkgs)
+    else:
+        mds = inits or Cfg.init
+    for mod in scanner(*pkgs, inits=mds, wait="w" in Cfg.opts):
+        mod.DEBUG = Cfg.debug
+        mod.NAME = Cfg.name
+            
 
 def check(text):
     "check for options."
@@ -133,6 +119,18 @@ def check(text):
                if char in arg:
                    return True
         return False
+
+
+def docmd(text):
+    "parse text for command and run it."
+    cli = Line()
+    for txt in text.split(" ! "):
+        evt = Message()
+        evt.orig = repr(cli)
+        evt.text = txt
+        evt.type = "command"
+        command(evt)
+        evt.wait()
 
  
 def daemon(verbose=False, nochdir=False):
@@ -153,6 +151,21 @@ def daemon(verbose=False, nochdir=False):
     os.umask(0)
     os.chdir("/")
     os.nice(10)
+
+
+def pidfile(filename):
+    "write pidfile."
+    if os.path.exists(filename):
+        os.unlink(filename)
+    path2 = pathlib.Path(filename)
+    path2.parent.mkdir(parents=True, exist_ok=True)
+    with open(filename, "w", encoding="utf-8") as fds:
+        fds.write(str(os.getpid()))
+
+
+def pidname(name: str):
+    "name of pidfile."
+    return os.path.join(Cfg.wdr, f"{name}.pid")
 
 
 def privileges():
@@ -187,11 +200,9 @@ def background():
     "background script."
     daemon()
     privileges()
-    boot(Cfg)
     pidfile(pidname(Cfg.name))
     addcmd(cmd, mod, ver)
-    scanner(modules(Cfg.ignore))
-    init(modules(Cfg.ignore))
+    boot(MODS, inits=Cfg.init or "irc,rss")
     forever()
 
 
@@ -199,15 +210,9 @@ def console():
     "console script."
     import readline
     readline.redisplay()
-    boot(Cfg)
-    if check('v'):
-        banner()
-    scanner(modules(Cfg.ignore))
+    boot(MODS)
     addcmd(cmd, mod, ver)
-    mds = Cfg.sets.init
-    if not mds and check('a'):
-        mds = modules(Cfg.ignore)
-    init(mds, check("w"))
+    docmd(TXT)
     csl = Console()
     csl.start()
     forever()
@@ -217,33 +222,18 @@ def control():
     "cli script."
     if len(sys.argv) == 1:
         return
-    boot(Cfg)
-    if check('t'):
-        Commands.names = {}
-    if check("m") or not Commands.names:
-        Commands.names = {}
-        scanner(modules(Cfg.ignore))
-    if check("t"):
-        print(dumps(Commands.names, indent=4))
-    addcmd(cmd, mod, srv, ver)
-    cli = Line()
-    evt = Message()
-    evt.orig = repr(cli)
-    evt.text = " ".join(sys.argv[1:])
-    evt.type = "command"
-    command(evt)
-    evt.wait()
+    boot(MODS)
+    addcmd(cmd, mod, ver)
+    docmd(TXT)
 
 
 def service():
     "service script."
     privileges()
-    boot(Cfg)
     banner()
     pidfile(pidname(Cfg.name))
     addcmd(cmd, mod, ver)
-    scanner(modules(Cfg.ignore))
-    init(modules(Cfg.ignore))
+    boot(MODS, inits=Cfg.init or "irc,rss")
     forever()
 
 
@@ -257,63 +247,12 @@ def cmd(event):
 
 def mod(event):
     "list available commands."
-    event.reply(modules())
-
-
-def srv(event):
-    "generate systemd service file."
-    import getpass
-    name = getpass.getuser()
-    event.reply(SYSTEMD % (Cfg.name.upper(), name, name, name, Cfg.name))
+    event.reply(",".join([x[:-3] for x in os.listdir(MODS.__path__[0]) if not x.startswith("__")]))
 
 
 def ver(event):
     "show version."
-    event.reply(f"{Cfg.name.upper()} {Cfg.version} {Cfg.opts.upper()}")
-
-
-"data"
-
-
-SYSTEMD = """[Unit]
-Description=%s
-After=multi-user.target
-
-[Service]
-Type=simple
-User=%s
-Group=%s
-ExecStart=/home/%s/.local/bin/%s -s
-
-[Install]
-WantedBy=multi-user.target"""
-
-
-Commands.names = {
-    "atr": "atr",
-    "flt": "flt",
-    "fnd": "fnd",
-    "cfg": "irc",
-    "mre": "irc",
-    "pwd": "irc",
-    "log": "log",
-    "lst": "lst",
-    "dpl": "rss",
-    "exp": "rss",
-    "imp": "rss",
-    "nme": "rss",
-    "rem": "rss",
-    "res": "rss",
-    "rss": "rss",
-    "syn": "rss",
-    "lou": "sil",
-    "sil": "sil",
-    "dne": "tdo",
-    "tdo": "tdo",
-    "thr": "thr",
-    "tmr": "tmr",
-    "upt": "upt"
-}
+    event.reply(f"{Cfg.name.upper()} {Cfg.version}")
 
 
 "runtime"

@@ -8,7 +8,7 @@ import time
 
 from nixt.methods import fmt
 from nixt.objects import Object, keys, update
-from nixt.timings import date, elapsed
+from nixt.timings import MONTH, date, elapsed
 
 
 from nixbot.locater import find

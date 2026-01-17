@@ -7,7 +7,7 @@
 import unittest
 
 
-from nixbot.persist import Cache
+from nixbot.storage import Cache
 
 
 class TestPersist(unittest.TestCase):

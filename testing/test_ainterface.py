@@ -18,23 +18,18 @@ import nixt
 import nixbot
 
 
-import nixt.brokers
-import nixt.clients
-import nixt.handler
-import nixt.message
-import nixt.methods
-import nixt.objects
-import nixt.serials
-import nixt.threads
-import nixt.timings
-import nixt.utility
-
-
+import nixbot.brokers
+import nixbot.clients
 import nixbot.command
-import nixbot.package
-import nixbot.persist
-import nixbot.workdir
-
+import nixbot.handler
+import nixbot.message
+import nixbot.methods
+import nixbot.objects
+import nixbot.serials
+import nixbot.storage
+import nixbot.threads
+import nixbot.timings
+import nixbot.utility
 
 
 
@@ -49,13 +44,11 @@ PACKAGE = [
     'message',
     'methods',
     'objects',
-    'package',
-    'persist',
     'serials',
+    'storage',
     'threads',
     'timings',
     'utility',
-    'workdir'
 ]
 
 

@@ -2,6 +2,8 @@
 # This file is placed in the Public Domain.
 
 
+import importlib.util
+import inspect
 import os
 import queue
 import shutil
@@ -13,32 +15,35 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from nixt.clients import Output
-from nixt.message import Message
-from nixt.methods import fmt, parse
-from nixt.threads import launch
-from nixt.timings import elapsed
-from nixt.utility import where, wrapped
-
-
+from nixbot.brokers import getobj
+from nixbot.clients import Output
 from nixbot.command import command, scanner
-from nixbot.configs import Cfg
-from nixbot.package import adddir, modules
-from nixbot.workdir import Workdir, skel
+from nixbot.message import Message
+from nixbot.methods import fmt, parse
+from nixbot.objects import Config
+from nixbot.storage import persist, skel
+from nixbot.threads import launch
+from nixbot.timings import elapsed
+from nixbot.utility import wrapped
 
 
-import nixbot.modules
+import nixbot.modules as MODS
 
+
+Cfg = Config()
 
 
 Cfg.debug = True
 Cfg.level = "info"
-Cfg.name = "nixt"
+Cfg.name = "nixbot"
 Cfg.version = 3
-Workdir.wdr = ".test"
+Cfg.wdr = ".test"
 
 
 events = queue.Queue()
+
+
+"clients"
 
 
 class CLI(Output):
@@ -121,7 +126,64 @@ def payload(todo):
             events.put(evt)
 
 
-"defines"
+"runtime"
+
+
+def wrap(func):
+    "restore console."
+    import termios
+    old = None
+    try:
+        old = termios.tcgetattr(sys.stdin.fileno())
+    except termios.error:
+        pass
+    try:
+        wrapped(func)
+    finally:
+        pass
+    if old:
+        termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old)
+
+
+def main():
+    if "p" not in Cfg.opts and os.path.exists(Cfg.wdr):
+        shutil.rmtree(Cfg.wdr)
+    parse(Cfg, " ".join(sys.argv[1:]))
+    Cfg.wdr = Cfg.sets.wdr or ".test"
+    persist(Cfg.wdr)
+    for mod in scanner(MODS):
+        mod.DEBUG = True
+    if "v" in Cfg.opts:
+        banner(Cfg.name, Cfg.version)
+    if "z" in Cfg.opts:
+        Pool.init(CLI, os.cpu_count())
+    else:
+        Pool.init(CLI, 1)
+    starttime = time.time()
+    nrs = Cfg.index or 1
+    for _x in range(nrs):
+        payload(pre)
+    for _x in range(nrs):
+        payload(examples)
+    for _x in range(nrs):
+        payload(post)
+    launch(consume)
+    nrevents = events.qsize()
+    try:
+        events.join()
+    except (KeyboardInterrupt, EOFError):
+        pass
+    endtime = time.time()
+    lap = elapsed(endtime-starttime)
+    percall = (endtime-starttime)/nrevents
+    nrs = events.qsize()
+    if "v" in Cfg.opts:
+        print(f"{fmt(Cfg)}")
+        print(f"{nrs} events left.")
+        print(f"total: {lap} nrs: {nrevents} call: %.6fs" % percall)
+
+
+"date"
 
 
 examples = {
@@ -171,60 +233,7 @@ post = {
 }
 
 
-"runtime"
-
-
-def wrap(func):
-    "restore console."
-    import termios
-    old = None
-    try:
-        old = termios.tcgetattr(sys.stdin.fileno())
-    except termios.error:
-        pass
-    try:
-        wrapped(func)
-    finally:
-        pass
-    if old:
-        termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old)
-
-
-def main():
-    if os.path.exists(Workdir.wdr):
-        shutil.rmtree(Workdir.wdr)
-    skel()
-    parse(Cfg, " ".join(sys.argv[1:]))
-    adddir(f"{Cfg.name}.modules", os.path.join(where(nixbot.modules), "modules"))
-    scanner(modules())
-    if "v" in Cfg.opts:
-        banner(Cfg.name, Cfg.version)
-    if "z" in Cfg.opts:
-        Pool.init(CLI, os.cpu_count())
-    else:
-        Pool.init(CLI, 1)
-    starttime = time.time()
-    nrs = Cfg.index or 1
-    for _x in range(nrs):
-        payload(pre)
-    for _x in range(nrs):
-        payload(examples)
-    for _x in range(nrs):
-        payload(post)
-    launch(consume)
-    nrevents = events.qsize()
-    try:
-        events.join()
-    except (KeyboardInterrupt, EOFError):
-        pass
-    endtime = time.time()
-    lap = elapsed(endtime-starttime)
-    percall = (endtime-starttime)/nrevents
-    nrs = events.qsize()
-    if "v" in Cfg.opts:
-        print(f"{fmt(Cfg)}")
-        print(f"{nrs} events left.")
-        print(f"total: {lap} nrs: {nrevents} call: %.6fs" % percall)
+"trampoline"
 
 
 if __name__ == "__main__":
