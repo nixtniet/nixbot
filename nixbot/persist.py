@@ -10,11 +10,11 @@ import pathlib
 import threading
 
 
-from nixt.methods import deleted, fqn, search
-from nixt.objects import Object, keys, update
-from nixt.serials import dump, load
-from nixt.timings import fntime
-from nixt.utility import cdir, ident
+from nixbot.methods import deleted, fqn, search
+from nixbot.objects import Object, keys, update
+from nixbot.serials import dump, load
+from nixbot.timings import fntime
+from nixbot.utility import cdir, ident
 
 
 lock = threading.RLock()
@@ -155,11 +155,6 @@ def syncpath(path, obj):
         addpath(path, obj)
 
 
-def workdir(path=""):
-    "return wokrkdir."
-    return os.path.join(Cache.workdir, path)    
-
-
 def write(obj, path=""):
     "write object to disk."
     with lock:
@@ -186,6 +181,5 @@ def __dir__():
         'skel',
         'strip',
         'syncpath',
-        'workdir',
         'write'
     )

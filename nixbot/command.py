@@ -9,10 +9,10 @@ import inspect
 import os
 
 
-from nixt.brokers import getobj
-from nixt.methods import parse
-from nixt.threads import launch
-from nixt.utility import spl
+from nixbot.brokers import getobj
+from nixbot.methods import parse
+from nixbot.threads import launch
+from nixbot.utility import spl
 
 
 class Commands:

@@ -1,10 +1,9 @@
 # This file is placed in the Public Domain.
 
 
-"client event handler"
+"client callbacks"
 
 
-import logging
 import queue
 import threading
 import _thread
@@ -18,7 +17,7 @@ from .threads import launch
 class Client(Handler):
 
     def __init__(self):
-        super().__init__()
+        Handler.__init__(self)
         self.iqueue = queue.Queue()
         self.olock = threading.RLock()
         self.silent = True
@@ -41,20 +40,6 @@ class Client(Handler):
         "say called by display."
         self.say(channel, text)
 
-    def input(self):
-        "input loop."
-        while True:
-            event = self.poll()
-            if not event or self.stopped.is_set():
-                break
-            self.put(event)
-            if event.waiting:
-                event.wait()
-
-    def poll(self):
-        "return event."
-        return self.iqueue.get()
-
     def raw(self, text):
         "raw output."
         raise NotImplementedError("raw")
@@ -63,18 +48,25 @@ class Client(Handler):
         "say text in channel."
         self.raw(text)
 
-    def start(self):
-        "start client loop."
-        super().start()
-        launch(self.input)
 
-    def stop(self):
-        "stop client loop."
-        self.stopped.set()
-        super().stop()
+class Console(Client):
+
+    def loop(self):
+        "input loop."
+        while True:
+            event = self.poll()
+            if not event or self.stopped.is_set():
+                break
+            event.orig = repr(self)
+            self.callback(event)
+            #event.wait()
+
+    def poll(self):
+        "return event."
+        return self.iqueue.get()
 
 
-class Output(Client):
+class Output(Console):
 
     def __init__(self):
         super().__init__()
@@ -112,5 +104,6 @@ class Output(Client):
 def __dir__():
     return (
         'Client',
+        'Console',
         'Output'
     )
