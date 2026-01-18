@@ -2,8 +2,6 @@
 # This file is placed in the Public Domain.
 
 
-import importlib.util
-import inspect
 import os
 import queue
 import shutil
@@ -15,18 +13,16 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from nixt.brokers import getobj
-from nixt.clients import Output
-from nixt.message import Message
-from nixt.methods import fmt, parse
-from nixt.objects import Config
-from nixt.threads import launch
-from nixt.timings import elapsed
-from nixt.utility import wrapped
-
-
-from nixbot.command import command, scanner
-from nixbot.storage import persist, skel
+from nixbot.caching import persist
+from nixbot.command import command
+from nixbot.message import Message
+from nixbot.methods import fmt, parse
+from nixbot.handler import Client
+from nixbot.objects import Config
+from nixbot.package import adddir, scanner
+from nixbot.threads import launch
+from nixbot.timings import elapsed
+from nixbot.utility import wrapped
 
 
 import nixbot.modules as MODS
@@ -48,10 +44,10 @@ events = queue.Queue()
 "clients"
 
 
-class CLI(Output):
+class CLI(Client):
 
     def __init__(self):
-        Output.__init__(self)
+        Client.__init__(self)
         self.register("command", command)
 
     def raw(self, txt):
@@ -151,9 +147,10 @@ def main():
     if "p" not in Cfg.opts and os.path.exists(Cfg.wdr):
         shutil.rmtree(Cfg.wdr)
     parse(Cfg, " ".join(sys.argv[1:]))
-    Cfg.wdr = Cfg.sets.wdr or ".test"
     persist(Cfg.wdr)
-    for mod in scanner(MODS):
+    adddir("modules", MODS.__path__[0])
+    adddir('mods', 'mods')
+    for mod in scanner():
         mod.DEBUG = True
     if "v" in Cfg.opts:
         banner(Cfg.name, Cfg.version)

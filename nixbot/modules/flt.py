@@ -1,12 +1,12 @@
 # This file is placed in the Public Domain.
 
 
-from nixt.brokers import objs
-from nixt.methods import fqn
+from nixbot.brokers import getobjs
+from nixbot.methods import fqn
 
 
 def flt(event):
-    clts = list(objs("announce"))
+    clts = list(getobjs("announce"))
     if event.args:
         index = int(event.args[0])
         if index < len(clts):

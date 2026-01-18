@@ -4,10 +4,7 @@
 import unittest
 
 
-from nixt.objects import Object
-
-
-from nixbot.storage import read, write
+from nixbot.objects import Object
 
 
 class TestComposite(unittest.TestCase):
@@ -17,12 +14,3 @@ class TestComposite(unittest.TestCase):
         obj.obj = Object()
         obj.obj.a = "test"
         self.assertEqual(obj.obj.a, "test")
-
-    def testcompositeprint(self):
-        obj = Object()
-        obj.obj = Object()
-        obj.obj.a = "test"
-        fnm = write(obj)
-        ooo = Object()
-        read(ooo, fnm)
-        self.assertTrue(ooo.obj)

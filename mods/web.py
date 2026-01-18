@@ -10,12 +10,12 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
-from nixt.objects import Object
-from nixt.threads import launch
-from nixt.utility import where
+from nixbot.objects import Object
+from nixbot.threads import launch
+from nixbot.utility import where
 
 
-DEBUG = False
+DEBUG = True
 
 
 def init():

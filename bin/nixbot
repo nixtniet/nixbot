@@ -8,31 +8,23 @@
 import os
 import pathlib
 import sys
-import threading
 import time
 
 
 sys.path.insert(0, os.getcwd())
 
 
-from nixt.clients import Client
-from nixt.message import Message
-from nixt.methods import fmt, parse
-from nixt.objects import Config
-from nixt.utility import forever, level, wrapped
+from nixbot.caching import persist
+from nixbot.command import Commands, addcmd, command
+from nixbot.handler import Console
+from nixbot.message import Message
+from nixbot.methods import parse
+from nixbot.objects import Config
+from nixbot.package import adddir, addpkg, modules, scanner
+from nixbot.utility import forever, level, wrapped
 
 
-from nixbot.command import Commands, addcmd, command, modules, scanner
-from nixbot.storage import persist
-
-
-import nixbot.modules as MODS
-
-
-try:
-    import mods as MODS2
-except ModuleNotFoundError:
-    MODS2 = None
+from nixbot import modules as MODS
 
 
 "defines"
@@ -42,6 +34,8 @@ TXT = " ".join(sys.argv[1:])
 
 
 Cfg = Config()
+
+
 Cfg.debug = False
 Cfg.init = ""
 Cfg.level = "info"
@@ -53,7 +47,7 @@ Cfg.wdr = os.path.expanduser(f"~/.{Cfg.name}")
 "clients"
 
 
-class Line(Client):
+class Line(Console):
 
     def __init__(self):
         super().__init__()
@@ -64,7 +58,8 @@ class Line(Client):
         print(text.encode('utf-8', 'replace').decode("utf-8"))
 
 
-class Console(Line):
+class Term(Line):
+
 
     def callback(self, event):
         "wait for callback result."
@@ -72,13 +67,13 @@ class Console(Line):
             event.ready()
             return
         super().callback(event)
+        event.wait()
 
     def poll(self):
         "poll for an event."
         evt = Message()
         evt.text = input("> ")
         evt.kind = "command"
-        evt.waiting = True
         return evt
 
 
@@ -105,15 +100,18 @@ def boot(*pkgs, inits=""):
     Cfg.level = Cfg.sets.level or Cfg.level or "info"
     Cfg.wdr = Cfg.sets.wdr or Cfg.wdr or ""
     level(Cfg.level)
+    addpkg(MODS)
+    if "m" in Cfg.opts:
+        adddir("mods", "mods")
     if "v" in Cfg.opts:
         banner()
     if 'p' not in Cfg.opts:
         persist(Cfg.wdr)
     if 'a' in Cfg.opts:
-        mds = modules(*pkgs)
+        mds = modules()
     else:
         mds = inits or Cfg.init
-    for mod in scanner(*pkgs, inits=mds, wait="w" in Cfg.opts):
+    for mod in scanner(inits=mds, wait="w" in Cfg.opts):
         mod.DEBUG = Cfg.debug
         mod.NAME = Cfg.name
             
@@ -210,7 +208,7 @@ def background():
     privileges()
     pidfile(pidname(Cfg.name))
     addcmd(cmd, mod, ver)
-    boot(MODS, MODS2, inits=Cfg.init or "irc,rss")
+    boot(MODS, inits=Cfg.init or "irc,rss")
     forever()
 
 
@@ -218,10 +216,10 @@ def console():
     "console script."
     import readline
     readline.redisplay()
-    boot(MODS, MODS2)
+    boot(MODS)
     addcmd(cmd, mod, ver)
     docmd(TXT)
-    csl = Console()
+    csl = Term()
     csl.start()
     forever()
 
@@ -230,7 +228,7 @@ def control():
     "cli script."
     if len(sys.argv) == 1:
         return
-    boot(MODS, MODS2)
+    boot(MODS)
     addcmd(cmd, mod, ver)
     docmd(TXT)
 
@@ -241,7 +239,7 @@ def service():
     banner()
     pidfile(pidname(Cfg.name))
     addcmd(cmd, mod, ver)
-    boot(MODS, MODS2, inits=Cfg.init or "irc,rss")
+    boot(MODS, inits=Cfg.init or "irc,rss")
     forever()
 
 

@@ -4,10 +4,10 @@
 import unittest
 
 
-from nixt.brokers import Broker
-from nixt.clients import Client
-from nixt.objects import update, values
-from nixt.serials import dumps, loads
+from nixbot.brokers import Broker
+from nixbot.handler import Client
+from nixbot.objects import Object, update, values
+from nixbot.serials import dumps, loads
 
 
 class TestBroker(unittest.TestCase):

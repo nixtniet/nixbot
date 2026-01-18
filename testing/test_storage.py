@@ -9,13 +9,11 @@ import unittest
 sys.path.insert(0, ".")
 
 
-from nixt.objects import Object
+from nixbot.caching import Cache, write
+from nixbot.objects import Object
 
 
-from nixbot.storage import Cache, write
-
-
-import nixbot.storage
+import nixbot.caching
 
 
 Cache.workdir = '.test'
@@ -33,6 +31,7 @@ ATTRS1 = (
     'skel',
     'strip',
     'syncpath',
+    'workdir',
     'write'
 )
 
@@ -50,7 +49,7 @@ class TestStorage(unittest.TestCase):
 
     def test_dirmodule(self):
         self.assertEqual(
-                         dir(nixbot.storage),
+                         dir(nixbot.caching),
                          list(ATTRS1)
                         )
 

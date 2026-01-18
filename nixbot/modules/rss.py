@@ -19,15 +19,13 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 
 
-from nixt.brokers import objs
-from nixt.methods import fmt, fqn
-from nixt.objects import Object, update
-from nixt.threads import launch
-from nixt.timings import Repeater, elapsed, fntime
-from nixt.utility import ident, spl
-
-
-from nixbot.storage import find, last, write
+from nixbot.brokers import getobjs
+from nixbot.caching import find, last, write
+from nixbot.methods import fmt, fqn
+from nixbot.objects import Object, update
+from nixbot.threads import launch
+from nixbot.timings import Repeater, elapsed, fntime
+from nixbot.utility import ident, spl
 
 
 DEBUG = False
@@ -139,7 +137,7 @@ class Fetcher(Object):
             txt = f"[{feedname}] "
         for obj in result:
             txt2 = txt + self.display(obj)
-            for bot in objs("announce"):
+            for bot in getobjs("announce"):
                 bot.announce(txt2)
         return counter
 

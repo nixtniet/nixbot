@@ -14,41 +14,31 @@ import unittest
 sys.path.insert(0, os.getcwd())
 
 
-import nixt
 import nixbot
-
-
 import nixbot.brokers
-import nixbot.clients
-import nixbot.command
 import nixbot.handler
 import nixbot.message
 import nixbot.methods
 import nixbot.objects
 import nixbot.serials
-import nixbot.storage
 import nixbot.threads
 import nixbot.timings
 import nixbot.utility
 
 
-
-from nixt.objects import *
+from nixbot.objects import *
 
 
 PACKAGE = [
     'brokers',
-    'clients',
-    'command',
     'handler',
     'message',
     'methods',
     'objects',
     'serials',
-    'storage',
     'threads',
     'timings',
-    'utility',
+    'utility'
 ]
 
 
@@ -85,16 +75,17 @@ METHODS = [
 
 
 class TestInterface(unittest.TestCase):
+
     def test_package(self):
         okd = True
         for mod in PACKAGE:
-            mod1 = getattr(nixt, mod, None)
+            mod1 = getattr(nixbot, mod, None)
             if not mod1:
-                mod1 = getattr(nixbot, mod, None)
-                if not mod1:
-                    okd = False
-                    print(mod)
-                    break
+                mod1 = getattr(nixt, mod, None)
+            if not mod1:
+                okd = False
+                print(mod)
+                break
         self.assertTrue(okd)
 
     def test_objects(self):
