@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nixbot"
-version = "180"
+version = "181"
 authors = [
     {name = "Bart Thate", email = "nixtniet@gmail.com" },
 ]
@@ -33,7 +33,13 @@ classifiers=[
 packages = [
     'nixbot',
     'nixbot.modules',
-    'nixbot.network',
     'nixbot.nucleus'
 ]
-include-package-data = false
+include-package-data = true
+
+
+[tool.setuptools.package-data]
+"nixbot.nucleus" = ["*"]
+"nixbot.nucleus.pdf" = ["*"]
+"nixbot.nucleus._images" = ["*"]
+"nixbot.nucleus._static" = ["*"]

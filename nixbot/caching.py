@@ -4,20 +4,23 @@
 "persistence through storage"
 
 
+import datetime
 import json
 import os
 import pathlib
 import threading
+import time
 
 
-from nixbot.methods import deleted, fqn, search
-from nixbot.objects import Object, keys, update
-from nixbot.serials import dump, load
-from nixbot.timings import fntime
-from nixbot.utility import ident
+from .methods import search
+from .objects import Object, fqn, items, keys, update
+from .serials import dump, load
 
 
 lock = threading.RLock()
+
+
+"cache"
 
 
 class Cache:
@@ -44,60 +47,33 @@ def syncpath(path, obj):
         addpath(path, obj)
 
 
-"workdir"
+"storage"
 
 
-def persist(path):
-    "enable writing to disk."
-    Cache.workdir = path
-    skel()
+def read(obj, path):
+    "read object from path."
+    with lock:
+        pth = os.path.join(Cache.workdir, "store", path)
+        with open(pth, "r", encoding="utf-8") as fpt:
+            try:
+                update(obj, load(fpt))
+            except json.decoder.JSONDecodeError as ex:
+                ex.add_note(path)
+                raise ex
 
 
-def kinds():
-    "show kind on objects in cache."
-    return os.listdir(os.path.join(Cache.workdir, "store"))
 
-def long(name):
-    "expand to fqn."
-    split = name.split(".")[-1].lower()
-    res = name
-    for names in kinds():
-        if split == names.split(".")[-1].lower():
-            res = names
-            break
-    return res
-
-
-def skel():
-    "create directories."
-    if not Cache.workdir:
-        return
-    path = os.path.abspath(Cache.workdir)
-    workpath = os.path.join(path, "store")
-    pth = pathlib.Path(workpath)
-    pth.mkdir(parents=True, exist_ok=True)
-    modpath = os.path.join(path, "mods")
-    pth = pathlib.Path(modpath)
-    pth.mkdir(parents=True, exist_ok=True)
-
-
-def workdir():
-    "return workdir."
-    return Cache.workdir
-
-
-"utility"
-
-
-def cdir(path):
-    "create directory."
-    pth = pathlib.Path(path)
-    pth.parent.mkdir(parents=True, exist_ok=True)
-
-
-def strip(path):
-    "strip filename from path."
-    return path.split('store')[-1][1:]
+def write(obj, path=""):
+    "write object to disk."
+    with lock:
+        if path == "":
+            path = ident(obj)
+        pth = os.path.join(Cache.workdir, "store", path)
+        cdir(pth)
+        with open(pth, "w", encoding="utf-8") as fpt:
+            dump(obj, fpt, indent=4)
+        syncpath(path, obj)
+        return path
 
 
 "find"
@@ -158,33 +134,121 @@ def last(obj, selector={}):
     return res
 
 
-"storage"
+"workdir"
 
 
-def read(obj, path):
-    "read object from path."
-    with lock:
-        pth = os.path.join(Cache.workdir, "store", path)
-        with open(pth, "r", encoding="utf-8") as fpt:
-            try:
-                update(obj, load(fpt))
-            except json.decoder.JSONDecodeError as ex:
-                ex.add_note(path)
-                raise ex
+def setwd(path):
+    "enable writing to disk."
+    Cache.workdir = path
+    skel()
 
 
+def kinds():
+    "show kind on objects in cache."
+    return os.listdir(os.path.join(Cache.workdir, "store"))
 
-def write(obj, path=""):
-    "write object to disk."
-    with lock:
-        if path == "":
-            path = ident(obj)
-        pth = os.path.join(Cache.workdir, "store", path)
-        cdir(pth)
-        with open(pth, "w", encoding="utf-8") as fpt:
-            dump(obj, fpt, indent=4)
-        syncpath(path, obj)
-        return path
+
+def long(name):
+    "expand to fqn."
+    split = name.split(".")[-1].lower()
+    res = name
+    for names in kinds():
+        if split == names.split(".")[-1].lower():
+            res = names
+            break
+    return res
+
+
+def pidfile(filename):
+    "write pidfile."
+    if os.path.exists(filename):
+        os.unlink(filename)
+    path2 = pathlib.Path(filename)
+    path2.parent.mkdir(parents=True, exist_ok=True)
+    with open(filename, "w", encoding="utf-8") as fds:
+        fds.write(str(os.getpid()))
+
+
+def pidname(name):
+    "name of pidfile."
+    return os.path.join(Cache.workdir, f"{name}.pid")
+
+
+def skel():
+    "create directories."
+    if not Cache.workdir:
+        return
+    path = os.path.abspath(Cache.workdir)
+    workpath = os.path.join(path, "store")
+    pth = pathlib.Path(workpath)
+    pth.mkdir(parents=True, exist_ok=True)
+    modpath = os.path.join(path, "mods")
+    pth = pathlib.Path(modpath)
+    pth.mkdir(parents=True, exist_ok=True)
+
+
+def workdir():
+    "return workdir."
+    return Cache.workdir
+
+
+"utility"
+
+
+def cdir(path):
+    "create directory."
+    pth = pathlib.Path(path)
+    pth.parent.mkdir(parents=True, exist_ok=True)
+
+
+def deleted(obj):
+    "check whether obj had deleted flag set."
+    return "__deleted__" in dir(obj) and obj.__deleted__
+
+
+def fntime(daystr):
+    "time from path."
+    datestr = " ".join(daystr.split(os.sep)[-2:])
+    datestr = datestr.replace("_", " ")
+    if "." in datestr:
+        datestr, rest = datestr.rsplit(".", 1)
+    else:
+        rest = ""
+    timd = time.mktime(time.strptime(datestr, "%Y-%m-%d %H:%M:%S"))
+    if rest:
+        timd += float("." + rest)
+    return float(timd)
+
+
+def ident(obj):
+    "return ident string for object."
+    return os.path.join(fqn(obj), *str(datetime.datetime.now()).split())
+
+
+def search(obj, selector={}, matching=False):
+    "check whether object matches search criteria."
+    res = False
+    for key, value in items(selector):
+        val = getattr(obj, key, None)
+        if not val:
+            res = False
+            break
+        if matching and value != val:
+            res = False
+            break
+        if str(value).lower() not in str(val).lower():
+            res = False
+            break
+        res = True
+    return res
+
+
+def strip(path):
+    "strip filename from path."
+    return path.split('store')[-1][1:]
+
+
+"interface"
 
 
 def __dir__():
@@ -195,8 +259,10 @@ def __dir__():
         'getpath',
         'kinds',
         'last',
-        'persist',
+        'pidfile',
+        'pidname',
         'read',
+        'setwd',
         'skel',
         'strip',
         'syncpath',

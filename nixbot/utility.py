@@ -11,7 +11,7 @@ import os
 import time
 
 
-from nixbot.methods import fqn
+"classes"
 
 
 class Log:
@@ -27,6 +27,9 @@ class Format(logging.Formatter):
         return logging.Formatter.format(self, record)
 
 
+"utils"
+
+
 def forever():
     "run forever until ctrl-c."
     while True:
@@ -34,11 +37,6 @@ def forever():
             time.sleep(0.1)
         except (KeyboardInterrupt, EOFError):
             break
-
-
-def ident(obj):
-    "return ident string for object."
-    return os.path.join(fqn(obj), *str(datetime.datetime.now()).split())
 
 
 def level(loglevel):
@@ -92,6 +90,9 @@ def wrapped(func):
         pass
 
 
+"interface"
+
+
 def __dir__():
     return (
         'Log',
@@ -105,4 +106,3 @@ def __dir__():
         'where',
         'wrapped'
     )
-

@@ -1,14 +1,29 @@
 # This file is placed in the Public Domain.
 
 
-"commands"
+"write your own commands"
 
 
 import inspect
 
 
-from nixbot.brokers import getobj
-from nixbot.methods import parse
+from .brokers import getobj
+from .methods import parse
+
+
+"config"
+
+
+class Cfg:
+
+    def __getattr__(self, key):
+        return self.__dict__.get(key, "")
+
+    def __str__(self):
+        return str(self.__dict__)
+
+
+"commands"
 
 
 class Commands:
@@ -52,8 +67,12 @@ def command(evt):
     evt.ready()
 
 
+"interface"
+
+
 def __dir__():
     return (
+        'Cfg',
         'Commands',
         'addcmd',
         'command',

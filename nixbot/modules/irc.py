@@ -12,17 +12,13 @@ import time
 
 
 from nixbot.brokers import getobj
-from nixbot.caching import last, write
-from nixbot.command import command
+from nixbot.caching import ident, last, write
+from nixbot.command import Cfg, command
 from nixbot.handler import Output
 from nixbot.message import Message
-from nixbot.methods import edit, fmt
-from nixbot.objects import Object, keys
+from nixbot.methods import fmt
+from nixbot.objects import Object, edit, keys
 from nixbot.threads import launch
-from nixbot.utility import ident
-
-
-NAME = "nixbot"
 
 
 lock = threading.RLock()
@@ -41,20 +37,20 @@ def init():
 
 class Config(Object):
 
-    channel = f"#{NAME}"
+    channel = f"#{Cfg.name}"
     commands = True
     control = "!"
     ignore = ["PING", "PONG", "PRIVMSG"] 
-    name = NAME
-    nick = NAME
+    name = Cfg.name
+    nick = Cfg.name
     word = ""
     port = 6667
-    realname = NAME
+    realname = Cfg.name
     sasl = False
     server = "localhost"
     servermodes = ""
     sleep = 60
-    username = NAME
+    username = Cfg.name
     users = False
     version = 1
 
@@ -582,7 +578,7 @@ def cb_privmsg(evt):
 
 
 def cb_quit(evt):
-    bot = getobj(evt.orig)
+    bot = geytobj(evt.orig)
     logging.debug("quit from %s", bot.cfg.server)
     bot.state.nrerror += 1
     bot.state.error = evt.text

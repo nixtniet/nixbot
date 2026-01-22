@@ -13,28 +13,25 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from nixbot.caching import persist
-from nixbot.command import command
+from nixbot.caching import setwd
+from nixbot.command import Cfg, command
 from nixbot.message import Message
 from nixbot.methods import fmt, parse
 from nixbot.handler import Client
-from nixbot.objects import Config
-from nixbot.package import adddir, scanner
+from nixbot.package import initmods, scanner
 from nixbot.threads import launch
 from nixbot.timings import elapsed
 from nixbot.utility import wrapped
 
 
-import nixbot.modules as MODS
-
-
-Cfg = Config()
+from nixbot import modules as MODS
 
 
 Cfg.debug = True
 Cfg.level = "info"
 Cfg.name = "nixbot"
-Cfg.version = 3
+Cfg.opts = ""
+Cfg.version = 181
 Cfg.wdr = ".test"
 
 
@@ -147,10 +144,9 @@ def main():
     if "p" not in Cfg.opts and os.path.exists(Cfg.wdr):
         shutil.rmtree(Cfg.wdr)
     parse(Cfg, " ".join(sys.argv[1:]))
-    persist(Cfg.wdr)
-    adddir("modules", MODS.__path__[0])
-    adddir('mods', 'mods')
-    for mod in scanner():
+    setwd(Cfg.wdr)
+    initmods("modules", MODS.__path__[0])
+    for name, mod in scanner():
         mod.DEBUG = True
     if "v" in Cfg.opts:
         banner(Cfg.name, Cfg.version)
