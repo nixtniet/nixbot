@@ -10,41 +10,24 @@ import sys
 import time
 
 
-sys.path.insert(0, os.getcwd())
+from .command import Cfg, Commands, addcmd, command
+from .handler import Console
+from .message import Message
+from .methods import parse
+from .package import initmods, inits, listmods, scanner
+from .persist import pidfile, pidname, setwd, workdir
+from .utility import forever, level, pkgname
 
 
-from nixbot.command import Cfg, Commands, addcmd, command
-from nixbot.handler import Console
-from nixbot.message import Message
-from nixbot.methods import parse
-from nixbot.package import initmods, inits, listmods, scanner
-from nixbot.persist import pidfile, pidname, setwd, workdir
-from nixbot.utility import forever, level
-
-
-from nixbot import modules as MODS
-#import mods as MODS
+from . import modules as MODS
 
 
 "defines"
 
-
-NAME = "nixbot"
+LEVEL = "info"
+NAME = pkgname(Cfg)
 TXT = " ".join(sys.argv[1:])
 VERSION = 181
-
-
-"config"
-
-
-Cfg.debug = False
-Cfg.default = "irc,mdl,rss,wsd"
-Cfg.ignore = "rst,web,udp"
-Cfg.init = ""
-Cfg.level = "info"
-Cfg.name = NAME
-Cfg.version = VERSION
-Cfg.wdr = os.path.expanduser(f"~/.{Cfg.name}")
 
 
 "clients"
@@ -88,10 +71,10 @@ def background():
     daemon()
     privileges()
     boot()
-    pidfile(pidname(Cfg.name))
+    pidfile(pidname(NAME))
     scanner(Cfg.ignore)
     addcmd(cmd, mod, ver)
-    inits(Cfg.default, Cfg.ignore)
+    inits(Cfg.default or "irc,mdl,rss,wsd", Cfg.ignore)
     forever()
 
 
@@ -124,10 +107,10 @@ def service():
     privileges()
     banner()
     boot()
-    pidfile(pidname(Cfg.name))
+    pidfile(pidname(NAME))
     scanner(listmods())
     addcmd(cmd, mod, ver)
-    inits(Cfg.default, Cfg.ignore)
+    inits(Cfg.default or "irc,mdl,rss,wsd", Cfg.ignore)
     forever()
 
 
@@ -148,12 +131,12 @@ def srv(event):
     "generate systemd service file."
     import getpass
     name = getpass.getuser()
-    event.reply(SYSTEMD % (Cfg.name.upper(), name, name, name, Cfg.name))
+    event.reply(SYSTEMD % (NAME.upper(), name, name, name, NAME))
 
 
 def ver(event):
     "show version."
-    event.reply(f"{Cfg.name.upper()} {Cfg.version}")
+    event.reply(f"{NAME.upper()} {VERSION}")
 
 
 "utility"
@@ -163,10 +146,10 @@ def banner():
     "hello."
     tme = time.ctime(time.time()).replace("  ", " ")
     print("%s %s since %s (%s)" % (
-        Cfg.name.upper(),
-        Cfg.version,
+        NAME.upper(),
+        VERSION,
         tme,
-        Cfg.level.upper(),
+        LEVEL.upper(),
     ))
     sys.stdout.flush()
 
@@ -177,10 +160,11 @@ def boot(inits=""):
     Cfg.ignore = Cfg.sets.ignore
     Cfg.init = Cfg.sets.init or Cfg.init or ""
     Cfg.level = Cfg.sets.level or Cfg.level or "info"
-    Cfg.wdr = Cfg.sets.wdr or Cfg.wdr or ""
+    Cfg.wdr = Cfg.sets.wdr or Cfg.wdr or os.path.expanduser(f"~/.{pkgname(Cfg)}")
     level(Cfg.level)
     setwd(Cfg.wdr)
-    initmods("modules", os.path.join(workdir(), "mods"))
+    if Cfg.wdr:
+        initmods("modules", os.path.join(workdir(), "mods"))
     initmods(MODS.__name__, MODS.__path__[0])
     if "m" in Cfg.opts and os.path.exists("mods"):
         initmods("mods", "mods")
@@ -211,6 +195,7 @@ def docmd(text):
         evt.type = "command"
         command(evt)
         evt.wait()
+    return evt.result
 
  
 def daemon(verbose=False, nochdir=False):

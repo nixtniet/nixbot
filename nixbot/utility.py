@@ -265,6 +265,10 @@ def forever():
         except (KeyboardInterrupt, EOFError):
             break
 
+def getname():
+    "return name of package."
+    return where(Log).split(os.sep)[-1]
+
 
 def level(loglevel):
     "set log level."
@@ -360,8 +364,8 @@ def __dir__():
         'elapsed',
         'extract',
         'forever',
+        'getname',
         'hour',
-        'ident',
         'level',
         'md5sum',
         'parsetxt',

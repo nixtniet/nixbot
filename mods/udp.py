@@ -9,10 +9,10 @@ import threading
 import time
 
 
-from ..brokers import getobjs
-from ..command import Cfg
-from ..objects import Object
-from ..threads import launch
+from nixbot.brokers import getobjs
+from nixbot.command import Cfg
+from nixbot.objects import Object
+from nixbot.threads import launch
 
 
 def init():

@@ -16,12 +16,12 @@ from .objects import Default
 "config"
 
 
-class Cfg(Default):
+class Config(Default):
 
-    name = __file__.split(os.sep)[-2].lower()
+    pass
 
-    def __str__(self):
-        return strip("_", Cfg)
+
+Cfg = Config()
 
 
 "commands"
@@ -74,6 +74,7 @@ def command(evt):
 def __dir__():
     return (
         'Cfg',
+        'Config',
         'Commands',
         'addcmd',
         'command',

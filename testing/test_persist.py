@@ -13,16 +13,7 @@ from nixbot.objects import skip
 from nixbot.persist import Cache
 
 
-default = {
-    'debug': False,
-    'default': 'irc,mdl,rss,wsd',
-    'ignore': 'rst,web,udp',
-    'init': '',
-    'level': 'info',
-    'name': 'nixbot',
-    'version': 181,
-    'wdr': '/home/bart/.nixbot'
-}
+default = {}
 
 
 class TestPersist(unittest.TestCase):

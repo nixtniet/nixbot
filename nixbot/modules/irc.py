@@ -19,6 +19,10 @@ from ..methods import fmt
 from ..objects import Object, edit, keys
 from ..persist import ident, last, write
 from ..threads import launch
+from ..utility import pkgname
+
+
+NAME = Cfg.name or pkgname(Cfg)
 
 
 lock = threading.RLock()
@@ -37,20 +41,20 @@ def init():
 
 class Config(Object):
 
-    channel = f"#{Cfg.name}"
+    channel = f"#{NAME}"
     commands = True
     control = "!"
     ignore = ["PING", "PONG", "PRIVMSG"] 
-    name = Cfg.name
-    nick = Cfg.name
+    name = NAME
+    nick = NAME
     word = ""
     port = 6667
-    realname = Cfg.name
+    realname = NAME
     sasl = False
     server = "localhost"
     servermodes = ""
     sleep = 60
-    username = Cfg.name
+    username = NAME
     users = False
     version = 1
 
