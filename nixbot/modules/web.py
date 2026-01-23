@@ -10,12 +10,10 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
+from ..command import Cfg
 from ..objects import Object
 from ..threads import launch
 from ..utility import where
-
-
-DEBUG = True
 
 
 def init():
@@ -99,7 +97,7 @@ class HTTPHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if "favicon" in self.path:
             return
-        if DEBUG:
+        if Cfg.debug:
             return
         if self.path == "/":
             self.path = "index.html"

@@ -1,1 +1,1 @@
-python3 -m nixbot.runtime $* ;
+python3 -c "import nixbot.runtime; nixbot.runtime.main()" $* ;

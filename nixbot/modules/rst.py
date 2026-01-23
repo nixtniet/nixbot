@@ -16,9 +16,6 @@ from ..persist import kinds, workdir
 from ..threads import launch
 
 
-DEBUG = False
-
-
 def init():
     try:
         rest = REST((Config.hostname, int(Config.port)), RESTHandler)

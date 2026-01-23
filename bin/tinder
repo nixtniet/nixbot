@@ -20,8 +20,7 @@ from nixbot.handler import Client
 from nixbot.package import initmods, listmods, scanner
 from nixbot.persist import setwd
 from nixbot.threads import launch
-from nixbot.timings import elapsed
-from nixbot.utility import wrapped
+from nixbot.utility import elapsed, wrapped
 
 
 from nixbot import modules as MODS
@@ -146,8 +145,7 @@ def main():
     parse(Cfg, " ".join(sys.argv[1:]))
     setwd(Cfg.wdr)
     initmods("modules", MODS.__path__[0])
-    for name, mod in scanner(listmods()):
-        mod.DEBUG = True
+    scanner(listmods())
     if "v" in Cfg.opts:
         banner(Cfg.name, Cfg.version)
     if "z" in Cfg.opts:

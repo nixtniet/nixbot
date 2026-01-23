@@ -125,7 +125,7 @@ def service():
     banner()
     boot()
     pidfile(pidname(Cfg.name))
-    scanner(Cfg.ignore)
+    scanner(listmods())
     addcmd(cmd, mod, ver)
     inits(Cfg.default, Cfg.ignore)
     forever()
@@ -174,6 +174,7 @@ def banner():
 def boot(inits=""):
     "in the beginning."
     parse(Cfg, TXT)
+    Cfg.ignore = Cfg.sets.ignore
     Cfg.init = Cfg.sets.init or Cfg.init or ""
     Cfg.level = Cfg.sets.level or Cfg.level or "info"
     Cfg.wdr = Cfg.sets.wdr or Cfg.wdr or ""
@@ -289,7 +290,3 @@ def main():
         wrap(service)
     else:
         wrap(control)
-
-
-if __name__ == "__main__":
-    main()

@@ -20,14 +20,12 @@ from urllib.parse import quote_plus, urlencode
 
 
 from ..brokers import getobjs
+from ..command import Cfg
 from ..methods import fmt
 from ..objects import Object, fqn, update
 from ..persist import find, fntime, ident, last, write
 from ..threads import launch
 from ..utility import Repeater, elapsed, spl
-
-
-DEBUG = False
 
 
 def init():
@@ -289,7 +287,7 @@ def cdata(line):
 
 def getfeed(url, items):
     result = [Object(), Object()]
-    if DEBUG or url in errors and (time.time() - errors[url]) < 600:
+    if Cfg.debug or url in errors and (time.time() - errors[url]) < 600:
         return result
     try:
         rest = geturl(url)
@@ -493,7 +491,7 @@ def rss(event):
 
 
 def syn(event):
-    if DEBUG:
+    if Cfg.debug:
         return
     fetcher = Fetcher()
     fetcher.start(False)

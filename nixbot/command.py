@@ -8,6 +8,9 @@ import inspect
 import os
 
 
+from dataclasses import dataclass
+
+
 from .brokers import getobj
 from .methods import parse
 
@@ -15,17 +18,10 @@ from .methods import parse
 "config"
 
 
-class Config:
+@dataclass
+class Cfg:
 
-    def __getattr__(self, key):
-        return self.__dict__.get(key, "")
-
-    def __str__(self):
-        return str(self.__dict__)
-
-
-Cfg = Config()
-Cfg.name = __file__.split(os.sep)[-2].lower()
+     name = __file__.split(os.sep)[-2].lower()
 
 
 "commands"
