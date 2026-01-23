@@ -4,8 +4,8 @@
 import unittest
 
 
+from nixbot.encoder import dumps
 from nixbot.objects import Object
-from nixbot.serials import dumps
 
 
 VALIDJSON = '{"test": "bla"}'

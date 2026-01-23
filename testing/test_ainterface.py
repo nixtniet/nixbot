@@ -16,11 +16,14 @@ sys.path.insert(0, os.getcwd())
 
 import nixbot
 import nixbot.brokers
+import nixbot.command
+import nixbot.encoder
 import nixbot.handler
 import nixbot.message
 import nixbot.methods
 import nixbot.objects
-import nixbot.serials
+import nixbot.package
+import nixbot.persist
 import nixbot.threads
 import nixbot.timings
 import nixbot.utility
@@ -29,13 +32,19 @@ import nixbot.utility
 from nixbot.objects import *
 
 
+TARGET = nixbot
+
+
 PACKAGE = [
     'brokers',
+    'command',
+    'encoder',
     'handler',
     'message',
     'methods',
     'objects',
-    'serials',
+    'package',
+    'persist',
     'threads',
     'timings',
     'utility'
@@ -79,9 +88,7 @@ class TestInterface(unittest.TestCase):
     def test_package(self):
         okd = True
         for mod in PACKAGE:
-            mod1 = getattr(nixbot, mod, None)
-            if not mod1:
-                mod1 = getattr(nixt, mod, None)
+            mod1 = getattr(TARGET, mod, None)
             if not mod1:
                 okd = False
                 print(mod)

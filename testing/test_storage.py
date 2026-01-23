@@ -9,11 +9,14 @@ import unittest
 sys.path.insert(0, ".")
 
 
-from nixbot.caching import Cache, write
 from nixbot.objects import Object
+from nixbot.persist import Cache, write
 
 
-import nixbot.caching
+import nixbot.persist
+
+
+TARGET = nixbot.persist
 
 
 Cache.workdir = '.test'
@@ -26,14 +29,17 @@ ATTRS1 = (
     'getpath',
     'kinds',
     'last',
-    'persist',
+    'pidfile',
+    'pidname',
     'read',
+    'setwd',
     'skel',
     'strip',
     'syncpath',
     'workdir',
     'write'
 )
+
 
 
 class TestStorage(unittest.TestCase):
@@ -49,7 +55,7 @@ class TestStorage(unittest.TestCase):
 
     def test_dirmodule(self):
         self.assertEqual(
-                         dir(nixbot.caching),
+                         dir(TARGET),
                          list(ATTRS1)
                         )
 

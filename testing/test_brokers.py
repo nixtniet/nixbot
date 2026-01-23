@@ -5,9 +5,9 @@ import unittest
 
 
 from nixbot.brokers import Broker
+from nixbot.encoder import dumps, loads
 from nixbot.handler import Client
 from nixbot.objects import Object, update, values
-from nixbot.serials import dumps, loads
 
 
 class TestBroker(unittest.TestCase):

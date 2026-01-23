@@ -4,8 +4,8 @@
 import unittest
 
 
+from nixbot.encoder import dumps, loads
 from nixbot.objects import Object, update
-from nixbot.serials import dumps, loads
 
 
 class TestTypes(unittest.TestCase):
