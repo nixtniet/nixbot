@@ -4,7 +4,7 @@
 "an object as the first argument"
 
 
-from .objects import Default, items, typed
+from .objects import Default, fqn, typed
 
 
 "methods"
