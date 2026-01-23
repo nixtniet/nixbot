@@ -74,7 +74,7 @@ def items(obj):
         if key.startswith("_"):
             continue
         res.append((key, getattr(obj, key)))
-    return res
+    return sorted(res, key=lambda x: x[0])
 
 
 def keys(obj):
@@ -87,12 +87,26 @@ def keys(obj):
         return obj.keys()
     if isinstance(obj, type):
         res = []
-        for key in sorted(dir(obj)):
+        for key in dir(obj):
             if key.startswith("_"):
                 continue
             res.append(key)
-        return res
+        return sorted(res)
     return obj.__dict__.keys()
+
+
+def skip(obj, chars="_"):
+    "skip keys containing chars."
+    res = {}
+    for key, value in items(obj):
+        next = False
+        for char in chars:
+            if char in key:
+                next = True
+        if next:
+            continue
+        res[key] = value
+    return res
 
 
 def typed(obj, key, val):
@@ -139,11 +153,11 @@ def values(obj):
     if isinstance(obj, dict):
         return obj.values()
     res = []
-    for key in dir(obj):
+    for key in sorted(dir(obj)):
         if key.startswith("_"):
             continue
         res.append(getattr(obj, key))
-    return res
+    return sorted(res)
 
 
 "default"
@@ -167,7 +181,7 @@ def __dir__():
         'fqn',
         'items',
         'keys',
-        'search',
+        'skip',
         'typed',
         'update',
         'values'

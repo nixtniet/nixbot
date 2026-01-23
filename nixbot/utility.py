@@ -212,6 +212,8 @@ def hour(daystr):
     return hmsres
 
 
+
+
 def timed(txt):
     "scan string for date/time."
     try:
@@ -365,6 +367,7 @@ def __dir__():
         'parsetxt',
         'pipxdir',
         'pkgname',
+        'skip',
         'spl',
         'timed',
         'today'

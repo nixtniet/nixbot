@@ -8,20 +8,20 @@ import inspect
 import os
 
 
-from dataclasses import dataclass
-
-
 from .brokers import getobj
 from .methods import parse
+from .objects import Default
 
 
 "config"
 
 
-@dataclass
-class Cfg:
+class Cfg(Default):
 
-     name = __file__.split(os.sep)[-2].lower()
+    name = __file__.split(os.sep)[-2].lower()
+
+    def __str__(self):
+        return strip("_", Cfg)
 
 
 "commands"
