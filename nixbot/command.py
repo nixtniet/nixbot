@@ -24,6 +24,10 @@ class Config:
         return str(self.__dict__)
 
 
+Cfg = Config()
+Cfg.name = __file__.split(os.sep)[-2].lower()
+
+
 "commands"
 
 
@@ -66,13 +70,6 @@ def command(evt):
         bot = getobj(evt.orig)
         bot.display(evt)
     evt.ready()
-
-
-"runtime"
-
-
-Cfg = Config()
-Cfg.name = __file__.split(os.sep)[-2].lower()
 
 
 "interface"

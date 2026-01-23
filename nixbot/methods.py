@@ -91,24 +91,6 @@ def parse(obj, text):
         obj.text = obj.cmd or ""
 
 
-def search(obj, selector={}, matching=False):
-    "check whether object matches search criteria."
-    res = False
-    for key, value in items(selector):
-        val = getattr(obj, key, None)
-        if not val:
-            res = False
-            break
-        if matching and value != val:
-            res = False
-            break
-        if str(value).lower() not in str(val).lower():
-            res = False
-            break
-        res = True
-    return res
-
-
 "interface"
 
 

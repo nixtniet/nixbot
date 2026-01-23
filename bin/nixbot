@@ -101,10 +101,10 @@ def console():
     import readline
     readline.redisplay()
     boot()
-    scanner(Cfg.init or Cfg.default, Cfg.ignore)
+    scanner(listmods(), Cfg.ignore)
     addcmd(cmd, mod, ver)
     docmd(TXT)
-    inits(Cfg.init or Cfg.default, Cfg.ignore, "w" in Cfg.opts)
+    inits(Cfg.init, Cfg.ignore, "w" in Cfg.opts)
     csl = Term()
     csl.start()
     forever()
