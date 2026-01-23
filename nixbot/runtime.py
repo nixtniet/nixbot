@@ -1,0 +1,295 @@
+# This file is placed in the Public Domain.
+
+
+"main program"
+
+
+import logging
+import os
+import sys
+import time
+
+
+sys.path.insert(0, os.getcwd())
+
+
+from nixbot.command import Cfg, Commands, addcmd, command
+from nixbot.handler import Console
+from nixbot.message import Message
+from nixbot.methods import parse
+from nixbot.package import initmods, inits, listmods, scanner
+from nixbot.persist import pidfile, pidname, setwd, workdir
+from nixbot.utility import forever, level
+
+
+from nixbot import modules as MODS
+#import mods as MODS
+
+
+"defines"
+
+
+NAME = "nixbot"
+TXT = " ".join(sys.argv[1:])
+VERSION = 181
+
+
+"config"
+
+
+Cfg.debug = False
+Cfg.default = "irc,mdl,rss,wsd"
+Cfg.ignore = "rst,web,udp"
+Cfg.init = ""
+Cfg.level = "info"
+Cfg.name = NAME
+Cfg.version = VERSION
+Cfg.wdr = os.path.expanduser(f"~/.{Cfg.name}")
+
+
+"clients"
+
+
+class Line(Console):
+
+    def __init__(self):
+        super().__init__()
+        self.register("command", command)
+
+    def raw(self, text):
+        "write to console."
+        print(text.encode('utf-8', 'replace').decode("utf-8"))
+
+
+class Term(Line):
+
+
+    def callback(self, event):
+        "wait for callback result."
+        if not event.text:
+            event.ready()
+            return
+        super().callback(event)
+        event.wait()
+
+    def poll(self):
+        "poll for an event."
+        evt = Message()
+        evt.text = input("> ")
+        evt.kind = "command"
+        return evt
+
+
+"scripts"
+
+
+def background():
+    "background script."
+    daemon()
+    privileges()
+    boot()
+    pidfile(pidname(Cfg.name))
+    scanner(Cfg.ignore)
+    addcmd(cmd, mod, ver)
+    inits(Cfg.default, Cfg.ignore)
+    forever()
+
+
+def console():
+    "console script."
+    import readline
+    readline.redisplay()
+    boot()
+    scanner(listmods(), Cfg.ignore)
+    addcmd(cmd, mod, ver)
+    docmd(TXT)
+    inits(Cfg.init, Cfg.ignore, "w" in Cfg.opts)
+    csl = Term()
+    csl.start()
+    forever()
+
+
+def control():
+    "cli script."
+    if len(sys.argv) == 1:
+        return
+    boot()
+    scanner(listmods(), Cfg.ignore)
+    addcmd(cmd, mod, srv, ver)
+    docmd(TXT)
+
+
+def service():
+    "service script."
+    privileges()
+    banner()
+    boot()
+    pidfile(pidname(Cfg.name))
+    scanner(Cfg.ignore)
+    addcmd(cmd, mod, ver)
+    inits(Cfg.default, Cfg.ignore)
+    forever()
+
+
+"commands"
+
+
+def cmd(event):
+    "list available commands."
+    event.reply(",".join(sorted(Commands.names or Commands.cmds)))
+
+
+def mod(event):
+    "list available commands."
+    event.reply(listmods(Cfg.ignore))
+
+
+def srv(event):
+    "generate systemd service file."
+    import getpass
+    name = getpass.getuser()
+    event.reply(SYSTEMD % (Cfg.name.upper(), name, name, name, Cfg.name))
+
+
+def ver(event):
+    "show version."
+    event.reply(f"{Cfg.name.upper()} {Cfg.version}")
+
+
+"utility"
+
+
+def banner():
+    "hello."
+    tme = time.ctime(time.time()).replace("  ", " ")
+    print("%s %s since %s (%s)" % (
+        Cfg.name.upper(),
+        Cfg.version,
+        tme,
+        Cfg.level.upper(),
+    ))
+    sys.stdout.flush()
+
+
+def boot(inits=""):
+    "in the beginning."
+    parse(Cfg, TXT)
+    Cfg.init = Cfg.sets.init or Cfg.init or ""
+    Cfg.level = Cfg.sets.level or Cfg.level or "info"
+    Cfg.wdr = Cfg.sets.wdr or Cfg.wdr or ""
+    level(Cfg.level)
+    setwd(Cfg.wdr)
+    initmods("modules", os.path.join(workdir(), "mods"))
+    initmods(MODS.__name__, MODS.__path__[0])
+    if "m" in Cfg.opts and os.path.exists("mods"):
+        initmods("mods", "mods")
+    if "v" in Cfg.opts:
+        banner()
+    if 'a' in Cfg.opts:
+        Cfg.init = listmods(Cfg.ignore)
+
+
+def check(text):
+    "check for options."
+    for arg in TXT.split():
+        if not arg.startswith("-"):
+            continue
+        for char in text:
+               if char in arg:
+                   return True
+        return False
+
+
+def docmd(text):
+    "parse text for command and run it."
+    cli = Line()
+    for txt in text.split(" ! "):
+        evt = Message()
+        evt.orig = repr(cli)
+        evt.text = txt
+        evt.type = "command"
+        command(evt)
+        evt.wait()
+
+ 
+def daemon(verbose=False, nochdir=False):
+    "run in the background."
+    pid = os.fork()
+    if pid != 0:
+        os._exit(0)
+    os.setsid()
+    pid2 = os.fork()
+    if pid2 != 0:
+        os._exit(0)
+    with open('/dev/null', 'r', encoding="utf-8") as sis:
+        os.dup2(sis.fileno(), sys.stdin.fileno())
+    with open('/dev/null', 'a+', encoding="utf-8") as sos:
+        os.dup2(sos.fileno(), sys.stdout.fileno())
+    with open('/dev/null', 'a+', encoding="utf-8") as ses:
+        os.dup2(ses.fileno(), sys.stderr.fileno())
+    os.umask(0)
+    os.chdir("/")
+    os.nice(10)
+
+
+def privileges():
+    "drop privileges."
+    import getpass
+    import pwd
+    pwnam2 = pwd.getpwnam(getpass.getuser())
+    os.setgid(pwnam2.pw_gid)
+    os.setuid(pwnam2.pw_uid)
+
+
+def wrap(func):
+    "restore console."
+    import termios
+    old = None
+    try:
+        old = termios.tcgetattr(sys.stdin.fileno())
+    except termios.error:
+        pass
+    try:
+        func()
+    except (KeyboardInterrupt, EOFError):
+        pass
+    except Exception as ex:
+        logging.exception(ex)
+    if old:
+        termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old)
+
+
+"data"
+
+
+SYSTEMD = """[Unit]
+Description=%s
+After=multi-user.target
+
+[Service]
+Type=simple
+User=%s
+Group=%s
+ExecStart=/home/%s/.local/bin/%s -s
+
+[Install]
+WantedBy=multi-user.target"""
+
+
+"runtime"
+
+
+def main():
+    "main"
+    if check("d"):
+        background()
+    elif check("c"):
+        wrap(console)
+    elif check("s"):
+        wrap(service)
+    else:
+        wrap(control)
+
+
+if __name__ == "__main__":
+    main()
