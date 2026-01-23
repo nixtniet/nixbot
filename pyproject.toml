@@ -33,7 +33,10 @@ classifiers=[
 packages = [
     'nixbot',
     'nixbot.modules',
-    'nixbot.nucleus'
+    'nixbot.nucleus',
+    'nixbot.nucleus.pdf',
+    'nixbot.nucleus._images',
+    'nixbot.nucleus._static'
 ]
 include-package-data = true
 

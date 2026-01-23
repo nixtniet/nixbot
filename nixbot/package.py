@@ -5,6 +5,7 @@
 
 
 import importlib.util
+import logging
 import os
 
 
@@ -26,7 +27,7 @@ def initmods(name, path):
     Mods.dirs[name] = path
 
 
-def getmods(ignore=""):
+def getmods(modlist, ignore=""):
     "loop over modules."
     for pkgname, path in Mods.dirs.items():
         if not os.path.exists(path):
@@ -37,12 +38,17 @@ def getmods(ignore=""):
             if not fnm.endswith(".py"):
                 continue
             name = fnm[:-3]
+            if name not in spl(modlist):
+                continue
             if ignore and name in spl(ignore):
                 continue
             modname = f"{pkgname}.{name}"
             mod =  Mods.modules.get(modname, None)
-            if not mod:
+            if mod:
+                logging.debug(f"cache {mod}")
+            else:
                 mod = importer(modname, os.path.join(path, fnm))
+                logging.debug(f"import {mod}")
             if mod:
                 yield name, mod
 
@@ -70,24 +76,28 @@ def importer(name, pth=""):
     else:
         spec = importlib.util.find_spec(name)
     if not spec or not spec.loader:
+        logging.debug(f"missing spec or loader for {name}")
         return None
     mod = importlib.util.module_from_spec(spec)
     if not mod:
+        logging.debug(f"can't load {name} module from spec")
         return None
     Mods.modules[name] = mod
-    spec.loader.exec_module(mod)
+    try:
+        spec.loader.exec_module(mod)
+    except Exception as ex:
+        logging.exception(ex)
+        return
     return mod
 
 
 "runtime"
 
 
-def inits(init, ignore="", wait=False):
+def inits(modlist, ignore="", wait=False):
     "scan named modules for commands."
     thrs = []
-    for name, mod in getmods(ignore):
-        if name not in spl(init):
-            continue
+    for name, mod in getmods(modlist, ignore):
         if "init" in dir(mod):
             thrs.append((name, launch(mod.init)))
     if wait:
@@ -95,10 +105,10 @@ def inits(init, ignore="", wait=False):
             thr.join()
         
 
-def scanner(ignore=""):
+def scanner(modlist, ignore=""):
     "scan named modules for commands."
     res = []
-    for name, mod in getmods(ignore):
+    for name, mod in getmods(modlist, ignore):
         scancmd(mod)
         res.append((name, mod))
     return res

@@ -6,9 +6,9 @@ import os
 import time
 
 
-from nixbot.caching import find, write
 from nixbot.methods import fmt
 from nixbot.objects import Object, keys, update
+from nixbot.persist import find, write
 from nixbot.timings import MONTH, date, elapsed
 
 

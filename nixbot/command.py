@@ -5,6 +5,7 @@
 
 
 import inspect
+import os
 
 
 from .brokers import getobj
@@ -14,7 +15,7 @@ from .methods import parse
 "config"
 
 
-class Cfg:
+class Config:
 
     def __getattr__(self, key):
         return self.__dict__.get(key, "")
@@ -65,6 +66,13 @@ def command(evt):
         bot = getobj(evt.orig)
         bot.display(evt)
     evt.ready()
+
+
+"runtime"
+
+
+Cfg = Config()
+Cfg.name = __file__.split(os.sep)[-2].lower()
 
 
 "interface"

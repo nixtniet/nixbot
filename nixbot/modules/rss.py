@@ -20,9 +20,9 @@ from urllib.parse import quote_plus, urlencode
 
 
 from nixbot.brokers import getobjs
-from nixbot.caching import find, ident, last, write
 from nixbot.methods import fmt
 from nixbot.objects import Object, fqn, update
+from nixbot.persist import find, ident, last, write
 from nixbot.threads import launch
 from nixbot.timings import Repeater, elapsed, fntime
 from nixbot.utility import spl

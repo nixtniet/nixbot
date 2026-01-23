@@ -14,12 +14,12 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from nixbot.caching import pidfile, pidname, setwd, workdir
 from nixbot.command import Cfg, Commands, addcmd, command
 from nixbot.handler import Console
 from nixbot.message import Message
 from nixbot.methods import parse
 from nixbot.package import initmods, inits, listmods, scanner
+from nixbot.persist import pidfile, pidname, setwd, workdir
 from nixbot.utility import forever, level
 
 
@@ -101,10 +101,10 @@ def console():
     import readline
     readline.redisplay()
     boot()
-    scanner(Cfg.ignore)
+    scanner(Cfg.init or Cfg.default, Cfg.ignore)
     addcmd(cmd, mod, ver)
     docmd(TXT)
-    inits(Cfg.init, Cfg.ignore, "w" in Cfg.opts)
+    inits(Cfg.init or Cfg.default, Cfg.ignore, "w" in Cfg.opts)
     csl = Term()
     csl.start()
     forever()
@@ -115,7 +115,7 @@ def control():
     if len(sys.argv) == 1:
         return
     boot()
-    scanner(Cfg.ignore)
+    scanner(listmods(), Cfg.ignore)
     addcmd(cmd, mod, srv, ver)
     docmd(TXT)
 

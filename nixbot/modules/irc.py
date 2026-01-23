@@ -12,12 +12,12 @@ import time
 
 
 from nixbot.brokers import getobj
-from nixbot.caching import ident, last, write
 from nixbot.command import Cfg, command
 from nixbot.handler import Output
 from nixbot.message import Message
 from nixbot.methods import fmt
 from nixbot.objects import Object, edit, keys
+from nixbot.persist import ident, last, write
 from nixbot.threads import launch
 
 
@@ -578,7 +578,7 @@ def cb_privmsg(evt):
 
 
 def cb_quit(evt):
-    bot = geytobj(evt.orig)
+    bot = getobj(evt.orig)
     logging.debug("quit from %s", bot.cfg.server)
     bot.state.nrerror += 1
     bot.state.error = evt.text

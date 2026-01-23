@@ -83,15 +83,15 @@ def keys(obj):
         return obj.keys()
     if isinstance(obj, types.MappingProxyType):
         return obj.keys()
-    res = []
-    for key in dir(obj):
-        if key.startswith("_"):
-            continue
-        res.append(key)
-    return res
-
     if isinstance(obj, dict):
         return obj.keys()
+    if isinstance(obj, type):
+        res = []
+        for key in sorted(dir(obj)):
+            if key.startswith("_"):
+                continue
+            res.append(key)
+        return res
     return obj.__dict__.keys()
 
 

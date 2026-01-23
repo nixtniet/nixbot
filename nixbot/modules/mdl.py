@@ -9,7 +9,6 @@ import logging
 import time
 
 
-
 from nixbot.brokers import getobjs
 from nixbot.message import Message
 from nixbot.objects import Object, construct, keys
@@ -132,7 +131,7 @@ def hourly():
 "callbacks"
 
 
-def cbnow(_evt):
+def cbnow(evt):
     delta = time.time() - STARTTIME
     txt = elapsed(delta) + " "
     for nme in sorted(keys(oorzaken), key=lambda x: seconds(getnr(x))):
@@ -142,7 +141,7 @@ def cbnow(_evt):
         nrtimes = int(delta/needed)
         txt += f"{getalias(nme)} {nrtimes} | "
     txt += SOURCE
-    for bot in getobj("announce"):
+    for bot in getobjs("announce"):
         bot.announce(txt)
 
 
@@ -410,7 +409,7 @@ aantal = """
 
 
 oorzaak = Object()
-construct(oorzaak, zip(oor, aantal))
+construct(oorzaak, zip([x.strip() for x in oor], [int(x.strip()) for x in aantal]))
 oorzaken = Object()
 
 

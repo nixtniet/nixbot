@@ -12,9 +12,9 @@ import threading
 import time
 
 
+from .encoder import dump, load
 from .methods import search
 from .objects import Object, fqn, items, keys, update
-from .serials import dump, load
 
 
 lock = threading.RLock()
