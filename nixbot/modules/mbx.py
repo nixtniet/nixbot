@@ -6,10 +6,10 @@ import os
 import time
 
 
-from nixbot.methods import fmt
-from nixbot.objects import Object, keys, update
-from nixbot.persist import find, write
-from nixbot.timings import MONTH, date, elapsed
+from ..methods import fmt
+from ..objects import Object, keys, update
+from ..persist import find, write
+from ..utility import MONTH, date, elapsed
 
 
 class Email(Object):

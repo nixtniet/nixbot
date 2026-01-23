@@ -10,9 +10,9 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
-from nixbot.objects import Object
-from nixbot.threads import launch
-from nixbot.utility import where
+from ..objects import Object
+from ..threads import launch
+from ..utility import where
 
 
 DEBUG = True

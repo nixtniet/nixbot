@@ -24,8 +24,8 @@ import nixbot.methods
 import nixbot.objects
 import nixbot.package
 import nixbot.persist
+import nixbot.runtime
 import nixbot.threads
-import nixbot.timings
 import nixbot.utility
 
 
@@ -45,8 +45,8 @@ PACKAGE = [
     'objects',
     'package',
     'persist',
+    'runtime',
     'threads',
-    'timings',
     'utility'
 ]
 

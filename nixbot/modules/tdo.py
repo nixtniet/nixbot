@@ -4,9 +4,9 @@
 import time
 
 
-from nixbot.objects import Object
-from nixbot.persist import find, write
-from nixbot.timings import elapsed, fntime
+from ..objects import Object
+from ..persist import find, fntime, write
+from ..utility import elapsed
 
 
 class Todo(Object):

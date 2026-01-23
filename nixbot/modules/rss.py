@@ -19,13 +19,12 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 
 
-from nixbot.brokers import getobjs
-from nixbot.methods import fmt
-from nixbot.objects import Object, fqn, update
-from nixbot.persist import find, ident, last, write
-from nixbot.threads import launch
-from nixbot.timings import Repeater, elapsed, fntime
-from nixbot.utility import spl
+from ..brokers import getobjs
+from ..methods import fmt
+from ..objects import Object, fqn, update
+from ..persist import find, fntime, ident, last, write
+from ..threads import launch
+from ..utility import Repeater, elapsed, spl
 
 
 DEBUG = False

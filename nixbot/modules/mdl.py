@@ -9,10 +9,10 @@ import logging
 import time
 
 
-from nixbot.brokers import getobjs
-from nixbot.message import Message
-from nixbot.objects import Object, construct, keys
-from nixbot.timings import Repeater, elapsed
+from ..brokers import getobjs
+from ..message import Message
+from ..objects import Object, construct, keys
+from ..utility import Repeater, elapsed
 
 
 def init():
