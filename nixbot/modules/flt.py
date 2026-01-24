@@ -1,8 +1,8 @@
 # This file is placed in the Public Domain.
 
 
-from ..brokers import getobjs
-from ..objects import fqn
+from nixbot.brokers import getobjs
+from nixbot.objects import fqn
 
 
 def flt(event):

@@ -4,9 +4,9 @@
 import time
 
 
-from ..methods import fmt
-from ..persist import find, fntime, kinds
-from ..utility import elapsed
+from nixbot.methods import fmt
+from nixbot.persist import find, fntime, kinds
+from nixbot.utility import elapsed
 
 
 def fnd(event):

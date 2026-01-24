@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-from ..brokers import getobj
+from nixbot.brokers import getobj
 
 
 def sil(event):

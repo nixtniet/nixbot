@@ -7,9 +7,9 @@ import logging
 from random import SystemRandom
 
 
-from ..brokers import getobjs
-from ..message import Message
-from ..utility import Repeater
+from nixbot.brokers import getobjs
+from nixbot.message import Message
+from nixbot.utility import Repeater
 
 
 rand = SystemRandom()

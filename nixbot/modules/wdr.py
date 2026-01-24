@@ -4,7 +4,7 @@
 "working directory"
 
 
-from ..persist import workdir
+from nixbot.persist import workdir
 
 
 def wdr(event):

@@ -11,15 +11,15 @@ import threading
 import time
 
 
-from ..brokers import getobj
-from ..command import Cfg, command
-from ..handler import Output
-from ..message import Message
-from ..methods import fmt
-from ..objects import Object, edit, keys
-from ..persist import ident, last, write
-from ..threads import launch
-from ..utility import pkgname
+from nixbot.brokers import getobj
+from nixbot.command import Cfg, command
+from nixbot.handler import Output
+from nixbot.message import Message
+from nixbot.methods import fmt
+from nixbot.objects import Object, edit, keys
+from nixbot.persist import ident, last, write
+from nixbot.threads import launch
+from nixbot.utility import pkgname
 
 
 NAME = Cfg.name or pkgname(Cfg)
