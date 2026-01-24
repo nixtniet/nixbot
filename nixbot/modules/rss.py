@@ -25,7 +25,8 @@ from nixbot.methods import fmt
 from nixbot.objects import Object, fqn, update
 from nixbot.persist import find, fntime, ident, last, write
 from nixbot.threads import launch
-from nixbot.utility import Repeater, elapsed, spl
+from nixbot.timings import Repeater, elapsed
+from nixbot.utility import spl
 
 
 def init():

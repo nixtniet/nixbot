@@ -20,7 +20,8 @@ from nixbot.handler import Client
 from nixbot.package import initmods, listmods, scanner
 from nixbot.persist import setwd
 from nixbot.threads import launch
-from nixbot.utility import elapsed, wrapped
+from nixbot.timings import elapsed
+from nixbot.utility import wrapped
 
 
 from nixbot import modules as MODS

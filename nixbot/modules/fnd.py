@@ -6,7 +6,7 @@ import time
 
 from nixbot.methods import fmt
 from nixbot.persist import find, fntime, kinds
-from nixbot.utility import elapsed
+from nixbot.timings import elapsed
 
 
 def fnd(event):

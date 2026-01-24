@@ -9,7 +9,7 @@ from random import SystemRandom
 
 from nixbot.brokers import getobjs
 from nixbot.message import Message
-from nixbot.utility import Repeater
+from nixbot.timings import Repeater
 
 
 rand = SystemRandom()

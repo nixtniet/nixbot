@@ -9,7 +9,7 @@ import time
 from nixbot.methods import fmt
 from nixbot.objects import Object, keys, update
 from nixbot.persist import find, write
-from nixbot.utility import MONTH, date, elapsed
+from nixbot.timings import MONTH, date, elapsed
 
 
 class Email(Object):

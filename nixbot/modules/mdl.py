@@ -12,7 +12,7 @@ import time
 from nixbot.brokers import getobjs
 from nixbot.message import Message
 from nixbot.objects import Object, construct, keys
-from nixbot.utility import Repeater, elapsed
+from nixbot.timings import Repeater, elapsed
 
 
 def init():
