@@ -20,13 +20,12 @@ from urllib.parse import quote_plus, urlencode
 
 
 from nixbot.brokers import getobjs
-from nixbot.command import Cfg
 from nixbot.methods import fmt
+from nixbot.modules import Cfg
 from nixbot.objects import Object, fqn, update
 from nixbot.persist import find, fntime, ident, last, write
 from nixbot.threads import launch
-from nixbot.timings import Repeater, elapsed
-from nixbot.utility import spl
+from nixbot.utility import Repeater, elapsed, spl
 
 
 def init():

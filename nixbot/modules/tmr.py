@@ -10,7 +10,7 @@ import time
 from nixbot.brokers import getobj, likeobj
 from nixbot.objects import Object, items
 from nixbot.persist import ident, last, write
-from nixbot.timings import NoDate, Timed, day, elapsed, extract, hour, today
+from nixbot.utility import NoDate, Timed, day, elapsed, extract, hour, today
 
 
 rand = random.SystemRandom()

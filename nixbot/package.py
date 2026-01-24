@@ -83,11 +83,7 @@ def importer(name, pth=""):
         logging.debug(f"can't load {name} module from spec")
         return None
     Mods.modules[name] = mod
-    try:
-        spec.loader.exec_module(mod)
-    except Exception as ex:
-        logging.exception(ex)
-        return
+    spec.loader.exec_module(mod)
     return mod
 
 

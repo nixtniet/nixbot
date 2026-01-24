@@ -13,17 +13,6 @@ from .methods import parse
 from .objects import Default
 
 
-"config"
-
-
-class Config(Default):
-
-    pass
-
-
-Cfg = Config()
-
-
 "commands"
 
 
@@ -73,7 +62,6 @@ def command(evt):
 
 def __dir__():
     return (
-        'Cfg',
         'Config',
         'Commands',
         'addcmd',

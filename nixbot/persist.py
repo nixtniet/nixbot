@@ -12,10 +12,8 @@ import threading
 import time
 
 
-from .command import Cfg
 from .encoder import dump, load
 from .objects import Object, fqn, items, keys, update
-from .utility import pkgname
 
 
 lock = threading.RLock()
@@ -27,7 +25,7 @@ lock = threading.RLock()
 class Cache:
 
     paths = {}
-    workdir = os.path.expanduser(f"~/.{pkgname(Cfg)}")
+    workdir = ""
 
 
 def addpath(path, obj):
@@ -177,6 +175,8 @@ def pidname(name):
 
 def skel():
     "create directories."
+    if not Cache.workdir:
+        return
     path = os.path.abspath(Cache.workdir)
     workpath = os.path.join(path, "store")
     pth = pathlib.Path(workpath)
