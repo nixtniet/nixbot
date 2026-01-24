@@ -19,7 +19,7 @@ from nixbot.handler import Console
 from nixbot.message import Message
 from nixbot.methods import parse
 from nixbot.modules import Cfg
-from nixbot.package import initmods, inits, listmods, scanner
+from nixbot.package import initmods, inits, listmods, pkgname, scanner
 from nixbot.persist import pidfile, setwd, workdir
 from nixbot.utility import forever, level, pkgname
 

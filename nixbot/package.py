@@ -66,6 +66,10 @@ def listmods(ignore=""):
     return ",".join(sorted(mods))
 
 
+def pkgname(obj):
+    return obj.__module__.split(".")[0]
+
+
 "utilities"
 
 
@@ -121,5 +125,6 @@ def __dir__():
         'importer',
         'inits',
         'listmods',
+        'pkgname',
         'scanner'
     )

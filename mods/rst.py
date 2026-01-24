@@ -10,7 +10,7 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
-from nixbot.command import Cfg
+from nixbot.modules import Cfg
 from nixbot.objects import Object
 from nixbot.persist import kinds, workdir
 from nixbot.threads import launch

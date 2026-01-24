@@ -18,9 +18,9 @@ from nixbot.message import Message
 from nixbot.methods import fmt
 from nixbot.modules import Cfg
 from nixbot.objects import Object, edit, keys
+from nixbot.package import pkgname
 from nixbot.persist import ident, last, write
 from nixbot.threads import launch
-from nixbot.utility import pkgname
 
 
 NAME = Cfg.name or pkgname(Cfg)

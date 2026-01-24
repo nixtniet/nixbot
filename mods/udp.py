@@ -10,7 +10,7 @@ import time
 
 
 from nixbot.brokers import getobjs
-from nixbot.command import Cfg
+from nixbot.modules import Cfg
 from nixbot.objects import Object
 from nixbot.threads import launch
 
