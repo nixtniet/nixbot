@@ -1,5 +1,4 @@
 # This file is put into the Public Domain.
 
 
-"runtime"
-
+"in case setup.py installed bin ain't owrking no more"
