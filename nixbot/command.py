@@ -11,9 +11,6 @@ from .brokers import getobj
 from .methods import parse
 
 
-"commands"
-
-
 class Commands:
 
     cmds = {}
@@ -40,8 +37,6 @@ def scancmd(module):
             continue
         addcmd(cmdz)
 
-
-"callback"
 
 
 def command(evt):

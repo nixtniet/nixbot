@@ -8,9 +8,6 @@ import json
 import types
 
 
-"encoder"
-
-
 class Encoder(json.JSONEncoder):
 
     def default(self, o):
@@ -27,9 +24,6 @@ class Encoder(json.JSONEncoder):
                 return vars(o)
             except TypeError:
                 return repr(o)
-
-
-"functions"
 
 
 def dump(*args, **kw):

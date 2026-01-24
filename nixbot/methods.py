@@ -7,9 +7,6 @@
 from .objects import Default, fqn, typed
 
 
-"methods"
-
-
 def fmt(obj, args=[], skip=[], plain=False, empty=False):
     "format object info printable string."
     if args == []:

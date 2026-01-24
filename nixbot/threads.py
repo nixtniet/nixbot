@@ -15,9 +15,6 @@ import _thread
 lock = threading.RLock()
 
 
-"thread"
-
-
 class Thread(threading.Thread):
 
     def __init__(self, func, *args, daemon=True, **kwargs):
@@ -62,9 +59,6 @@ class Thread(threading.Thread):
                 self.event.ready()
             logging.exception(ex)
             _thread.interrupt_main()
-
-
-"utilities"
 
 
 def launch(func, *args, **kwargs):

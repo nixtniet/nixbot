@@ -14,9 +14,6 @@ from .threads import launch
 from .utility import spl
 
 
-"modules"
-
-
 class Mods:
 
     dirs = {}

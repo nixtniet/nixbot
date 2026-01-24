@@ -7,15 +7,9 @@
 import types
 
 
-"exception"
-
-
 class Reserved(Exception):
 
     pass
-
-
-"object"
 
 
 class Object:
@@ -158,9 +152,6 @@ def values(obj):
             continue
         res.append(getattr(obj, key))
     return sorted(res)
-
-
-"default"
 
 
 class Default(Object):

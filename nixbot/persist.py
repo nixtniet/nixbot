@@ -19,9 +19,6 @@ from .objects import Object, fqn, items, keys, update
 lock = threading.RLock()
 
 
-"cache"
-
-
 class Cache:
 
     paths = {}
