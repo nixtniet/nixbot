@@ -5,7 +5,6 @@ import base64
 import logging
 import os
 import socket
-import sys
 import ssl
 import textwrap
 import threading
@@ -17,7 +16,7 @@ from nixbot.command import command
 from nixbot.handler import Output
 from nixbot.message import Message
 from nixbot.methods import edit, fmt
-from nixbot.objects import Default, Object, keys
+from nixbot.objects import Object, keys
 from nixbot.package import pkgname
 from nixbot.persist import ident, last, write
 from nixbot.runtime import Cfg

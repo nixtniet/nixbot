@@ -16,7 +16,6 @@ sys.path.insert(0, os.getcwd())
 from nixbot.command import command
 from nixbot.message import Message
 from nixbot.methods import fmt, parse
-from nixbot.objects import Default
 from nixbot.handler import Client
 from nixbot.package import initmods, listmods, scanner
 from nixbot.persist import setwd
