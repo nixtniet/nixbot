@@ -7,6 +7,7 @@ import http.client
 import logging
 import os
 import re
+import sys
 import time
 import urllib
 import urllib.parse
@@ -20,10 +21,11 @@ from urllib.parse import quote_plus, urlencode
 
 
 from nixbot.brokers import getobjs
-from nixbot.methods import fmt
-from nixbot.modules import Cfg
-from nixbot.objects import Object, fqn, update
+from nixbot.methods import fmt, fqn
+from nixbot.objects import Default, Object, update
+from nixbot.package import pkgname
 from nixbot.persist import find, fntime, ident, last, write
+from nixbot.runtime import Cfg
 from nixbot.threads import launch
 from nixbot.utility import Repeater, elapsed, spl
 

@@ -4,7 +4,15 @@
 "an object as the first argument"
 
 
-from .objects import Default, fqn, typed
+from .objects import Default, items
+
+
+def edit(obj, setter={}, skip=False):
+    "update object with dict."
+    for key, val in items(setter):
+        if skip and val == "":
+            continue
+        typed(obj, key, val)
 
 
 def fmt(obj, args=[], skip=[], plain=False, empty=False):
@@ -33,6 +41,14 @@ def fmt(obj, args=[], skip=[], plain=False, empty=False):
     if txt == "":
         txt = "{}"
     return txt.strip()
+
+
+def fqn(obj):
+    "full qualified name."
+    kin = str(type(obj)).split()[-1][1:-2]
+    if kin == "type":
+        kin = f"{obj.__module__}.{obj.__name__}"
+    return kin
 
 
 def parse(obj, text):
@@ -88,11 +104,49 @@ def parse(obj, text):
         obj.text = obj.cmd or ""
 
 
+def skip(obj, chars="_"):
+    "skip keys containing chars."
+    res = {}
+    for key, value in items(obj):
+        next = False
+        for char in chars:
+            if char in key:
+                next = True
+        if next:
+            continue
+        res[key] = value
+    return res
+
+
+def typed(obj, key, val):
+    "assign proper types."
+    try:
+        setattr(obj, key, int(val))
+        return
+    except ValueError:
+        pass
+    try:
+        setattr(obj, key, float(val))
+        return
+    except ValueError:
+        pass
+    if val in ["True", "true", True]:
+        setattr(obj, key, True)
+    elif val in ["False", "false", False]:
+        setattr(obj, key, False)
+    else:
+        setattr(obj, key, val)
+
+
 "interface"
 
 
 def __dir__():
     return (
+        'edit',
         'fmt',
-        'parse'
+        'fqn',
+        'parse',
+        'skip',
+        'typed'
     )

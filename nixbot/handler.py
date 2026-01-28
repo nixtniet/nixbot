@@ -19,7 +19,8 @@ class Handler:
     def __init__(self):
         self.cbs = {}
         self.queue = queue.Queue()
-
+        self.running = threading.Event()
+        
     def callback(self, event):
         "run callback function with event."
         func = self.cbs.get(event.kind, None)
@@ -31,13 +32,13 @@ class Handler:
 
     def loop(self):
         "event loop."
-        while True:
+        while self.running.is_set():
             event = self.queue.get()
             if not event:
                 break
             event.orig = repr(self)
             self.callback(event)
-
+        
     def put(self, event):
         "put event on queue."
         self.queue.put(event)
@@ -48,11 +49,16 @@ class Handler:
 
     def start(self, daemon=True):
         "start event handler loop."
+        self.running.set()
         launch(self.loop, daemon=daemon)
 
     def stop(self):
         "stop event handler loop."
+        self.running.clear()
         self.queue.put(None)
+    
+
+"client"
 
 
 class Client(Handler):
@@ -99,11 +105,13 @@ class Client(Handler):
 
     def raw(self, text):
         "raw output."
-        raise NotImplementedError("raw")
 
     def say(self, channel, text):
         "say text in channel."
         self.raw(text)
+
+
+"console"
 
 
 class Console(Client):
@@ -121,6 +129,9 @@ class Console(Client):
     def poll(self):
         "return event."
         return self.iqueue.get()
+
+
+"buffered"
 
 
 class Output(Client):

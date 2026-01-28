@@ -5,6 +5,7 @@ import base64
 import logging
 import os
 import socket
+import sys
 import ssl
 import textwrap
 import threading
@@ -15,15 +16,15 @@ from nixbot.brokers import getobj
 from nixbot.command import command
 from nixbot.handler import Output
 from nixbot.message import Message
-from nixbot.methods import fmt
-from nixbot.modules import Cfg
-from nixbot.objects import Object, edit, keys
+from nixbot.methods import edit, fmt
+from nixbot.objects import Default, Object, keys
 from nixbot.package import pkgname
 from nixbot.persist import ident, last, write
+from nixbot.runtime import Cfg
 from nixbot.threads import launch
 
 
-NAME = Cfg.name or pkgname(Cfg)
+NAME = Cfg.name or pkgname(Object)
 
 
 lock = threading.RLock()
@@ -42,20 +43,20 @@ def init():
 
 class Config(Object):
 
-    channel = f"#{NAME}"
+    channel = f"#{Cfg.name}"
     commands = True
     control = "!"
     ignore = ["PING", "PONG", "PRIVMSG"] 
-    name = NAME
-    nick = NAME
+    name = Cfg.name
+    nick = Cfg.name
     word = ""
     port = 6667
-    realname = NAME
+    realname = Cfg.name
     sasl = False
     server = "localhost"
     servermodes = ""
     sleep = 60
-    username = NAME
+    username = Cfg.name
     users = False
     version = 1
 

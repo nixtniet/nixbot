@@ -18,10 +18,11 @@ from nixbot.command import Commands, addcmd, command
 from nixbot.handler import Console
 from nixbot.message import Message
 from nixbot.methods import parse
-from nixbot.modules import Cfg
+from nixbot.objects import Default
 from nixbot.package import initmods, inits, listmods, pkgname, scanner
 from nixbot.persist import pidfile, setwd, workdir
-from nixbot.utility import forever, level, pkgname
+from nixbot.runtime import Cfg
+from nixbot.utility import forever, level
 
 
 from nixbot import modules as MODS
@@ -30,8 +31,9 @@ from nixbot import modules as MODS
 "config"
 
 
+Cfg.ignore = "rst,udp,web"
 Cfg.level = "info"
-Cfg.name = pkgname(Cfg)
+Cfg.name = pkgname(Commands)
 Cfg.txt = " ".join(sys.argv[1:])
 Cfg.version = 181
 Cfg.wdr = os.path.expanduser(f"~/.{Cfg.name}")
@@ -78,7 +80,7 @@ def background():
     daemon()
     privileges()
     boot()
-    pidfile(NAME)
+    pidfile(Cfg.name)
     scanner(Cfg.ignore)
     addcmd(cmd, mod, ver)
     inits(Cfg.default or "irc,mdl,rss,wsd", Cfg.ignore)
@@ -114,7 +116,7 @@ def service():
     privileges()
     banner()
     boot()
-    pidfile(pidname(NAME))
+    pidfile(Cfg.name)
     scanner(listmods())
     addcmd(cmd, mod, ver)
     inits(Cfg.default or "irc,mdl,rss,wsd", Cfg.ignore)
@@ -138,12 +140,12 @@ def srv(event):
     "generate systemd service file."
     import getpass
     name = getpass.getuser()
-    event.reply(SYSTEMD % (NAME.upper(), name, name, name, NAME))
+    event.reply(SYSTEMD % (Cfg.name.upper(), name, name, name, Cfg.name))
 
 
 def ver(event):
     "show version."
-    event.reply(f"{NAME.upper()} {VERSION}")
+    event.reply(f"{Cfg.name.upper()} {Cfg.version}")
 
 
 "utility"
@@ -164,7 +166,7 @@ def banner():
 def boot(inits=""):
     "in the beginning."
     parse(Cfg, Cfg.txt)
-    Cfg.ignore = Cfg.sets.ignore
+    Cfg.ignore = Cfg.sets.ignore or Cfg.ignore or ""
     Cfg.init = Cfg.sets.init or Cfg.init or ""
     Cfg.level = Cfg.sets.level or Cfg.level or "info"
     Cfg.wdr = Cfg.sets.wdr or Cfg.wdr or os.path.expanduser(f"~/.{pkgname(Cfg)}")
@@ -172,7 +174,8 @@ def boot(inits=""):
     setwd(Cfg.wdr)
     if Cfg.wdr:
         initmods("modules", os.path.join(workdir(), "mods"))
-    initmods(MODS.__name__, MODS.__path__[0])
+    if MODS:
+        initmods(MODS.__name__, MODS.__path__[0])
     if "m" in Cfg.opts and os.path.exists("mods"):
         initmods("mods", "mods")
     if "v" in Cfg.opts:
