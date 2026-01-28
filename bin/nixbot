@@ -14,7 +14,7 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from nixbot.command import Commands, addcmd, command
+from nixbot.command import Commands, addcmd, command, docmd
 from nixbot.handler import Console
 from nixbot.message import Message
 from nixbot.methods import parse
@@ -108,7 +108,9 @@ def control():
     boot()
     scanner(listmods(), Cfg.ignore)
     addcmd(cmd, mod, srv, ver)
-    docmd(Cfg.txt)
+    evt = docmd(Cfg.txt)
+    for line in evt.result.values():
+        print(line)
 
 
 def service():
@@ -195,19 +197,6 @@ def check(text):
         return False
 
 
-def docmd(text):
-    "parse text for command and run it."
-    cli = Line()
-    for txt in text.split(" ! "):
-        evt = Message()
-        evt.orig = repr(cli)
-        evt.text = txt
-        evt.type = "command"
-        command(evt)
-        evt.wait()
-    return evt.result
-
- 
 def daemon(verbose=False, nochdir=False):
     "run in the background."
     pid = os.fork()
