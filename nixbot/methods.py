@@ -138,6 +138,9 @@ def typed(obj, key, val):
         setattr(obj, key, val)
 
 
+"interface"
+
+
 def __dir__():
     return (
         'edit',

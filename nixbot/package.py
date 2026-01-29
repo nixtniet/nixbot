@@ -64,6 +64,9 @@ def listmods(ignore=""):
     return ",".join(sorted(mods))
 
 
+"utilities"
+
+
 def importer(name, pth=""):
     "import module by path."
     if pth and os.path.exists(pth):
@@ -86,6 +89,9 @@ def pkgname(obj):
     return obj.__module__.split(".")[0]
 
 
+"runtime"
+
+
 def inits(modlist, ignore="", wait=False):
     "scan named modules for commands."
     thrs = []
@@ -104,6 +110,9 @@ def scanner(modlist, ignore=""):
         scancmd(mod)
         res.append((name, mod))
     return res
+
+
+"interface"
 
 
 def __dir__():

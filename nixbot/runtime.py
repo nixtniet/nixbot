@@ -15,6 +15,9 @@ class Config(Default):
 Cfg = Config()
 
 
+"interface"
+
+
 def __dir__():
     return (
         'Cfg',

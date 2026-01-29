@@ -7,10 +7,6 @@
 import types
 
 
-attrs1 = (
-        )
-
-
 class Reserved(Exception):
 
     pass
@@ -120,24 +116,16 @@ def values(obj):
     return obj.__dict__.values()
 
 
-def skip(obj, chars="_"):
-    "skip keys containing chars."
-    res = {}
-    for key, value in items(obj):
-        next = False
-        for char in chars:
-            if char in key:
-                next = True
-        if next:
-            continue
-        res[key] = value
-    return res
+"default"
 
 
 class Default(Object):
 
     def __getattr__(self, key):
         return self.__dict__.get(key, "")
+
+
+"interface"
 
 
 def __dir__():

@@ -43,6 +43,9 @@ def syncpath(path, obj):
         addpath(path, obj)
 
 
+"workdir"
+
+
 class Workdir:
 
     wdr = ""
@@ -99,9 +102,7 @@ def workdir():
     return Workdir.wdr
 
 
-class Disk:
-
-    pass
+"disk"
 
 
 def read(obj, path):
@@ -130,9 +131,7 @@ def write(obj, path=""):
         return path
 
 
-class Locate:
-
-    pass
+"locate"
 
 
 def attrs(kind):
@@ -190,9 +189,7 @@ def last(obj, selector={}):
     return res
 
 
-class Utils:
-
-    pass
+"utilities"
 
 
 def cdir(path):
@@ -246,6 +243,9 @@ def search(obj, selector={}, matching=False):
 def strip(path):
     "strip filename from path."
     return path.split('store')[-1][1:]
+
+
+"interface"
 
 
 def __dir__():
