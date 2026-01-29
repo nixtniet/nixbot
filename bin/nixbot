@@ -18,7 +18,6 @@ from nixbot.command import Commands, addcmd, command, docmd
 from nixbot.handler import Console
 from nixbot.message import Message
 from nixbot.methods import parse
-from nixbot.objects import Default
 from nixbot.package import initmods, inits, listmods, pkgname, scanner
 from nixbot.persist import pidfile, setwd, workdir
 from nixbot.runtime import Cfg
@@ -28,18 +27,12 @@ from nixbot.utility import forever, level
 from nixbot import modules as MODS
 
 
-"config"
-
-
 Cfg.ignore = "rst,udp,web"
 Cfg.level = "info"
 Cfg.name = pkgname(Commands)
 Cfg.txt = " ".join(sys.argv[1:])
 Cfg.version = 181
 Cfg.wdr = os.path.expanduser(f"~/.{Cfg.name}")
-
-
-"clients"
 
 
 class Line(Console):
@@ -55,7 +48,6 @@ class Line(Console):
 
 class Term(Line):
 
-
     def callback(self, event):
         "wait for callback result."
         if not event.text:
@@ -70,9 +62,6 @@ class Term(Line):
         evt.text = input("> ")
         evt.kind = "command"
         return evt
-
-
-"scripts"
 
 
 def background():
@@ -125,9 +114,6 @@ def service():
     forever()
 
 
-"commands"
-
-
 def cmd(event):
     "list available commands."
     event.reply(",".join(sorted(Commands.names or Commands.cmds)))
@@ -135,7 +121,11 @@ def cmd(event):
 
 def mod(event):
     "list available commands."
-    event.reply(listmods(Cfg.ignore))
+    mods = listmods(Cfg.ignore)
+    if not mods:
+        event.reply("no modules available")
+        return
+    event.reply(mods)
 
 
 def srv(event):
@@ -146,11 +136,8 @@ def srv(event):
 
 
 def ver(event):
-    "show version."
+    "show verson."
     event.reply(f"{Cfg.name.upper()} {Cfg.version}")
-
-
-"utility"
 
 
 def banner():
@@ -244,9 +231,6 @@ def wrap(func):
         termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old)
 
 
-"data"
-
-
 SYSTEMD = """[Unit]
 Description=%s
 After=multi-user.target
@@ -259,9 +243,6 @@ ExecStart=/home/%s/.local/bin/%s -s
 
 [Install]
 WantedBy=multi-user.target"""
-
-
-"runtime"
 
 
 def main():

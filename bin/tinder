@@ -13,21 +13,23 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from nixbot.command import command
-from nixbot.message import Message
-from nixbot.methods import fmt, parse
-from nixbot.handler import Client
-from nixbot.package import initmods, listmods, scanner
-from nixbot.persist import setwd
-from nixbot.runtime import Cfg
-from nixbot.threads import launch
-from nixbot.utility import elapsed, wrapped
+from nixt.command import Commands, command
+from nixt.message import Message
+from nixt.methods import fmt, parse
+from nixt.handler import Client
+from nixt.package import initmods, listmods, pkgname, scanner
+from nixt.persist import setwd
+from nixt.runtime import Cfg
+from nixt.threads import launch
+from nixt.utility import elapsed, wrapped
 
 
-from nixbot import modules as MODS
+from nixt import modules as MODS
 
-
-"defines"
+try:
+    import mods as MODS2
+except ModuleNotFoundError:
+    MODS2 = None
 
 
 events = queue.Queue()
@@ -35,12 +37,11 @@ events = queue.Queue()
 
 "config"
 
-
 Cfg.debug = True
+Cfg.ignore = ""
 Cfg.level = "info"
-Cfg.name = "nixbot"
-Cfg.opts = ""
-Cfg.version = 181
+Cfg.name = pkgname(Commands)
+Cfg.txt = " ".join(sys.argv[1:])
 Cfg.wdr = ".test"
 
 
@@ -90,9 +91,9 @@ class Pool:
 "utilities"
 
 
-def banner(name, version):
+def banner(name):
     tme = time.ctime(time.time()).replace("  ", " ")
-    print(f"{name.upper()} {version} since {tme} ({Cfg.level})")
+    print(f"{name.upper()} since {tme} ({Cfg.level})")
     sys.stdout.flush()
 
 
@@ -152,9 +153,10 @@ def main():
     parse(Cfg, " ".join(sys.argv[1:]))
     setwd(Cfg.wdr)
     initmods("modules", MODS.__path__[0])
+    initmods("mods", MODS2.__path__[0])
     scanner(listmods())
     if "v" in Cfg.opts:
-        banner(Cfg.name, Cfg.version)
+        banner(Cfg.name)
     if "z" in Cfg.opts:
         Pool.init(CLI, os.cpu_count())
     else:
@@ -213,7 +215,6 @@ examples = {
     "thr": [""],
     "tmr": ["", "22:00 test"],
     "upt": [""],
-    "ver": [""],
     "wsd": [""]
 }
 
