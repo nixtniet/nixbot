@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"Genocide model of the Netherlands since 4 March 2019."
+"nixbot model of the netherlands since 4 march 2019."
 
 
 import datetime
@@ -10,12 +10,10 @@ import time
 
 
 from nixbot.brokers import Broker
-from nixbot.message import Message
+from nixbot.handler import Event
 from nixbot.objects import Dict, Object
-from nixbot.utility import Repeater, Time
-
-
-"init"
+from nixbot.threads import Repeater
+from nixbot.utility import Time
 
 
 def init():
@@ -24,7 +22,7 @@ def init():
             continue
         val = getattr(oorzaken, key, None)
         if val and int(val) > 10000:
-            evt = Message()
+            evt = Event()
             evt.txt = ""
             evt.rest = key
             sec = seconds(val)
@@ -34,12 +32,9 @@ def init():
             logging.warning("since %s", Time.elapsed(time.time()-STARTTIME))
 
 
-"defines"
-
-
 DAY = 24*60*60
 YEAR = 365*DAY
-SOURCE = "https://nixbot.github.io"
+SOURCE = "https://otpcr.github.io"
 STARTDATE = "2019-03-04 00:00:00"
 STARTTIME = time.mktime(time.strptime(STARTDATE, "%Y-%m-%d %H:%M:%S"))
 
@@ -77,9 +72,6 @@ jaar["Pvp"] = 20088
 jaar["Wzd"] = 25000
 jaar["Wfz"] = 23820
 jaar["totaal"] = 168678
-
-
-"utilities"
 
 
 def getalias(txt):
@@ -120,18 +112,15 @@ def iswanted(k, line):
 def daily():
     while 1:
         time.sleep(24*60*60)
-        evt = Message()
+        evt = Event()
         cbnow(evt)
 
 
 def hourly():
     while 1:
         time.sleep(60*60)
-        evt = Message()
+        evt = Event()
         cbnow(evt)
-
-
-"callbacks"
 
 
 def cbnow(evt):
@@ -144,8 +133,7 @@ def cbnow(evt):
         nrtimes = int(delta/needed)
         txt += f"{getalias(nme)} {nrtimes} | "
     txt += SOURCE
-    for bot in Broker.objs("announce"):
-        bot.announce(txt)
+    Broker.announce(txt)
 
 
 def cbstats(evt):
@@ -167,11 +155,7 @@ def cbstats(evt):
             nryear,
             Time.elapsed(needed)
         )
-        for bot in Broker.objs("announce"):
-            bot.announce(txt)
-
-
-"commands"
+        Broker.announce(txt)
 
 
 def dis(event):
@@ -207,9 +191,6 @@ def now(event):
             Time.elapsed(needed)
         )
         event.reply(txt)
-
-
-"data"
 
 
 oor = """"Totaal onderliggende doodsoorzaken (aantal)";
@@ -406,9 +387,6 @@ aantal = """
           17495;
           2678
          """.split(";")
-
-
-"boot"
 
 
 oorzaak = Object()

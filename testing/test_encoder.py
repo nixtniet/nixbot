@@ -1,11 +1,14 @@
 # This file is placed in the Public Domain.
 
 
+"encoder/decoder tests"
+
+
 import unittest
 
 
-from nixbot.encoder import *
-from nixbot.objects import *
+from nixbot.encoder import Json
+from nixbot.objects import Dict, Object
 
 
 VALIDJSON = '{"test": "bla"}'

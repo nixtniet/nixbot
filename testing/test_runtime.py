@@ -9,5 +9,20 @@ import unittest
 
 class TestRuntime(unittest.TestCase):
 
-    def test_runtime(self):
-        self.assertTrue(True)
+    def test_daemon(self):
+        pass
+
+    def test_init(self):
+        pass
+
+    def test_privileges(self):
+        pass
+
+    def test_scanner(self):
+        pass
+
+    def test_shutdown(self):
+        pass
+
+    def test_wrap(self):
+        pass

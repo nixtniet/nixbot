@@ -1,10 +1,13 @@
 # This file is placed in the Public Domain.
 
 
+"show fields on objects"
+
+
 from nixbot.persist import Locate, Workdir
 
 
-def atr(event):
+def fie(event):
     if not event.rest:
         res = sorted({x.split('.')[-1].lower() for x in Workdir.kinds()})
         if res:

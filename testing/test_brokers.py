@@ -1,16 +1,33 @@
 # This file is placed in the Public Domain.
 
 
+"broker tests"
+
+
+import types
 import unittest
 
 
 from nixbot.brokers import Broker
-from nixbot.clients import Client
 from nixbot.encoder import Json
+from nixbot.handler import Client
 from nixbot.objects import Dict, Object
 
 
 class TestBroker(unittest.TestCase):
+
+    def test_ismethod(self):
+        self.assertEqual(type(Broker.add), types.MethodType)
+
+    def test_asinstance(self):
+        broker = Broker()
+        self.assertTrue(isinstance(broker, Broker))
+
+    def test_functioninginstance(self):
+        broker = Broker()
+        obj = Object()
+        broker.add(obj)
+        self.assertTrue(Broker.has(obj))
 
     def test_add(self):
         clt = Client()
@@ -20,7 +37,7 @@ class TestBroker(unittest.TestCase):
         obj = Object()
         Broker.add(obj)
         self.assertTrue(Broker.has(obj))
-    
+
     def test_getobj(self):
         obj = Object()
         Broker.add(obj)
@@ -47,7 +64,7 @@ class TestBroker(unittest.TestCase):
         s = Json.dumps(Broker)
         o = Json.loads(s)
         self.assertEqual(o["a"], "b")
-        
+
     def test_update(self):
         o = {}
         o["a"] = "b"

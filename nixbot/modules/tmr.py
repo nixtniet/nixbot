@@ -1,6 +1,9 @@
 # This file is placed in the Public Domain.
 
 
+"timers"
+
+
 import logging
 import random
 import threading
@@ -10,7 +13,8 @@ import time
 from nixbot.brokers import Broker
 from nixbot.objects import Dict, Methods, Object
 from nixbot.persist import Disk, Locate
-from nixbot.utility import NoDate, Time, Timed
+from nixbot.threads import Thread, Timed
+from nixbot.utility import Time
 
 
 rand = random.SystemRandom()
@@ -50,7 +54,7 @@ class Timers(Object):
     path = ""
     timers = Timer()
     lock = threading.RLock()
-    
+
     @staticmethod
     def add(tme, orig, channel,  txt):
         with Timers.lock:
@@ -63,7 +67,6 @@ class Timers(Object):
 
 
 def tmr(event):
-    result = ""
     if not event.rest:
         nmr = 0
         for tme, txt in Dict.items(Timers.timers):
@@ -73,37 +76,20 @@ def tmr(event):
                 nmr += 1
         if not nmr:
             event.reply("no timers.")
-        return result
-    seconds = 0
-    line = ""
-    for word in event.args:
-        if word.startswith("+"):
-            try:
-                seconds = int(word[1:])
-            except (ValueError, IndexError):
-                event.reply(f"{seconds} is not an integer")
-                return result
-        else:
-            line += word + " "
-    if seconds:
-        target = time.time() + seconds
-    else:
-        try:
-            target = Time.day(event.rest)
-        except NoDate:
-            target = Time.extract(Time.today())
-        hours =  Time.hour(event.rest)
-        if hours:
-            target += hours
-    target += rand.random() 
+        return
+    target = Time.extract(event.rest)
+    if not target:
+        event.reply("can't determine time")
+        return
+    target += rand.random()
     if not target or time.time() > target:
         event.reply("already passed given time.")
-        return result
+        return
     diff = target - time.time()
     txt = " ".join(event.args[1:])
     Timers.add(target, event.orig, event.channel, txt)
     Disk.write(Timers.timers, Timers.path or Methods.ident(Timers.timers))
     bot = Broker.get(event.orig)
-    timer = Timed(diff, bot.say, event.orig, event.channel, txt)
-    timer.start()
+    timer = Timed(diff, bot.say, event.channel, txt)
+    Thread.launch(timer.start).join()
     event.reply("ok " + Time.elapsed(diff))

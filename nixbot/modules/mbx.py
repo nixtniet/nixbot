@@ -1,6 +1,9 @@
 # This file is placed in the Public Domain.
 
 
+"mailbox"
+
+
 import mailbox
 import os
 import time
@@ -8,10 +11,7 @@ import time
 
 from nixbot.objects import Dict, Methods, Object
 from nixbot.persist import Disk, Locate
-from nixbot.utility import MONTH, Time
-
-
-"email"
+from nixbot.utility import Time
 
 
 class Email(Object):
@@ -21,53 +21,19 @@ class Email(Object):
         self.text = ""
 
 
-"utility"
-
-
-def todate(date):
-    date = date.replace("_", ":")
-    res = date.split()
-    ddd = ""
-    try:
-        if "+" in res[3]:
-            raise ValueError
-        if "-" in res[3]:
-            raise ValueError
-        int(res[3])
-        ddd = "{:4}-{:#02}-{:#02} {:6}".format(res[3], MONTH[res[2]], int(res[1]), res[4])
-    except (IndexError, KeyError, ValueError) as ex:
-        try:
-            if "+" in res[4]:
-                raise ValueError from ex
-            if "-" in res[4]:
-                raise ValueError from ex
-            int(res[4])
-            ddd = "{:4}-{:#02}-{:02} {:6}".format(res[4], MONTH[res[1]], int(res[2]), res[3])
-        except (IndexError, KeyError, ValueError):
-            try:
-                ddd = "{:4}-{:#02}-{:02} {:6}".format(res[2], MONTH[res[1]], int(res[0]), res[3])
-            except (IndexError, KeyError):
-                try:
-                    ddd = "{:4}-{:#02}-{:02}".format(res[2], MONTH[res[1]], int(res[0]))
-                except (IndexError, KeyError):
-                    try:
-                        ddd = "{:4}-{:#02}".format(res[2], MONTH[res[1]])
-                    except (IndexError, KeyError):
-                        try:
-                            ddd = "{:4}".format(res[2])
-                        except (IndexError, KeyError):
-                            ddd = ""
-    return ddd
-
-
-"commands"
+def timed(datestr):
+    if not datestr:
+        return time.time()
+    tme = Time.date(datestr)
+    if not tme:
+        tme = time.time()
+    return tme
 
 
 def eml(event):
     nrs = -1
     args = ["From", "Subject"]
-    if len(event.args) > 1:
-        args.extend(event.args[1:])
+    args.extend(event.args)
     if event.gets:
         args.extend(Dict.keys(event.gets))
     for key in event.silent:
@@ -76,19 +42,19 @@ def eml(event):
     args = set(args)
     result = sorted(
                     Locate.find("email", event.gets),
-                    key=lambda x: Time.date(todate(getattr(x[1], "Date", "")))
+                    key=lambda x: timed(x[1].Date)
                    )
     if event.index:
         obj = result[event.index]
         if obj:
             obj = obj[-1]
             tme = getattr(obj, "Date", "")
-            event.reply(f'{event.index} {Methods.fmt(obj, args, plain=True)} {Time.elapsed(time.time() - Time.date(todate(tme)))}')
+            event.reply(f'{event.index} {Methods.fmt(obj, args, plain=True)} {Time.elapsed(time.time() - timed(tme))}')
     else:
         for _fn, obj in result:
             nrs += 1
             tme = getattr(obj, "Date", "")
-            event.reply(f'{nrs} {Methods.fmt(obj, args, plain=True)} {Time.elapsed(time.time() - Time.date(todate(tme)))}')
+            event.reply(f'{nrs} {Methods.fmt(obj, args, plain=True)} {Time.elapsed(time.time() - timed(tme))}')
     if not result:
         event.reply("no emails found.")
 
