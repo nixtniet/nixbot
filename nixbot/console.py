@@ -23,6 +23,7 @@ from .utility import Log, Utils
 from . import modules as MODS
 
 
+Main.default = "irc,mdl,rss"
 Main.level = "info"
 Main.version = "453"
 Main.wdr = os.path.expanduser(f"~/.{Main.name}")
