@@ -1,0 +1,78 @@
+# This file is placed in the Pubic Domain.
+
+
+"tables"
+
+
+NAMES = {
+    "cmd": "adm",
+    "mod": "adm",
+    "tbl": "adm",
+    "ver": "adm",
+    "cfg": "cfg",
+    "fie": "fie",
+    "flt": "flt",
+    "fnd": "fnd",
+    "log": "log",
+    "man": "man",
+    "eml": "mbx",
+    "mbx": "mbx",
+    "dis": "mdl",
+    "now": "mdl",
+    "pth": "pth",
+    "pwd": "pwd",
+    "req": "req",
+    "atr": "rss",
+    "dpl": "rss",
+    "err": "rss",
+    "exp": "rss",
+    "imp": "rss",
+    "nme": "rss",
+    "rem": "rss",
+    "res": "rss",
+    "rss": "rss",
+    "syn": "rss",
+    "lou": "sil",
+    "sil": "sil",
+    "slg": "slg",
+    "srv": "srv",
+    "dne": "tdo",
+    "tdo": "tdo",
+    "thr": "thr",
+    "tmr": "tmr",
+    "udp": "udp",
+    "upt": "upt",
+    "wdr": "wdr",
+    "wsd": "wsd"
+}
+
+
+MD5 = {
+    "mods.adm": "e36a66d026fe2e210dd963501759dc4d",
+    "mods.cfg": "b74d1e160b9e1c027e25863a4c3e1d56",
+    "mods.fie": "8764d7a9613a9018ec273ce8f3f800e6",
+    "mods.flt": "68b06f967b47b2567c8eccb7113a72f0",
+    "mods.fnd": "a7442773cf6e5c9387486c42f9e34f23",
+    "mods.irc": "bd81210ed0050848569489a576be5dcc",
+    "mods.log": "85f4fe5cbe317e16e07835da8a966ce3",
+    "mods.man": "b748396cfcf563b0f06df1546c930fce",
+    "mods.mbx": "2cfe738ca916258fab04c10093e6aa77",
+    "mods.mdl": "a4d80c57181b73199ce8e650adb73eab",
+    "mods.pth": "211bf9ef6898555135249123b584fe6c",
+    "mods.pwd": "c308a6405f500bbcdde84334fc377bb8",
+    "mods.req": "bc1984d2e9de0310dc1b468f25c7ab8c",
+    "mods.rss": "97d72e9cb8c5c06dac5b3d73a4d30d54",
+    "mods.rst": "60876576e1da46106b40c096765e5912",
+    "mods.sil": "fcceb6f048dd756ae9e2bad8c9793ad8",
+    "mods.slg": "0196cecb8ff67e032bd389a0b1860353",
+    "mods.srv": "1faed99cc345057558d5618ab29d9802",
+    "mods.tbl": "d41d8cd98f00b204e9800998ecf8427e",
+    "mods.tdo": "109f69d17755b9bf0caaea4f55eda5cf",
+    "mods.thr": "942bc0354e26935adc97065feb50e9da",
+    "mods.tmr": "8de30e34c4200a5bb800a1883bdeb96c",
+    "mods.udp": "4849e25d29401293f67bddd01afc8313",
+    "mods.upt": "1af6772bff48f035752869e45799ca40",
+    "mods.wdr": "9bc2f166297b19a5fb964b500f5d91af",
+    "mods.web": "153bc18a397bc304b9eb2ea52d5155fc",
+    "mods.wsd": "1ddb0329e6cfbaf6349a1720e2d25a0c"
+}
