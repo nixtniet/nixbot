@@ -17,12 +17,11 @@ sys.path.insert(0, os.getcwd())
 
 
 from nixbot.command import Commands
-from nixbot.defines import Main
 from nixbot.handler import Client, Event
 from nixbot.objects import Data, Methods
 from nixbot.package import Mods
 from nixbot.persist import Workdir
-from nixbot.runtime import Runtime
+from nixbot.runtime import Main, Runtime
 from nixbot.threads import Thread
 from nixbot.utility import Log, Time, Utils
 
