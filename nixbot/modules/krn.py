@@ -4,7 +4,6 @@
 "configuration"
 
 
-from nixbot.configs import Main
 from nixbot.objects import Data, Methods
 from nixbot.persist import Disk
 

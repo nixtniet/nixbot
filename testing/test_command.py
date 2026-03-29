@@ -9,7 +9,7 @@ import unittest
 
 from nixbot.handler import Client, Event
 from nixbot.command import Commands
-from nixbot.objects import Dict
+from nixbot.objects import Object
 
 
 def cmnd(event):
@@ -41,4 +41,4 @@ class TestCommands(unittest.TestCase):
         evt.text = "cmnd"
         evt.orig = repr(clt)
         Commands.command(evt)
-        self.assertTrue("yo!" in Dict.values(evt.result))
+        self.assertTrue("yo!" in Object.values(evt.result))

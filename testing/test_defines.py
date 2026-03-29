@@ -7,7 +7,7 @@
 import unittest
 
 
-from nixbot.defines import Main
+from nixbot.configs import Main
 
 
 class TestDefines(unittest.TestCase):

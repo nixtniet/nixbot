@@ -12,8 +12,9 @@ import unittest
 sys.path.insert(0, ".")
 
 
+from nixbot.configs import Main
+from nixbot.objects import Data
 from nixbot.persist import Disk, Workdir
-from nixbot.objects import Object
 
 
 Workdir.wdr = '.test'
@@ -22,10 +23,10 @@ Workdir.wdr = '.test'
 class TestPersist(unittest.TestCase):
 
     def test_save(self):
-        obj = Object()
+        obj = Data()
         opath = Disk.write(obj)
         self.assertTrue(os.path.exists(os.path.join(
-                                                    Workdir.wdr,
+                                                    Main.wdr,
                                                     "store",
                                                     opath
                                                    )))
