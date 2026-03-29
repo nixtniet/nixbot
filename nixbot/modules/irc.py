@@ -14,9 +14,8 @@ import time
 
 
 from nixbot.command import Commands
-from nixbot.configs import Configuration
 from nixbot.handler import Broker, Event, Output
-from nixbot.objects import Data, Methods
+from nixbot.objects import Configuration, Data, Methods
 from nixbot.persist import Locate
 from nixbot.runtime import Main
 from nixbot.threads import Thread

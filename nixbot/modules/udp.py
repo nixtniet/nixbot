@@ -13,8 +13,7 @@ import time
 
 
 from nixbot.brokers import Broker
-from nixbot.configs import Configuration
-from nixbot.objects import Data
+from nixbot.objects import Configuration, Data
 from nixbot.runtime import Main
 from nixbot.threads import Thread
 

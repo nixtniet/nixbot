@@ -13,8 +13,7 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
-from nixbot.configs import Configuration
-from nixbot.objects import Data
+from nixbot.objects import Configuration, Data
 from nixbot.persist import Locate, Workdir
 from nixbot.runtime import Main
 from nixbot.threads import Thread

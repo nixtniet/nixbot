@@ -24,9 +24,8 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 
 
-from nixbot.configs import Configuration
 from nixbot.handler import Broker
-from nixbot.objects import Data, Methods, Object
+from nixbot.objects import Configuration, Data, Methods, Object
 from nixbot.persist import Disk, Locate
 from nixbot.runtime import Main
 from nixbot.threads import Repeater, Thread

@@ -18,10 +18,11 @@ sys.path.insert(0, os.getcwd())
 
 from nixbot.command import Commands
 from nixbot.handler import Client, Event
+from nixbot.kernels import Kernel
 from nixbot.objects import Data, Methods
 from nixbot.package import Mods
 from nixbot.persist import Workdir
-from nixbot.runtime import Main, Runtime
+from nixbot.runtime import Main
 from nixbot.threads import Thread
 from nixbot.utility import Log, Time, Utils
 
@@ -115,13 +116,13 @@ def main():
     if "p" not in Main.opts and os.path.exists(Main.wdr):
         shutil.rmtree(Main.wdr)
     Methods.parse(Main, " ".join(sys.argv[1:]))
-    Workdir.setwd(Main.wdr)
+    Workdir.skel()
     Log.level(Main.level)
     Mods.add("modules", MODS.__path__[0])
     if MODS2:
         Mods.add("mods", MODS2.__path__[0])
     Main.mods = Main.mods or Mods.list()
-    Runtime.scanner(Main)
+    Kernel.scanner(Main)
     if "z" in Main.opts:
         Clients.init(os.cpu_count(), CLI)
     else:
@@ -144,7 +145,7 @@ def main():
     lap = Time.elapsed(endtime-starttime)
     percall = (endtime-starttime)/nrevents
     nrs = events.qsize()
-    Runtime.shutdown()
+    Kernel.shutdown()
     if "v" in Main.opts:
         print(f"{Methods.fmt(Main, skip='otxt,txt')}")
         print(f"{nrs} events left.")
@@ -201,4 +202,4 @@ post = {
 
 
 if __name__ == "__main__":
-    Runtime.wrap(main)
+    Kernel.wrap(main)
