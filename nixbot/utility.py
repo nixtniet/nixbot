@@ -214,6 +214,29 @@ class Log:
         )
 
 
+HELP = """
+%s [-h] [-a] [-c] [-d] [-n] [-s] [-t] [-v] [-w] [key=value]
+
+options:
+
+-h       show this help message and exit
+-a       load all modules
+-b       read config on boot
+-c       start console
+-d       start background daemon
+-n       disable ignore
+-r       read modules on start
+-s       start service
+-v       enable verbose
+-w       wait for services to start
+-u       use local mods directory
+
+example:
+
+%s -cvaw level=debug wdr=.test
+"""
+
+
 LEVELS = {
     "notset": logging.NOTSET,
     "debug": logging.DEBUG,
@@ -242,6 +265,7 @@ TIMES = [
 
 def __dir__():
     return (
+        'HELP',
         'LEVELS',
         'TIMES',
         'Log',

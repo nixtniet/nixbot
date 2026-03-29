@@ -14,10 +14,10 @@ sys.path.insert(0, ".")
 
 from nixbot.configs import Main
 from nixbot.objects import Data
-from nixbot.persist import Disk, Workdir
+from nixbot.persist import Disk
 
 
-Workdir.wdr = '.test'
+Main.wdr = '.test'
 
 
 class TestPersist(unittest.TestCase):

@@ -13,6 +13,7 @@ from .configs import Main
 from .kernels import Kernel
 from .handler import Console, Event
 from .package import Mods
+from .utility import HELP
 
 
 from . import modules as MODS
@@ -137,6 +138,7 @@ def main():
     "main"
     if check('a'): Main.all = True
     if check('b'): Main.boot = True
+    if check('h'): print(HELP % (Main.name, Main.name))
     if check('n'): Main.noignore = True
     if check('r'): Main.read = True
     if check("u"): Main.user = True

@@ -24,7 +24,7 @@ classifiers=[
 
 
 [project.scripts]
-"nixbot" = "nixbot.console:main"
+"nixbot" = "nixbot.runtime:main"
 
 
 [project.urls]
