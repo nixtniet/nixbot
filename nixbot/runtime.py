@@ -22,11 +22,6 @@ from . import modules as MODS
 TXT = " ".join(sys.argv[1:])
 
 
-Main.default = "irc,mdl,rss,wsd"
-Main.version = "453"
-Main.wdr = os.path.expanduser(f"~/.{Main.name}")
-
-
 class Line(Console):
 
     def __init__(self):
@@ -136,6 +131,9 @@ check = Run.check
 
 def main():
     "main"
+    Main.default = "irc,mdl,rss,wsd"
+    Main.version = "453"
+    Main.wdr = os.path.expanduser(f"~/.{Main.name}")
     if check('a'): Main.all = True
     if check('b'): Main.boot = True
     if check('h'): print(HELP % (Main.name, Main.name))

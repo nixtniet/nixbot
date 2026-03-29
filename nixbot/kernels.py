@@ -14,7 +14,7 @@ import _thread
 
 from .command import Commands
 from .configs import Main
-from .objects import Data, Methods
+from .objects import Data, Methods, Object
 from .package import Mods
 from .persist import Disk, Workdir
 from .threads import Thread
@@ -42,10 +42,10 @@ class Kernel:
     @classmethod
     def boot(cls, txt, *pkgs):
         "in the beginning."
+        parsed = Data()
         if Main.boot:
             cls.load()
         else:
-            parsed = Data()
             Methods.parse(parsed, txt)
             Methods.merge(Main, parsed)
             Methods.merge(Main, parsed.sets)
