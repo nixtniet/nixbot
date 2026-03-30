@@ -236,7 +236,7 @@ default,ignore,init,level,mods,name,version,wdr
 
 example:
 
-%s -cvaw level=debug wdr=.test"""
+%s -cvw level=debug mods=irc,rss"""
 
 
 LEVELS = {

@@ -4,25 +4,30 @@
 "configuration"
 
 
-from nixbot.objects import Methods, Object
+from nixbot.objects import Data, Methods, Object
 from nixbot.package import Mods
 from nixbot.persist import Disk, Locate
 
 
 def cfg(event):
     if not event.args:
-        event.reply(f"cfg <{Mods.has('Config') or 'modulename'}>")
+        event.reply(f"cfg <{Mods.has('Config') + ',kernel'}>")
         return
     name = event.args[0]
-    mod = Mods.get(name)
-    if not mod:
-        event.reply(f"no {name} module found.")
-        return
-    config = getattr(mod, "Config", None)
-    if not config:
-        event.reply("no configuration found.")
-        return
-    fnm = Locate.first(config) or Methods.ident(config)
+    print(name, event.sets)
+    config = Data()
+    if name == "kernel":
+        Disk.read(config, "kernel", "config")
+        print(config)
+    else:
+        mod = Mods.get(name)
+        if not mod:
+            event.reply(f"no {name} module found.")
+            return
+        config = getattr(mod, "Config", None)
+        if not config:
+            event.reply("no configuration found.")
+            return
     if not event.sets:
         event.reply(
             Methods.fmt(
@@ -33,5 +38,15 @@ def cfg(event):
         )
         return
     Methods.edit(config, event.sets)
-    Disk.write(Methods.skip(config), fnm)
-    event.reply("ok")
+    if name == "kernel":
+        Disk.write(config, "kernel", "config")
+    else:
+        fnm = Locate.first(config) or Methods.ident(config)
+        Disk.write(Methods.skip(config), fnm)
+    event.ok()
+
+
+def krn(event):
+    txt = "cfg kernel " + event.rest
+    Methods.parse(event, txt)
+    cfg(event)
