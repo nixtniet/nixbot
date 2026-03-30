@@ -14,11 +14,9 @@ def cfg(event):
         event.reply(f"cfg <{Mods.has('Config') + ',kernel'}>")
         return
     name = event.args[0]
-    print(name, event.sets)
     config = Data()
     if name == "kernel":
         Disk.read(config, "kernel", "config")
-        print(config)
     else:
         mod = Mods.get(name)
         if not mod:
