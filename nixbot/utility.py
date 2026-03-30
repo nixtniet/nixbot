@@ -214,9 +214,8 @@ class Log:
         )
 
 
-HELP = """
-%s [-h] [-a] [-c] [-d] [-n] [-s] [-t] [-v] [-w] [key=value]
-
+HELP = """%s [-c|d|h|s] [-a] [-b] [-n] [-r] [-u] [-v] [-w] [key=value] [key==value]
+ 
 options:
 
 -h       show this help message and exit
@@ -227,14 +226,17 @@ options:
 -n       disable ignore
 -r       read modules on start
 -s       start service
+-u       use local mods directory
 -v       enable verbose
 -w       wait for services to start
--u       use local mods directory
+
+keys:
+
+default,ignore,init,level,mods,name,version,wdr
 
 example:
 
-%s -cvaw level=debug wdr=.test
-"""
+%s -cvaw level=debug wdr=.test"""
 
 
 LEVELS = {
