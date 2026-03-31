@@ -21,7 +21,7 @@ from .threads import Thread
 from .utility import Log, Utils
 
 
-class Kernel:
+class Boot:
 
     inits = []
 
@@ -174,5 +174,5 @@ class Kernel:
 
 def __dir__():
     return (
-        "Kernel",
+        "Boot",
     )

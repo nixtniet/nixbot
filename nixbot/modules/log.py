@@ -21,7 +21,7 @@ class Log(Data):
 
 def log(event):
     if not event.rest:
-        event.reply("rss <url>")
+        event.reply("log <txt>")
         return
     obj = Log()
     obj.txt = event.rest

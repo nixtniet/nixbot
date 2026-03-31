@@ -50,7 +50,7 @@ class Commands:
                 for skp in Utils.spl(func.skip):
                     if skp.lower() in evt.orig.lower():
                         doskip = True
-                if not doskip:
+                if doskip:
                     evt.ready()
                     return
             func(evt)
@@ -62,15 +62,15 @@ class Commands:
     @classmethod
     def commands(cls, orig):
         res = []
-        for func in cls.cmds:
+        for func in cls.cmds.values():
             doskip = False
             if getattr(func, "skip", False):
                 for skp in Utils.spl(func.skip):
-                    if skp in orig:
+                    if skp in orig.lower():
                         doskip = True
             if doskip:
                 continue
-            res.append(func)
+            res.append(func.__name__)
         return res
 
     @classmethod

@@ -515,6 +515,9 @@ def err(event):
         event.reply(f'{nre} feeds reset.')
 
 
+err.skip = "irc"
+
+
 def exp(event):
     with Run.importlock:
         event.reply(TEMPLATE)
@@ -529,6 +532,9 @@ def exp(event):
         event.reply(" " * 8 + "</outline>")
         event.reply("    <body>")
         event.reply("</opml>")
+
+
+exp.skip = "irc"
 
 
 def imp(event):
@@ -623,16 +629,7 @@ def res(event):
 
 def rss(event):
     if not event.rest:
-        nrs = 0
-        for fnm, fed in Locate.find(Methods.fqn(Rss), event.gets):
-            if fed.skip:
-                continue
-            nrs += 1
-            elp = Time.elapsed(time.time() - Time.fntime(fnm))
-            txt = Methods.fmt(fed)
-            event.reply(f"{nrs} {txt} {elp}")
-        if not nrs:
-            event.reply("no feed found.")
+        event.reply("rss <url>")
         return
     url = event.args[0]
     if "http://" not in url and "https://" not in url:

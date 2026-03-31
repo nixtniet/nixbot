@@ -16,9 +16,9 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
+from nixbot.booting import Boot
 from nixbot.command import Commands
 from nixbot.handler import Client, Event
-from nixbot.kernels import Kernel
 from nixbot.objects import Data, Methods
 from nixbot.package import Mods
 from nixbot.persist import Workdir
@@ -122,7 +122,7 @@ def main():
     if MODS2:
         Mods.add("mods", MODS2.__path__[0])
     Main.mods = Main.mods or Mods.list()
-    Kernel.scanner(Main)
+    Boot.scanner(Main)
     if "z" in Main.opts:
         Clients.init(os.cpu_count(), CLI)
     else:
@@ -145,7 +145,7 @@ def main():
     lap = Time.elapsed(endtime-starttime)
     percall = (endtime-starttime)/nrevents
     nrs = events.qsize()
-    Kernel.shutdown()
+    Boot.shutdown()
     if "v" in Main.opts:
         print(f"{Methods.fmt(Main, skip='otxt,txt')}")
         print(f"{nrs} events left.")
@@ -202,4 +202,4 @@ post = {
 
 
 if __name__ == "__main__":
-    Kernel.wrap(main)
+    Boot.wrap(main)

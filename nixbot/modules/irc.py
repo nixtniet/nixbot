@@ -183,7 +183,7 @@ class IRC(Output):
 
     def display(self, event):
         if len(event.result) > 3:
-            self.say(event.channel, "command would flood, use cli or console")
+            self.say(event.channel, "command would flood")
             return
         for key in sorted(event.result):
             txt = event.result.get(key)

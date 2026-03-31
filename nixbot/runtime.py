@@ -8,9 +8,9 @@ import os
 import sys
 
 
+from .booting import Boot
 from .command import Commands
 from .configs import Main
-from .kernels import Kernel
 from .handler import Console, Event
 from .package import Mods
 from .utility import HELP
@@ -83,24 +83,24 @@ class Scripts:
     @staticmethod
     def background():
         "background script."
-        Kernel.daemon(Main.verbose, Main.nochdir)
-        Kernel.privileges()
+        Boot.daemon(Main.verbose, Main.nochdir)
+        Boot.privileges()
         Main.boot = True
-        Kernel.boot(TXT, MODS)
-        Kernel.pidfile(Main.name)
-        Kernel.init()
-        Kernel.forever()
+        Boot.boot(TXT, MODS)
+        Boot.pidfile(Main.name)
+        Boot.init()
+        Boot.forever()
 
     @staticmethod
     def console():
         "console script."
         import readline
         readline.redisplay()
-        Kernel.boot(TXT, MODS)
-        Kernel.init(default=False)
+        Boot.boot(TXT, MODS)
+        Boot.init(default=False)
         csl = CSL()
         csl.start()
-        Kernel.forever()
+        Boot.forever()
 
     @staticmethod
     def control():
@@ -108,20 +108,20 @@ class Scripts:
         if len(sys.argv) == 1:
             return
         Main.all = True
-        Kernel.boot(TXT, MODS)
+        Boot.boot(TXT, MODS)
         Main.mods = Mods.list(Main.ignore)
         Run.cmd(TXT)
 
     @staticmethod
     def service():
         "service script."
-        Kernel.privileges()
+        Boot.privileges()
         Main.boot = True
-        Kernel.boot(TXT, MODS)
-        Kernel.pidfile(Main.name)
-        Kernel.banner()
-        Kernel.init()
-        Kernel.forever()
+        Boot.boot(TXT, MODS)
+        Boot.pidfile(Main.name)
+        Boot.banner()
+        Boot.init()
+        Boot.forever()
 
 
 check = Run.check
@@ -141,10 +141,10 @@ def main():
     if check("v"): Main.verbose = True
     if check("w"): Main.wait = True
     if check("d"): Scripts.background()
-    elif check("c"): Kernel.wrap(Scripts.console)
-    elif check("s"): Kernel.wrap(Scripts.service)
-    else: Kernel.wrap(Scripts.control)
-    Kernel.shutdown()
+    elif check("c"): Boot.wrap(Scripts.console)
+    elif check("s"): Boot.wrap(Scripts.service)
+    else: Boot.wrap(Scripts.control)
+    Boot.shutdown()
 
 
 if __name__ == "__main__":
