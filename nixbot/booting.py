@@ -44,7 +44,7 @@ class Boot:
         "in the beginning."
         parsed = Data()
         if Main.boot:
-            cls.load()
+            Disk.read(Main, "main", "config")
         else:
             Methods.parse(parsed, txt)
             Methods.merge(Main, parsed)
@@ -52,26 +52,37 @@ class Boot:
         Workdir.skel()
         Log.size(len(Main.name))
         Log.level(Main.level or "info")
-        if Main.noignore: Main.ignore = ""
-        if Main.user: Mods.add('mods', 'mods')
+        if Main.noignore:
+            Main.ignore = ""
+        if Main.user:
+            Mods.add('mods', 'mods')
         if pkgs:
             for pkg in pkgs:
                 Mods.pkg(pkg)
-        if Main.wdr: Mods.add("modules", os.path.join(Main.wdr, "mods"))
-        if Main.read: cls.scanner()
-        else: Commands.table() ; Mods.sums()
-        if Main.verbose: cls.banner()
-        if Main.all: Main.mods = Mods.list(Main.ignore)
-        if not Commands.names: cls.scanner()
+        if Main.wdr:
+            Mods.add("modules", os.path.join(Main.wdr, "mods"))
+        if Main.read:
+            cls.scanner()
+        else:
+            Commands.table()
+            Mods.sums()
+        if Main.verbose:
+            cls.banner()
+        if Main.all:
+            Main.mods = Mods.list(Main.ignore)
+        if not Commands.names:
+            cls.scanner()
 
     @classmethod
     def daemon(cls, verbose=False, nochdir=False):
         "run in the background."
         pid = os.fork()
-        if pid != 0: os._exit(0)
+        if pid != 0:
+            os._exit(0)
         os.setsid()
         pid2 = os.fork()
-        if pid2 != 0: os._exit(0)
+        if pid2 != 0:
+            os._exit(0)
         if not verbose:
             with open('/dev/null', 'r', encoding="utf-8") as sis:
                 os.dup2(sis.fileno(), sys.stdin.fileno())
@@ -80,7 +91,8 @@ class Boot:
             with open('/dev/null', 'a+', encoding="utf-8") as ses:
                 os.dup2(ses.fileno(), sys.stderr.fileno())
         os.umask(0)
-        if not nochdir: os.chdir("/")
+        if not nochdir:
+            os.chdir("/")
         os.nice(10)
 
     @classmethod
@@ -103,12 +115,8 @@ class Boot:
                 thrs.append((name, Thread.launch(mod.init)))
                 cls.inits.append(name)
         if Main.wait:
-            for name, thr in thrs: thr.join()
-
-    @classmethod
-    def load(cls):
-        logging.info("loading config")
-        Disk.read(Main, "main", "config")
+            for name, thr in thrs:
+                thr.join()
 
     @classmethod
     def pidfile(cls, name):
@@ -131,20 +139,17 @@ class Boot:
         os.setuid(pwnam2.pw_uid)
 
     @classmethod
-    def save(cls):
-        "saving config to disk."
-        logging.info("saving kenrel")
-        Disk.write(Main, "main", "config")
-
-    @classmethod
     def scanner(cls, default=False):
         "scan named modules for commands."
         res = []
-        if default: defs = Main.default
-        else: defs = ""
+        if default:
+            defs = Main.default
+        else:
+            defs = ""
         for name, mod in Mods.iter(Main.mods or defs or Mods.list(), Main.ignore):
             Commands.scan(mod)
-            if "configure" in dir(mod): mod.configure()
+            if "configure" in dir(mod):
+                mod.configure()
             res.append((name, mod))
         return res
 
@@ -164,12 +169,18 @@ class Boot:
         "restore console."
         import termios
         old = None
-        try: old = termios.tcgetattr(sys.stdin.fileno())
-        except termios.error: pass
-        try: func(*args)
-        except (KeyboardInterrupt, EOFError): pass
-        except Exception as ex: logging.exception(ex)
-        if old: termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old)
+        try:
+            old = termios.tcgetattr(sys.stdin.fileno())
+        except termios.error:
+            pass
+        try:
+            func(*args)
+        except (KeyboardInterrupt, EOFError):
+            pass
+        except Exception as ex:
+            logging.exception(ex)
+        if old:
+            termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old)
 
 
 def __dir__():

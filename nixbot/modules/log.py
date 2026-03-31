@@ -4,12 +4,8 @@
 "log text"
 
 
-import time
-
-
 from nixbot.objects import Data
 from nixbot.persist import Disk
-from nixbot.utility import Time
 
 
 class Log(Data):

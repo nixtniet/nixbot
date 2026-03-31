@@ -190,15 +190,9 @@ class Workdir:
         if not os.path.exists(Main.wdr):
             Disk.cdir(Main.wdr)
         path = os.path.abspath(Main.wdr)
-        workpath = os.path.join(path, "store")
-        pth = pathlib.Path(workpath)
-        pth.mkdir(parents=True, exist_ok=True)
-        modpath = os.path.join(path, "mods")
-        pth = pathlib.Path(modpath)
-        pth.mkdir(parents=True, exist_ok=True)
-        filespath = os.path.join(path, "files")
-        pth = pathlib.Path(filespath)
-        pth.mkdir(parents=True, exist_ok=True)
+        for wpth in ["config", "files", "logs", "mods", "store"]:
+            pth = pathlib.Path(os.path.join(path, wpth))
+            pth.mkdir(parents=True, exist_ok=True)
 
     @classmethod
     def workdir(cls, path=""):

@@ -1,4 +1,3 @@
-{'nixbot.modules': '/home/nixt/nixbot/nixbot/modules', 'modules': '/home/nixt/.nixbot/mods'}
 # This file is placed in the Pubic Domain.
 
 
@@ -55,19 +54,19 @@ MD5 = {
     "nixbot.modules.flt": "5a76d4cded22b2bd01dcca20ae2733dd",
     "nixbot.modules.fnd": "9cc828b218b9c941c03928c9481722c6",
     "nixbot.modules.irc": "1a3a6f9bb15e6dc3f25fb280aee86ca5",
-    "nixbot.modules.log": "a52bd0bb88adafeab291a186e687afc7",
+    "nixbot.modules.log": "a86ab4755c53546318a8c0d52a87068a",
     "nixbot.modules.mbx": "6c36e5b188f0a206a5c2cfc7ca7c8ec0",
     "nixbot.modules.mdl": "58645f82c900a614a3f41c3dfc1045ed",
     "nixbot.modules.pth": "211bf9ef6898555135249123b584fe6c",
     "nixbot.modules.pwd": "c308a6405f500bbcdde84334fc377bb8",
-    "nixbot.modules.req": "3074e4797c5263ba865ab64e338ee2b2",
-    "nixbot.modules.rss": "8149dffebc6a424df9306fc6ded64e42",
+    "nixbot.modules.req": "272635755a01b6e21d39ffba6a219e43",
+    "nixbot.modules.rss": "1c76097bbde1051118e24316936c8efa",
     "nixbot.modules.rst": "72efb03f5618ba71956291a3c0b74eb5",
     "nixbot.modules.sil": "10b9cd0d61444e800d9d881bef7e9a22",
     "nixbot.modules.slg": "0196cecb8ff67e032bd389a0b1860353",
     "nixbot.modules.srv": "7d4f5ff24093a9d61ced84e7318f4e05",
     "nixbot.modules.tbl": "d41d8cd98f00b204e9800998ecf8427e",
-    "nixbot.modules.tdo": "5cfce25c49df6ee0c1ddcaabeb4c05f2",
+    "nixbot.modules.tdo": "697df10ca46da4c114647c97a3104e71",
     "nixbot.modules.thr": "415f1a965b843e8ecc532657fffea0c0",
     "nixbot.modules.tmr": "d490c27d925327e2e568114686a96256",
     "nixbot.modules.udp": "00e984b502ec9c4b31c480a60eadd181",

@@ -4,12 +4,8 @@
 "todo"
 
 
-import time
-
-
 from nixbot.objects import Data
 from nixbot.persist import Disk, Locate
-from nixbot.utility import Time
 
 
 class Todo(Data):

@@ -12,7 +12,6 @@ import os
 import queue
 import re
 import threading
-import time
 import urllib
 import urllib.parse
 import urllib.request
@@ -29,7 +28,7 @@ from nixbot.objects import Configuration, Data, Methods, Object
 from nixbot.persist import Disk, Locate
 from nixbot.runtime import Main
 from nixbot.threads import Repeater, Thread
-from nixbot.utility import Time, Utils
+from nixbot.utility import Utils
 
 
 class Config(Configuration):
@@ -641,7 +640,7 @@ def rss(event):
             return
     feed = Rss()
     feed.rss = event.args[0]
-    fnm = Disk.write(feed)
+    Disk.write(feed)
     event.reply("ok")
 
 

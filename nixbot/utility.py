@@ -122,18 +122,6 @@ class Utils:
             return hashlib.md5(txt, usedforsecurity=False).hexdigest()  # pylint: disable=E1123
 
     @staticmethod
-    def md5s(path):
-        import hashlib
-        sums = hashlib.md5(usedforsecurity=False)  # pylint: disable=E1123
-        for fnm in os.listdir(path):
-            if fnm.startswith("_"):
-                continue
-            pth = os.path.join(path, fnm)
-            with open(pth, "rb") as file:
-                sums.update(file.read())
-        return sums.hexdigest()
-
-    @staticmethod
     def pkgname(obj):
         "return package name of an object."
         return obj.__module__.split(".", maxsplit=1)[0]
@@ -177,21 +165,6 @@ class Log:
 
     datefmt = "%H:%M:%S"
     format = "%(module)-3s %(message)s"
-
-    @staticmethod
-    def log(level, txt, extra={}):
-        level = LEVELS.get(level, logging.INFO)
-        data = {
-            "args": {},
-            "levelno": level,
-            'lno': 0,
-            "module": "md5",
-            "msg": txt
-        }
-        data.update(extra)
-        record = logging.makeLogRecord(data)
-        logger = logging.getLogger("__main__")
-        logger.callHandlers(record)
 
     @staticmethod
     def size(nr):

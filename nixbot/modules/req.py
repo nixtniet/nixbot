@@ -72,4 +72,3 @@ def req(event):
 
 
 req.skip = "irc"
-
