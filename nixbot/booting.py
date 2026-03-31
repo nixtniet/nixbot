@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"kernel"
+"in the beginning"
 
 
 import logging
@@ -107,8 +107,8 @@ class Boot:
 
     @classmethod
     def load(cls):
-        logging.info("loading kernel")
-        Disk.read(Main, "kernel", "config")
+        logging.info("loading config")
+        Disk.read(Main, "main", "config")
 
     @classmethod
     def pidfile(cls, name):
@@ -132,9 +132,9 @@ class Boot:
 
     @classmethod
     def save(cls):
-        "save kernel to disk."
+        "saving config to disk."
         logging.info("saving kenrel")
-        Disk.write(Main, "kernel", "config")
+        Disk.write(Main, "main", "config")
 
     @classmethod
     def scanner(cls, default=False):

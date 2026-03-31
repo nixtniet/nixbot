@@ -11,12 +11,15 @@ from nixbot.persist import Disk, Locate
 
 def cfg(event):
     if not event.args:
-        event.reply(f"cfg <{Mods.has('Config') + ',kernel'}>")
+        mods = f"cfg <{Mods.has('Config') + ',main'}>"
+        if mods.startswith(","):
+            mods = mods[1:]
+        event.reply(mods)
         return
     name = event.args[0]
     config = Data()
-    if name == "kernel":
-        Disk.read(config, "kernel", "config")
+    if name == "main":
+        Disk.read(config, "main", "config")
     else:
         mod = Mods.get(name)
         if not mod:
@@ -36,8 +39,8 @@ def cfg(event):
         )
         return
     Methods.edit(config, event.sets)
-    if name == "kernel":
-        Disk.write(config, "kernel", "config")
+    if name == "main":
+        Disk.write(config, "main", "config")
     else:
         fnm = Locate.first(config) or Methods.ident(config)
         Disk.write(Methods.skip(config), fnm)
@@ -45,6 +48,6 @@ def cfg(event):
 
 
 def krn(event):
-    txt = "cfg kernel " + event.rest
+    txt = "cfg main " + event.rest
     Methods.parse(event, txt)
     cfg(event)
