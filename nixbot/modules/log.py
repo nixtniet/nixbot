@@ -8,7 +8,7 @@ import time
 
 
 from nixbot.objects import Data
-from nixbot.persist import Disk, Locate
+from nixbot.persist import Disk
 from nixbot.utility import Time
 
 
@@ -21,13 +21,7 @@ class Log(Data):
 
 def log(event):
     if not event.rest:
-        nmr = 0
-        for fnm, obj in Locate.find('log', event.gets):
-            lap = Time.elapsed(time.time() - Time.fntime(fnm))
-            event.reply(f'{nmr} {obj.txt} {lap}')
-            nmr += 1
-        if not nmr:
-            event.reply('no log')
+        event.reply("rss <url>")
         return
     obj = Log()
     obj.txt = event.rest

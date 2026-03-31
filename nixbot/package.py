@@ -26,6 +26,7 @@ class Mods:
 
     @classmethod
     def all(cls, force=False):
+        print(Mods.dirs)
         return cls.iter(cls.list(), force=force)
 
     @classmethod

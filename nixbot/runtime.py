@@ -96,7 +96,6 @@ class Scripts:
         "console script."
         import readline
         readline.redisplay()
-        Main.user = True
         Kernel.boot(TXT, MODS)
         Kernel.init(default=False)
         csl = CSL()
@@ -109,7 +108,6 @@ class Scripts:
         if len(sys.argv) == 1:
             return
         Main.all = True
-        Main.user = True
         Kernel.boot(TXT, MODS)
         Main.mods = Mods.list(Main.ignore)
         Run.cmd(TXT)

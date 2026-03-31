@@ -11,6 +11,7 @@ import logging
 from .brokers import Broker
 from .objects import Methods
 from .package import Mods
+from .utility import Utils
 
 
 class Commands:
@@ -44,11 +45,33 @@ class Commands:
                 cls.scan(mod)
                 func = cls.get(evt.cmd)
         if func:
+            if "skip" in dir(func):
+                doskip = False
+                for skp in Utils.spl(func.skip):
+                    if skp.lower() in evt.orig.lower():
+                        doskip = True
+                if not doskip:
+                    evt.ready()
+                    return
             func(evt)
             bot = Broker.get(evt.orig)
             if bot:
                 bot.display(evt)
         evt.ready()
+
+    @classmethod
+    def commands(cls, orig):
+        res = []
+        for func in cls.cmds:
+            doskip = False
+            if getattr(func, "skip", False):
+                for skp in Utils.spl(func.skip):
+                    if skp in orig:
+                        doskip = True
+            if doskip:
+                continue
+            res.append(func)
+        return res
 
     @classmethod
     def get(cls, cmd):

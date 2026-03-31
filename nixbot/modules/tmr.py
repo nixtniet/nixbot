@@ -68,26 +68,19 @@ class Timers(Data):
 
 def tmr(event):
     if not event.rest:
-        nmr = 0
-        for tme, txt in Object.items(Timers.timers):
-            lap = float(tme) - time.time()
-            if lap > 0:
-                event.reply(f'{nmr} {" ".join(txt)} {Time.elapsed(lap)}')
-                nmr += 1
-        if not nmr:
-            event.reply("no timers.")
+        event.reply("tmr <date> <txt>")
         return
-    target = Time.extract(event.rest)
-    if not target:
+    todo = Time.extract(event.rest)
+    if not todo:
         event.reply("can't determine time")
         return
-    target += rand.random()
-    if not target or time.time() > target:
+    todo += rand.random()
+    if not todo or time.time() > todo:
         event.reply("already passed given time.")
         return
-    diff = target - time.time()
+    diff = todo - time.time()
     txt = " ".join(event.args[1:])
-    Timers.add(target, event.orig, event.channel, txt)
+    Timers.add(todo, event.orig, event.channel, txt)
     Disk.write(Timers.timers, Timers.path or Methods.ident(Timers.timers))
     bot = Broker.get(event.orig)
     timer = Timed(diff, bot.say, event.channel, txt)

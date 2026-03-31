@@ -12,7 +12,7 @@ from nixbot.runtime import Main
 
 def cmd(event):
     "list available commands."
-    event.reply(",".join(sorted(Commands.names.keys() or Commands.cmds.keys())))
+    event.reply(",".join(sorted(Commands.commands(event.orig))))
 
 
 def mod(event):
@@ -33,6 +33,9 @@ def tbl(event):
     event.reply('"tables"\n\n')
     event.reply(f"NAMES = {Json.dumps(Commands.names, indent=4)}\n\n")
     event.reply(f"MD5 = {Json.dumps(Mods.md5s, indent=4)}")
+
+
+tbl.skip = "irc"
 
 
 def ver(event):

@@ -44,7 +44,7 @@ class Config(Configuration):
 
     name = Main.name or Utils.pkgname(Commands)
     channel = f"#{name}"
-    commands = False
+    commands = True
     control = "!"
     ignore = ["PING", "PONG", "PRIVMSG"]
     nick = name
@@ -323,11 +323,11 @@ class IRC(Output):
             obj.nick, obj.origin = obj.origin.split("!")
         except ValueError:
             obj.nick = ""
-        target = ""
+        todo = ""
         if obj.arguments:
-            target = obj.arguments[0]
-        if target.startswith("#"):
-            obj.channel = target
+            todo = obj.arguments[0]
+        if todo.startswith("#"):
+            obj.channel = todo
         else:
             obj.channel = obj.nick
         if not obj.text:
@@ -523,7 +523,7 @@ def cb_privmsg(evt):
     if not bot.cfg.commands:
         return
     if evt.text:
-        if evt.text[0] in ["!",]:
+        if evt.text[0] == bot.cfg.control:
             evt.text = evt.text[1:]
         elif evt.text.startswith(f"{bot.cfg.nick}:"):
             evt.text = evt.text[len(bot.cfg.nick) + 1:]
