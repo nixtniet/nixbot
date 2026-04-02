@@ -325,7 +325,7 @@ class Methods:
         "assign proper types."
         if val in ["True", "true", True]:
             return setattr(obj, key, True)
-        elif val in ["False", "false", False]:
+        if val in ["False", "false", False]:
             return setattr(obj, key, False)
         try:
             return setattr(obj, key, int(val))

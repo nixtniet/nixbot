@@ -584,6 +584,9 @@ def imp(event):
         event.reply(f"added {nrs} urls.")
 
 
+imp.skip = "irc"
+
+
 def nme(event):
     if len(event.args) != 2:
         event.reply("nme <stringinurl> <name>")
@@ -655,6 +658,9 @@ def syn(event):
     fetcher.start(False)
     nrs = fetcher.run(True)
     event.reply(f"{nrs} feeds synced")
+
+
+syn.skip = "irc"
 
 
 TEMPLATE = """<opml version="1.0">
