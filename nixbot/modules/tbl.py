@@ -49,12 +49,12 @@ NAMES = {
 
 
 MD5 = {
-    "nixbot.modules.adm": "89f80d003804e64aa2a6249eaa13dc3a",
-    "nixbot.modules.cfg": "14f27a0a3ee18470cda7a055389e2a95",
+    "nixbot.modules.adm": "c7c4881b4711111ac97189c40cbd3cc4",
+    "nixbot.modules.cfg": "a1d084aa071fd53cc3b9107a02e335b4",
     "nixbot.modules.fie": "63d5b771d15c46beae8f6f4d56ee7b90",
     "nixbot.modules.flt": "5a76d4cded22b2bd01dcca20ae2733dd",
     "nixbot.modules.fnd": "9cc828b218b9c941c03928c9481722c6",
-    "nixbot.modules.irc": "10ccb58d7403296923ea7150fcd8c0b6",
+    "nixbot.modules.irc": "05f70ef2b32e38540f03124eb33be55c",
     "nixbot.modules.log": "a86ab4755c53546318a8c0d52a87068a",
     "nixbot.modules.man": "b748396cfcf563b0f06df1546c930fce",
     "nixbot.modules.mbx": "6c36e5b188f0a206a5c2cfc7ca7c8ec0",
@@ -70,7 +70,7 @@ MD5 = {
     "nixbot.modules.tbl": "d41d8cd98f00b204e9800998ecf8427e",
     "nixbot.modules.tdo": "697df10ca46da4c114647c97a3104e71",
     "nixbot.modules.thr": "415f1a965b843e8ecc532657fffea0c0",
-    "nixbot.modules.tmr": "d490c27d925327e2e568114686a96256",
+    "nixbot.modules.tmr": "8f45cdf9eeca48c6d0dfd4af94ef3f8b",
     "nixbot.modules.udp": "4974c3d1d0f9ae01673d8d8dbaf808f0",
     "nixbot.modules.upt": "382ded2084373a18641daca24ec933f5",
     "nixbot.modules.web": "1560c18681c4eeaf7c4c91d34098e361",
