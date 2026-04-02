@@ -7,6 +7,7 @@
 import os
 import sys
 import time
+import _thread
 
 
 from .booting import Boot
@@ -14,6 +15,7 @@ from .command import Commands
 from .configs import Main
 from .handler import Console, Event
 from .package import Mods
+from .persist import Workdir
 from .utility import HELP, Utils
 
 
@@ -92,6 +94,25 @@ class Run:
             evt.wait()
         return evt
 
+    @staticmethod
+    def forever():
+        "run forever until ctrl-c."
+        while True:
+            try:
+                time.sleep(0.1)
+            except (KeyboardInterrupt, EOFError):
+                _thread.interrupt_main()
+
+    @staticmethod
+    def scan():
+        if Main.read:
+            Boot.scanner()
+        else:
+            Commands.table()
+            Mods.sums()
+        if not Commands.names:
+            Boot.scanner()
+
 
 class Scripts:
 
@@ -102,10 +123,10 @@ class Scripts:
         Boot.privileges()
         Main.boot = True
         Boot.boot(TXT, MODS)
-        Boot.scan()
-        Boot.pidfile(Main.name)
+        Run.scan()
+        Workdir.pidfile(Main.name)
         Boot.init()
-        Boot.forever()
+        Run.forever()
 
     @staticmethod
     def console():
@@ -115,11 +136,11 @@ class Scripts:
         Boot.boot(TXT, MODS)
         if Main.verbose:
             Run.banner()
-        Boot.scan()
+        Run.scan()
         Boot.init(default=False)
         csl = CSL()
         csl.start()
-        Boot.forever()
+        Run.forever()
 
     @staticmethod
     def control():
@@ -128,8 +149,7 @@ class Scripts:
             return
         Main.all = True
         Boot.boot(TXT, MODS)
-        Boot.scan()
-        #Main.mods = Mods.list(Main.ignore)
+        Run.scan()
         Run.cmd(TXT)
 
     @staticmethod
@@ -138,10 +158,11 @@ class Scripts:
         Boot.privileges()
         Main.boot = True
         Boot.boot(TXT, MODS)
+        Run.scan()
         Run.banner()
-        Boot.pidfile(Main.name)
+        Workdir.pidfile(Main.name)
         Boot.init()
-        Boot.forever()
+        Run.forever()
 
 
 check = Run.check

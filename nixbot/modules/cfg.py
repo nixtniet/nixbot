@@ -4,7 +4,6 @@
 "configuration"
 
 
-from nixbot.configs import Main
 from nixbot.objects import Data, Methods, Object
 from nixbot.package import Mods
 from nixbot.persist import Cfg

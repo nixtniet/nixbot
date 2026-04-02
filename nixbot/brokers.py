@@ -24,7 +24,6 @@ class Broker:
         "object by repr(obj)."
         return cls.objects.get(origin)
 
-
     @classmethod
     def has(cls, obj):
         "whether the Broker has object."

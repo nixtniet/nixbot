@@ -173,7 +173,7 @@ class Log:
 
     datefmt = "%H:%M:%S"
     format = "%(module)-3s %(message)s"
-    
+
     @staticmethod
     def size(nr):
         index = Log.format.find("-")+1
