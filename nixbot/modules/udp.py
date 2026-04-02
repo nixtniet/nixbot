@@ -14,8 +14,13 @@ import time
 
 from nixbot.brokers import Broker
 from nixbot.objects import Configuration, Data
+from nixbot.persist import Cfg
 from nixbot.runtime import Main
 from nixbot.threads import Thread
+
+
+def configure():
+    Cfg.load(Config)
 
 
 def init():

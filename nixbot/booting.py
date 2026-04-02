@@ -18,7 +18,7 @@ from .objects import Data, Methods
 from .package import Mods
 from .persist import Disk, Workdir
 from .threads import Thread
-from .utility import Log, Utils
+from .utility import Log
 
 
 class Boot:
@@ -26,26 +26,12 @@ class Boot:
     inits = []
 
     @classmethod
-    def banner(cls):
-        "hello."
-        tme = time.ctime(time.time()).replace("  ", " ")
-        print("%s %s since %s %s (%s)" % (
-            Main.name.upper(),
-            Main.version,
-            tme,
-            Main.level.upper() or "INFO",
-            Utils.md5sum(Mods.path("tbl") or "")[:7]
-        ))
-        sys.stdout.flush()
-        return Main.version
-
-    @classmethod
     def boot(cls, txt, *pkgs):
         "in the beginning."
-        parsed = Data()
         if Main.boot:
             Disk.read(Main, "main", "config")
         else:
+            parsed = Data()
             Methods.parse(parsed, txt)
             Methods.merge(Main, parsed)
             Methods.merge(Main, parsed.sets)
@@ -56,20 +42,20 @@ class Boot:
             Main.ignore = ""
         if Main.user:
             Mods.add('mods', 'mods')
-        if pkgs:
-            for pkg in pkgs:
-                Mods.pkg(pkg)
         if Main.wdr:
             Mods.add("modules", os.path.join(Main.wdr, "mods"))
+        for pkg in pkgs:
+            Mods.pkg(pkg)
+        if Main.all:
+            Main.mods = Mods.list(Main.ignore)
+
+    @classmethod
+    def scan(cls):
         if Main.read:
             cls.scanner()
         else:
             Commands.table()
             Mods.sums()
-        if Main.verbose:
-            cls.banner()
-        if Main.all:
-            Main.mods = Mods.list(Main.ignore)
         if not Commands.names:
             cls.scanner()
 
@@ -108,8 +94,10 @@ class Boot:
     def init(cls, default=True):
         "scan named modules for commands."
         thrs = []
-        if default: defs = Main.default
-        else: defs = ""
+        if default:
+            defs = Main.default
+        else:
+            defs = ""
         for name, mod in Mods.iter(Main.mods or defs, Main.ignore):
             if "init" in dir(mod):
                 thrs.append((name, Thread.launch(mod.init)))

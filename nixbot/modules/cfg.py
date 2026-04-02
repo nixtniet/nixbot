@@ -4,9 +4,10 @@
 "configuration"
 
 
+from nixbot.configs import Main
 from nixbot.objects import Data, Methods, Object
 from nixbot.package import Mods
-from nixbot.persist import Disk, Locate
+from nixbot.persist import Cfg
 
 
 def cfg(event):
@@ -18,9 +19,8 @@ def cfg(event):
         return
     name = event.args[0]
     config = Data()
-    if name == "main":
-        Disk.read(config, "main", "config")
-    else:
+    Cfg.load(config, name)
+    if name != "main" and not config:
         mod = Mods.get(name)
         if not mod:
             event.reply(f"no {name} module found.")
@@ -39,11 +39,10 @@ def cfg(event):
         )
         return
     Methods.edit(config, event.sets)
-    if name == "main":
-        Disk.write(config, "main", "config")
-    else:
-        fnm = Locate.first(config) or Methods.ident(config)
-        Disk.write(Methods.skip(config), fnm)
+    Cfg.save(config, name)
+    mod = Mods.get(name)
+    if mod and "configure" in dir(mod):
+        mod.configure()
     event.ok()
 
 

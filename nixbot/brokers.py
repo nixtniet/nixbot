@@ -24,12 +24,6 @@ class Broker:
         "object by repr(obj)."
         return cls.objects.get(origin)
 
-    @classmethod
-    def objs(cls, attr):
-        "objects with a certain attribute."
-        for obj in cls.objects.values():
-            if attr in dir(obj):
-                yield obj
 
     @classmethod
     def has(cls, obj):
@@ -41,7 +35,14 @@ class Broker:
         "all keys with a substring in their key."
         for orig in cls.objects:
             if txt in orig.split()[0]:
-                yield orig
+                yield orig, cls.get(orig)
+
+    @classmethod
+    def objs(cls, attr):
+        "objects with a certain attribute."
+        for obj in cls.objects.values():
+            if attr in dir(obj):
+                yield obj
 
 
 def __dir__():

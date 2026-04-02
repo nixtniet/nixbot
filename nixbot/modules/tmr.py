@@ -27,12 +27,11 @@ def init():
         if not args:
             continue
         orig, channel, txt = args
-        for origin in Broker.like(orig):
+        for origin, bot in Broker.like(orig):
             if not origin:
                 continue
             diff = float(tme) - time.time()
             if diff > 0:
-                bot = Broker.get(origin)
                 timer = Timed(diff, bot.say, channel, txt)
                 timer.start()
             else:

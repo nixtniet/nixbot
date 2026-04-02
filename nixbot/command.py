@@ -24,8 +24,7 @@ class Commands:
         for func in args:
             cls.cmds[func.__name__] = func
             modname = func.__module__.split(".")[-1]
-            if "__" in modname:
-                continue
+            if "__" in modname: continue
             cls.names[func.__name__] = modname
 
     @classmethod
@@ -36,8 +35,7 @@ class Commands:
         if not func:
             name = cls.names.get(evt.cmd)
             mod = None
-            if name:
-                mod = Mods.get(name)
+            if name: mod = Mods.get(name)
             if mod:
                 cls.scan(mod)
                 func = cls.get(evt.cmd)
@@ -45,16 +43,14 @@ class Commands:
             if not cls.skip(func, evt.orig):
                 func(evt)
                 bot = Broker.get(evt.orig)
-                if bot:
-                    bot.display(evt)
+                if bot: bot.display(evt)
         evt.ready()
 
     @classmethod
     def commands(cls, orig):
         res = []
         for func in cls.cmds.values():
-            if cls.skip(func, orig):
-                continue
+            if cls.skip(func, orig): continue
             res.append(func.__name__)
         return res
 
@@ -74,16 +70,14 @@ class Commands:
     def skip(cls, func, orig):
         if "skip" in dir(func):
             for skp in Utils.spl(func.skip):
-                if skp.lower() in orig.lower():
-                    return True
+                if skp.lower() in orig.lower(): return True
         return False
 
     @classmethod
     def table(cls):
         mod = cls.get("tbl")
         names = getattr(mod, "NAMES", None)
-        if names:
-            cls.names.update(names)
+        if names: cls.names.update(names)
 
 
 def __dir__():

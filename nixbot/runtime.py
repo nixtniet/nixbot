@@ -6,6 +6,7 @@
 
 import os
 import sys
+import time
 
 
 from .booting import Boot
@@ -13,7 +14,7 @@ from .command import Commands
 from .configs import Main
 from .handler import Console, Event
 from .package import Mods
-from .utility import HELP
+from .utility import HELP, Utils
 
 
 from . import modules as MODS
@@ -53,6 +54,20 @@ class CSL(Line):
 
 class Run:
 
+    @classmethod
+    def banner(cls):
+        "hello."
+        tme = time.ctime(time.time()).replace("  ", " ")
+        print("%s %s since %s %s (%s)" % (
+            Main.name.upper(),
+            Main.version,
+            tme,
+            Main.level.upper() or "INFO",
+            Utils.md5sum(Mods.path("tbl") or "")[:7]
+        ))
+        sys.stdout.flush()
+        return Main.version
+
     @staticmethod
     def check(opts):
         for word in TXT.split():
@@ -87,6 +102,7 @@ class Scripts:
         Boot.privileges()
         Main.boot = True
         Boot.boot(TXT, MODS)
+        Boot.scan()
         Boot.pidfile(Main.name)
         Boot.init()
         Boot.forever()
@@ -97,6 +113,9 @@ class Scripts:
         import readline
         readline.redisplay()
         Boot.boot(TXT, MODS)
+        if Main.verbose:
+            Run.banner()
+        Boot.scan()
         Boot.init(default=False)
         csl = CSL()
         csl.start()
@@ -109,7 +128,8 @@ class Scripts:
             return
         Main.all = True
         Boot.boot(TXT, MODS)
-        Main.mods = Mods.list(Main.ignore)
+        Boot.scan()
+        #Main.mods = Mods.list(Main.ignore)
         Run.cmd(TXT)
 
     @staticmethod
@@ -118,8 +138,8 @@ class Scripts:
         Boot.privileges()
         Main.boot = True
         Boot.boot(TXT, MODS)
+        Run.banner()
         Boot.pidfile(Main.name)
-        Boot.banner()
         Boot.init()
         Boot.forever()
 

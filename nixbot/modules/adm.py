@@ -1,4 +1,4 @@
-# This file is placed in the Public Domain.
+#  This file is placed in the Public Domain.
 
 
 "administrator"
@@ -8,6 +8,12 @@ from nixbot.command import Commands
 from nixbot.encoder import Json
 from nixbot.package import Mods
 from nixbot.runtime import Main
+from nixbot.persist import Workdir
+
+
+def configure():
+    tbl.skip = "irc"
+    wdr.skip = "irc"
 
 
 def cmd(event):
@@ -35,9 +41,11 @@ def tbl(event):
     event.reply(f"MD5 = {Json.dumps(Mods.md5s, indent=4)}")
 
 
-tbl.skip = "irc"
-
-
 def ver(event):
     "show verson."
     event.reply(f"{Main.name.upper()} {Main.version}")
+
+
+def wdr(event):
+    "show working directory."
+    event.reply(Workdir.workdir())

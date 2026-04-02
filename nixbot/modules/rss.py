@@ -25,15 +25,14 @@ from urllib.parse import quote_plus, urlencode
 
 from nixbot.handler import Broker
 from nixbot.objects import Configuration, Data, Methods, Object
-from nixbot.persist import Disk, Locate
+from nixbot.persist import Cfg, Disk, Locate
 from nixbot.runtime import Main
 from nixbot.threads import Repeater, Thread
 from nixbot.utility import Utils
 
 
-class Config(Configuration):
-
-    polltime = 300
+def configure():
+    Cfg.load(Config)
 
 
 def init():
@@ -44,6 +43,11 @@ def init():
 
 def shutdown():
     Run.fetcher.stop()
+
+
+class Config(Configuration):
+
+    polltime = 300
 
 
 class Feed(Data):

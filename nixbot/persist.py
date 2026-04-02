@@ -14,7 +14,7 @@ import threading
 from .configs import Main
 from .encoder import Json
 from .objects import Data, Methods, Object
-from .utility import Time
+from .utility import Time, Utils
 
 
 class Cache:
@@ -38,6 +38,17 @@ class Cache:
             Object.update(cls.paths[path], obj)
         except KeyError:
             cls.add(path, obj)
+
+
+class Cfg:
+
+    @classmethod
+    def load(cls, obj, name=""):
+        Disk.read(obj, name or Utils.modname(obj), "config")
+
+    @classmethod
+    def save(cls, obj, name=""):
+        Disk.write(obj, name or Utils.modname(obj), "config")
 
 
 class Disk:

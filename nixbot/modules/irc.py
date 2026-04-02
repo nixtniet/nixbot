@@ -16,10 +16,15 @@ import time
 from nixbot.command import Commands
 from nixbot.handler import Broker, Event, Output
 from nixbot.objects import Configuration, Data, Methods
-from nixbot.persist import Locate
+from nixbot.persist import Cfg
 from nixbot.runtime import Main
 from nixbot.threads import Thread
 from nixbot.utility import Utils
+
+
+def configure():
+    for name, bot in Broker.like("IRC"):
+        Cfg.load(bot.cfg)
 
 
 def init():
@@ -436,6 +441,7 @@ class IRC(Output):
         self.state.lastline = splitted[-1]
 
     def start(self):
+        #Cfg.load(self.cfg)
         if self.cfg.channel not in self.channels:
             self.channels.append(self.cfg.channel)
         self.events.ready.clear()
@@ -444,7 +450,6 @@ class IRC(Output):
         Output.start(self)
         if not self.state.keeprunning:
             Thread.launch(self.keep)
-        Locate.first(self.cfg)
         Thread.launch(
             self.doconnect,
             self.cfg.server or "localhost",

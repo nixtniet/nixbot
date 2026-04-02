@@ -122,6 +122,11 @@ class Utils:
             return hashlib.md5(txt, usedforsecurity=False).hexdigest()  # pylint: disable=E1123
 
     @staticmethod
+    def modname(obj):
+        "return package name of an object."
+        return obj.__module__.split(".")[-1]
+
+    @staticmethod
     def pkgname(obj):
         "return package name of an object."
         return obj.__module__.split(".", maxsplit=1)[0]
@@ -156,8 +161,11 @@ class Utils:
 
 class Format(logging.Formatter):
 
+    size = 3
+
     def format(self, record):
         record.module = record.module.upper()
+        record.module = record.module[:Format.size]
         return logging.Formatter.format(self, record)
 
 
@@ -165,7 +173,7 @@ class Log:
 
     datefmt = "%H:%M:%S"
     format = "%(module)-3s %(message)s"
-
+    
     @staticmethod
     def size(nr):
         index = Log.format.find("-")+1
@@ -173,6 +181,7 @@ class Log:
         newformat += str(nr)
         newformat += Log.format[index+1:]
         Log.format = newformat
+        Format.size = nr
 
     @staticmethod
     def level(loglevel):
