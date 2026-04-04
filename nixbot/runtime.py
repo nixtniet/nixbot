@@ -20,9 +20,11 @@ from .utility import HELP, Utils
 from . import modules as MODS
 
 
-DEFAULT = "irc,mdl,rss,wsd"
-TXT = " ".join(sys.argv[1:])
-VERSION = 453
+class Default:
+
+    default = "irc,mdl,rss,wsd"
+    txt = " ".join(sys.argv[1:])
+    version = 453
 
 
 class Line(Console):
@@ -72,7 +74,7 @@ class Run:
 
     @staticmethod
     def check(opts):
-        for word in TXT.split():
+        for word in Default.txt.split():
             if not word.startswith("-"):
                 continue
             for char in opts:
@@ -103,7 +105,7 @@ class Scripts:
         Boot.daemon(Main.verbose, Main.nochdir)
         Boot.privileges()
         Main.boot = True
-        Boot.boot(TXT, MODS)
+        Boot.boot(Default.txt, MODS)
         Boot.scan()
         Boot.pidfile(Main.name)
         Boot.init()
@@ -114,7 +116,7 @@ class Scripts:
         "console script."
         import readline
         readline.redisplay()
-        Boot.boot(TXT, MODS)
+        Boot.boot(Default.txt, MODS)
         if Main.verbose:
             Run.banner()
         Boot.scan()
@@ -129,16 +131,16 @@ class Scripts:
         if len(sys.argv) == 1:
             return
         Main.all = True
-        Boot.boot(TXT, MODS)
+        Boot.boot(Default.txt, MODS)
         Boot.scan()
-        Run.cmd(TXT)
+        Run.cmd(Default.txt)
 
     @staticmethod
     def service():
         "service script."
         Boot.privileges()
         Main.boot = True
-        Boot.boot(TXT, MODS)
+        Boot.boot(Default.txt, MODS)
         Boot.scan()
         Run.banner()
         Boot.pidfile(Main.name)
@@ -151,8 +153,8 @@ check = Run.check
 
 def main():
     "main"
-    Main.default = DEFAULT
-    Main.version = VERSION
+    Main.default = Default.default
+    Main.version = Default.version
     Main.wdr = os.path.expanduser(f"~/.{Main.name}")
     if check('a'): Main.all = True
     if check('b'): Main.boot = True
