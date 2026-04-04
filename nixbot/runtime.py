@@ -7,7 +7,6 @@
 import os
 import sys
 import time
-import _thread
 
 
 from .booting import Boot
@@ -15,14 +14,15 @@ from .command import Commands
 from .configs import Main
 from .handler import Console, Event
 from .package import Mods
-from .persist import Workdir
 from .utility import HELP, Utils
 
 
 from . import modules as MODS
 
 
+DEFAULT = "irc,mdl,rss,wsd"
 TXT = " ".join(sys.argv[1:])
+VERSION = 453
 
 
 class Line(Console):
@@ -94,25 +94,6 @@ class Run:
             evt.wait()
         return evt
 
-    @staticmethod
-    def forever():
-        "run forever until ctrl-c."
-        while True:
-            try:
-                time.sleep(0.1)
-            except (KeyboardInterrupt, EOFError):
-                _thread.interrupt_main()
-
-    @staticmethod
-    def scan():
-        if Main.read:
-            Boot.scanner()
-        else:
-            Commands.table()
-            Mods.sums()
-        if not Commands.names:
-            Boot.scanner()
-
 
 class Scripts:
 
@@ -123,10 +104,10 @@ class Scripts:
         Boot.privileges()
         Main.boot = True
         Boot.boot(TXT, MODS)
-        Run.scan()
-        Workdir.pidfile(Main.name)
+        Boot.scan()
+        Boot.pidfile(Main.name)
         Boot.init()
-        Run.forever()
+        Boot.forever()
 
     @staticmethod
     def console():
@@ -136,11 +117,11 @@ class Scripts:
         Boot.boot(TXT, MODS)
         if Main.verbose:
             Run.banner()
-        Run.scan()
+        Boot.scan()
         Boot.init(default=False)
         csl = CSL()
         csl.start()
-        Run.forever()
+        Boot.forever()
 
     @staticmethod
     def control():
@@ -149,7 +130,7 @@ class Scripts:
             return
         Main.all = True
         Boot.boot(TXT, MODS)
-        Run.scan()
+        Boot.scan()
         Run.cmd(TXT)
 
     @staticmethod
@@ -158,11 +139,11 @@ class Scripts:
         Boot.privileges()
         Main.boot = True
         Boot.boot(TXT, MODS)
-        Run.scan()
+        Boot.scan()
         Run.banner()
-        Workdir.pidfile(Main.name)
+        Boot.pidfile(Main.name)
         Boot.init()
-        Run.forever()
+        Boot.forever()
 
 
 check = Run.check
@@ -170,8 +151,8 @@ check = Run.check
 
 def main():
     "main"
-    Main.default = "irc,mdl,rss,wsd"
-    Main.version = "453"
+    Main.default = DEFAULT
+    Main.version = VERSION
     Main.wdr = os.path.expanduser(f"~/.{Main.name}")
     if check('a'): Main.all = True
     if check('b'): Main.boot = True

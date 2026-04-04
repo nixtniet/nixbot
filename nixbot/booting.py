@@ -6,7 +6,10 @@
 
 import logging
 import os
+import pathlib
 import sys
+import time
+import _thread
 
 
 from .command import Commands
@@ -69,6 +72,15 @@ class Boot:
         os.nice(10)
 
     @classmethod
+    def forever(cls):
+        "run forever until ctrl-c."
+        while True:
+            try:
+                time.sleep(0.1)
+            except (KeyboardInterrupt, EOFError):
+                _thread.interrupt_main()
+
+    @classmethod
     def init(cls, default=True):
         "scan named modules for commands."
         thrs = []
@@ -85,6 +97,17 @@ class Boot:
                 thr.join()
 
     @classmethod
+    def pidfile(cls, name):
+        "write pidfile."
+        filename = os.path.join(Main.wdr, f"{name}.pid")
+        if os.path.exists(filename):
+            os.unlink(filename)
+        path2 = pathlib.Path(filename)
+        path2.parent.mkdir(parents=True, exist_ok=True)
+        with open(filename, "w", encoding="utf-8") as fds:
+            fds.write(str(os.getpid()))
+
+    @classmethod
     def privileges(cls):
         "drop privileges."
         import getpass
@@ -92,6 +115,16 @@ class Boot:
         pwnam2 = pwd.getpwnam(getpass.getuser())
         os.setgid(pwnam2.pw_gid)
         os.setuid(pwnam2.pw_uid)
+
+    @classmethod
+    def scan(cls):
+        if Main.read:
+            cls.scanner()
+        else:
+            Commands.table()
+            Mods.sums()
+        if not Commands.names:
+            cls.scanner()
 
     @classmethod
     def scanner(cls, default=False):
