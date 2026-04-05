@@ -26,7 +26,7 @@ class Boot:
     inits = []
 
     @classmethod
-    def boot(cls, txt, *pkgs, read=False, all=False):
+    def boot(cls, txt, *pkgs, read=False, doall=False):
         "in the beginning."
         if Main.boot or read:
             Disk.read(Main, "main", "config")
@@ -46,7 +46,7 @@ class Boot:
             Mods.add("modules", os.path.join(Main.wdr, "mods"))
         for pkg in pkgs:
             Mods.pkg(pkg)
-        if Main.all or all:
+        if Main.all or doall:
             Main.mods = Mods.list(Main.ignore)
 
     @classmethod

@@ -129,7 +129,7 @@ class Scripts:
         "cli script."
         if len(sys.argv) == 1:
             return
-        Boot.boot(Default.txt, MODS, all=True)
+        Boot.boot(Default.txt, MODS, doall=True)
         Boot.scan()
         Run.cmd(Default.txt)
 
