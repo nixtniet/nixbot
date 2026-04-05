@@ -104,10 +104,9 @@ class Scripts:
         "background script."
         Boot.daemon(Main.verbose, Main.nochdir)
         Boot.privileges()
-        Main.boot = True
-        Boot.boot(Default.txt, MODS)
-        Boot.scan()
+        Boot.boot(Default.txt, MODS, read=True)
         Boot.pidfile(Main.name)
+        Boot.scan()
         Boot.init()
         Boot.forever()
 
@@ -130,8 +129,7 @@ class Scripts:
         "cli script."
         if len(sys.argv) == 1:
             return
-        Main.all = True
-        Boot.boot(Default.txt, MODS)
+        Boot.boot(Default.txt, MODS, all=True)
         Boot.scan()
         Run.cmd(Default.txt)
 
@@ -139,8 +137,7 @@ class Scripts:
     def service():
         "service script."
         Boot.privileges()
-        Main.boot = True
-        Boot.boot(Default.txt, MODS)
+        Boot.boot(Default.txt, MODS, read=True)
         Boot.scan()
         Run.banner()
         Boot.pidfile(Main.name)
