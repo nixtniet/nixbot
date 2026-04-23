@@ -11,6 +11,7 @@ import ssl
 import textwrap
 import threading
 import time
+import _thread
 
 
 from nixbot.command import Commands
@@ -459,7 +460,10 @@ class IRC(Output):
         Output.stop(self)
 
     def wait(self):
-        self.events.ready.wait()
+        try:
+            self.events.ready.wait()
+        except (KeyboardInterrupt, EOFError):
+            _thread.interrupt_main()
 
 
 def cb_auth(evt):

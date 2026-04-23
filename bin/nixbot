@@ -1,1 +1,1 @@
-python3 -c "from nixbot.booting import main ; main()" $* ;
+python3 -c "from nixbot.runtime import main ; main()" $* ;
