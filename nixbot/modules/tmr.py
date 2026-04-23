@@ -11,7 +11,7 @@ import time
 
 
 from nixbot.brokers import Broker
-from nixbot.objects import Data, Object, Methods
+from nixbot.objects import Base, Object, Methods
 from nixbot.persist import Disk, Locate
 from nixbot.threads import Thread, Timed
 from nixbot.utility import Time
@@ -28,7 +28,7 @@ def init():
             continue
         orig, channel, txt = args
         for origin, bot in Broker.like(orig):
-            if not origin:
+            if not origin or not bot:
                 continue
             diff = float(tme) - time.time()
             if diff > 0:
@@ -43,12 +43,12 @@ def init():
     logging.warning("%s timers", len(Timers.timers))
 
 
-class Timer(Data):
+class Timer(Base):
 
     pass
 
 
-class Timers(Data):
+class Timers(Base):
 
     path = ""
     timers = Timer()
@@ -80,8 +80,12 @@ def tmr(event):
     diff = todo - time.time()
     txt = " ".join(event.args[1:])
     Timers.add(todo, event.orig, event.channel, txt)
-    Disk.write(Timers.timers, Timers.path or Methods.ident(Timers.timers))
+    with Timers.lock:
+        Disk.write(Timers.timers, Timers.path or Methods.ident(Timers.timers))
     bot = Broker.get(event.orig)
+    if not bot:
+        event.reply("no bot")
+        return
     timer = Timed(diff, bot.say, event.channel, txt)
     Thread.launch(timer.start).join()
     event.reply("ok " + Time.elapsed(diff))

@@ -13,14 +13,14 @@ import time
 
 
 from nixbot.brokers import Broker
-from nixbot.objects import Configuration, Data
-from nixbot.persist import Cfg
-from nixbot.runtime import Main
+from nixbot.configs import Configuration, Main
+from nixbot.objects import Base
+from nixbot.persist import Disk
 from nixbot.threads import Thread
 
 
 def configure():
-    Cfg.load(Config)
+    Disk.read(Config, "udp", "config")
 
 
 def init():
@@ -36,10 +36,10 @@ class Config(Configuration):
     port = 5500
 
 
-class UDP(Data):
+class UDP(Base):
 
     def __init__(self):
-        Data.__init__(self)
+        Base.__init__(self)
         self.stopped = False
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -121,6 +121,3 @@ def udp(event):
             toudp(Config.host, Config.port, txt)
         if stop:
             break
-
-
-udp.skip = "irc"

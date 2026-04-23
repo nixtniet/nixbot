@@ -13,9 +13,9 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
-from nixbot.objects import Configuration, Data
+from nixbot.configs import Configuration, Main
+from nixbot.objects import Base
 from nixbot.persist import Locate, Workdir
-from nixbot.runtime import Main
 from nixbot.threads import Thread
 
 
@@ -39,14 +39,14 @@ class Config(Configuration):
     port = 10102
 
 
-class REST(HTTPServer, Data):
+class REST(HTTPServer, Base):
 
     allow_reuse_address = True
     daemon_thread = True
 
     def __init__(self, *args, **kwargs):
         HTTPServer.__init__(self, *args, **kwargs)
-        Data.__init__(self)
+        Base.__init__(self)
         self.host = args[0]
         self._last = time.time()
         self._starttime = time.time()

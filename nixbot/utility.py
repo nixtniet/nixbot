@@ -11,6 +11,9 @@ import os
 import time
 
 
+from .objects import Base
+
+
 class NoDate(Exception):
 
     pass
@@ -112,6 +115,23 @@ class Time:
 class Utils:
 
     @staticmethod
+    def clsname(obj):
+        "reutrn classname of an object."
+        return obj.__class__.__name__
+
+    @staticmethod
+    def md5dir(path):
+        "create a md5 for a directory."
+        md5s = {}
+        for fnm in os.listdir(path):
+            if not fnm.endswith(".py"):
+                continue
+            name = fnm[:-3]
+            mpath = os.path.join(path, fnm)
+            md5s[name] = Utils.md5sum(mpath)
+        return md5s
+
+    @staticmethod
     def md5sum(path):
         "return md5 of a file."
         import hashlib
@@ -120,6 +140,11 @@ class Utils:
         with open(path, "r", encoding="utf-8") as file:
             txt = file.read().encode("utf-8")
             return hashlib.md5(txt, usedforsecurity=False).hexdigest()  # pylint: disable=E1123
+
+    @staticmethod
+    def moddir():
+        "return modules directory."
+        return os.path.join(os.path.dirname(__spec__.loader.path), "modules")
 
     @staticmethod
     def modname(obj):
@@ -161,11 +186,14 @@ class Utils:
 
 class Format(logging.Formatter):
 
+    disable = False
     size = 3
 
     def format(self, record):
-        record.module = record.module.upper()
-        record.module = record.module[:Format.size]
+        "logging formatter."
+        if not Format.disable:
+            record.module = record.module.upper()
+            record.module = record.module[:Format.size]
         return logging.Formatter.format(self, record)
 
 
@@ -174,17 +202,23 @@ class Log:
     datefmt = "%H:%M:%S"
     format = "%(module)-3s %(message)s"
 
-    @staticmethod
-    def size(nr):
-        index = Log.format.find("-")+1
-        newformat = Log.format[:index]
-        newformat += str(nr)
-        newformat += Log.format[index+1:]
-        Log.format = newformat
-        Format.size = nr
+    @classmethod
+    def configure(cls, cfg):
+        "configure logging."
+        cls.size(len(cfg.name))
+        cls.level(cfg.level or "info")
 
-    @staticmethod
-    def level(loglevel):
+    @classmethod
+    def size(cls, nr):
+        "set text size."
+        index = cls.format.find("-")+1
+        newformat = cls.format[:index]
+        newformat += str(nr)
+        newformat += cls.format[index+1:]
+        cls.format = newformat
+
+    @classmethod
+    def level(cls, loglevel):
         "set log level."
         formatter = Format(Log.format, Log.datefmt)
         stream = logging.StreamHandler()
@@ -196,32 +230,7 @@ class Log:
         )
 
 
-HELP = """%s [-c|d|h|s] [-a] [-b] [-n] [-r] [-u] [-v] [-w] [key=value] [key==value]
-
-options:
-
--h       show this help message and exit
--a       load all modules
--b       read config on boot
--c       start console
--d       start background daemon
--n       disable ignore
--r       read modules on start
--s       start service
--u       use local mods directory
--v       enable verbose
--w       wait for services to start
-
-keys:
-
-default,ignore,init,level,mods,name,version,wdr
-
-example:
-
-%s -cvw level=debug mods=irc,rss"""
-
-
-LEVELS = {
+LEVELS = Base({
     "notset": logging.NOTSET,
     "debug": logging.DEBUG,
     "info": logging.INFO,
@@ -229,7 +238,7 @@ LEVELS = {
     "error": logging.ERROR,
     "critical": logging.CRITICAL,
     "fatal": logging.FATAL
-}
+})
 
 
 TIMES = [
@@ -249,11 +258,9 @@ TIMES = [
 
 def __dir__():
     return (
-        'HELP',
         'LEVELS',
         'TIMES',
         'Log',
-        'NoDate',
         'Time',
         'Utils'
     )

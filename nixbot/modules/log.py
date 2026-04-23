@@ -4,11 +4,11 @@
 "log text"
 
 
-from nixbot.objects import Data
+from nixbot.objects import Base
 from nixbot.persist import Disk
 
 
-class Log(Data):
+class Log(Base):
 
     def __init__(self):
         super().__init__()

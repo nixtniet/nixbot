@@ -1,11 +1,16 @@
 # This file is placed in the Public Domain.
 
 
-"configuration"
+"configurations"
 
 
-from .objects import Methods
+from .objects import Base, Object
 from .utility import Utils
+
+
+class Configuration(Base):
+
+    pass
 
 
 class MainConfig(type):
@@ -16,17 +21,18 @@ class MainConfig(type):
         return cls.__getattribute__(key)
 
     def __str__(cls):
-        return str(Methods.skip(cls.__dict__))
+        return str(Object.skip(cls.__dict__))
 
 
 class Main(metaclass=MainConfig):
 
+    level = "info"
     name = Utils.pkgname(MainConfig)
-    wdr = f".{name}"
+    wdr = ""
 
 
 def __dir__():
     return (
-        'MainConfig',
+        'Configuration',
         'Main'
     )

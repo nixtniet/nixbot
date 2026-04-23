@@ -13,20 +13,34 @@ sys.path.insert(0, ".")
 
 
 from nixbot.configs import Main
-from nixbot.objects import Data
-from nixbot.persist import Disk
+from nixbot.objects import Base
+from nixbot.persist import Disk, Workdir
 
 
-Main.wdr = '.test'
+Workdir.wdr = '.test'
 
 
 class TestPersist(unittest.TestCase):
 
+    def test_loadcfg(self):
+        Main.a = "b"
+        Disk.read(Main, "main", "config")
+        self.assertEqual(Main.a, "b")
+
     def test_save(self):
-        obj = Data()
+        obj = Base()
         opath = Disk.write(obj)
         self.assertTrue(os.path.exists(os.path.join(
-                                                    Main.wdr,
+                                                    Workdir.wdr,
                                                     "store",
                                                     opath
+                                                   )))
+
+    def test_writecfg(self):
+        Main.a = "b"
+        Disk.write(Main, "main", "config")
+        self.assertTrue(os.path.exists(os.path.join(
+                                                    Workdir.wdr,
+                                                    "config",
+                                                    "main"
                                                    )))

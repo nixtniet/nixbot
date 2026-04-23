@@ -1,172 +1,195 @@
 # This file is placed in the Public Domain.
 
 
-"main program"
+"runtime"
 
 
+import logging
 import os
+import pathlib
 import sys
 import time
 
 
-from .booting import Boot
+from .brokers import Broker
 from .command import Commands
 from .configs import Main
-from .handler import Console, Event
 from .package import Mods
-from .utility import HELP, Utils
+from .persist import Disk, Workdir
+from .threads import Thread
+from .utility import Log, Utils
 
 
-from . import modules as MODS
+class Runtime:
 
-
-class Default:
-
-    default = "irc,mdl,rss,wsd"
-    txt = " ".join(sys.argv[1:])
-    version = 453
-
-
-class Line(Console):
-
-    def __init__(self):
-        super().__init__()
-        self.register("command", Commands.command)
-
-    def raw(self, text):
-        "write to console."
-        print(text.encode('utf-8', 'replace').decode("utf-8"))
-
-
-class CSL(Line):
-
-    def callback(self, event):
-        "wait for callback result."
-        if not event.text:
-            event.ready()
-            return
-        super().callback(event)
-        event.wait()
-
-    def poll(self):
-        "poll for an event."
-        evt = Event()
-        evt.text = input("> ")
-        evt.kind = "command"
-        return evt
-
-
-class Run:
+    inits = []
+    md5s = {}
+    path = os.path.dirname(__spec__.loader.path)
 
     @classmethod
     def banner(cls):
         "hello."
         tme = time.ctime(time.time()).replace("  ", " ")
-        print("%s %s since %s %s (%s)" % (
+        print("%s since %s %s (%s)" % (
             Main.name.upper(),
-            Main.version,
             tme,
             Main.level.upper() or "INFO",
-            Utils.md5sum(Mods.path("tbl") or "")[:7]
+            Utils.md5sum(Mods.path("tbl") or "")[:7],
         ))
         sys.stdout.flush()
-        return Main.version
 
-    @staticmethod
-    def check(opts):
-        for word in Default.txt.split():
-            if not word.startswith("-"):
+    @classmethod
+    def check(cls, opts):
+        "check for command line options."
+        for arg in sys.argv:
+            if not arg.startswith("-"):
                 continue
-            for char in opts:
-                if char in word:
+            for opt in opts:
+                if opt in arg:
                     return True
         return False
 
+    @classmethod
+    def configure(cls, cfg):
+        "in the beginning."
+        Main.name = cfg.name or Main.name or Utils.pkgname(Runtime)
+        if cfg.read:
+            Disk.read(Main, "main", "config")
+        Workdir.configure(cfg)
+        Log.configure(cfg)
+        Mods.configure(cfg)
+        if Main.all:
+            Main.mods = Mods.list()
+        if Main.noignore:
+            Main.ignore = ""
+
+    @classmethod
+    def daemon(cls, verbose=False, nochdir=False):
+        "run in the background."
+        pid = os.fork()
+        if pid != 0:
+            os._exit(0)
+        os.setsid()
+        pid2 = os.fork()
+        if pid2 != 0:
+            os._exit(0)
+        if not verbose:
+            with open('/dev/null', 'r', encoding="utf-8") as sis:
+                os.dup2(sis.fileno(), sys.stdin.fileno())
+            with open('/dev/null', 'a+', encoding="utf-8") as sos:
+                os.dup2(sos.fileno(), sys.stdout.fileno())
+            with open('/dev/null', 'a+', encoding="utf-8") as ses:
+                os.dup2(ses.fileno(), sys.stderr.fileno())
+        os.umask(0)
+        if not nochdir:
+            os.chdir("/")
+        os.nice(10)
+
+    @classmethod
+    def forever(cls):
+        "run forever until ctrl-c."
+        while True:
+            try:
+                time.sleep(0.1)
+            except (KeyboardInterrupt, EOFError):
+                break
+
+    @classmethod
+    def init(cls, cfg):
+        "scan named modules for commands."
+        thrs = []
+        for name, mod in Mods.iter(cfg.mods, cfg.ignore):
+            if "init" in dir(mod):
+                thrs.append((name, Thread.launch(mod.init)))
+                cls.inits.append(name)
+        if cfg.wait:
+            for name, thr in thrs:
+                thr.join()
+
     @staticmethod
-    def cmd(text):
-        "parse text for command and run it."
-        cli = Line()
-        cli.start()
-        for txt in text.split(" ! "):
-            evt = Event()
-            evt.orig = repr(cli)
-            evt.text = txt
-            evt.kind = "command"
-            Commands.command(evt)
-            evt.wait()
-        return evt
+    def pidfile(name):
+        "write pidfile."
+        filename = os.path.join(Workdir.wdr, f"{name}.pid")
+        if os.path.exists(filename):
+            os.unlink(filename)
+        path2 = pathlib.Path(filename)
+        path2.parent.mkdir(parents=True, exist_ok=True)
+        with open(filename, "w", encoding="utf-8") as fds:
+            fds.write(str(os.getpid()))
+
+    @classmethod
+    def privileges(cls):
+        "drop privileges."
+        import getpass
+        import pwd
+        pwnam2 = pwd.getpwnam(getpass.getuser())
+        os.setgid(pwnam2.pw_gid)
+        os.setuid(pwnam2.pw_uid)
+
+    @classmethod
+    def scan(cls, cfg):
+        "load tables or scan directories."
+        if cfg.read:
+            cls.scanner(cfg)
+        else:
+            Commands.table()
+            Mods.sums()
+        if not Commands.names:
+            cls.scanner(cfg)
+
+    @classmethod
+    def scanner(cls, cfg):
+        "scan named modules for commands."
+        res = []
+        for name, mod in Mods.iter(cfg.mods, cfg.ignore):
+            Commands.scan(mod)
+            if "configure" in dir(mod):
+                mod.configure()
+            res.append((name, mod))
+        return res
+
+    @classmethod
+    def setmd5s(cls):
+        "set md5 sums."
+        cls.md5s.update(Utils.md5dir(cls.path))
+
+    @classmethod
+    def shutdown(cls):
+        "call shutdown on modules."
+        for name in cls.inits:
+            mod = Mods.get(name)
+            if "shutdown" in dir(mod):
+                logging.info("shutdown %s", name)
+                try:
+                    mod.shutdown()
+                except Exception as ex:
+                    logging.exception(ex)
+        Broker.stop()
+
+    @classmethod
+    def wrap(cls, func, *args):
+        "restore console."
+        import termios
+        old = None
+        try:
+            old = termios.tcgetattr(sys.stdin.fileno())
+        except termios.error:
+            pass
+        try:
+            func(*args)
+        except (KeyboardInterrupt, EOFError):
+            pass
+        except Exception as ex:
+            logging.exception(ex)
+        try:
+            cls.shutdown()
+        except Exception as ex:
+            logging.exception(ex)
+        if old:
+            termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old)
 
 
-class Scripts:
-
-    @staticmethod
-    def background():
-        "background script."
-        Boot.daemon(Main.verbose, Main.nochdir)
-        Boot.privileges()
-        Boot.boot(Default.txt, MODS, read=True)
-        Boot.pidfile(Main.name)
-        Boot.scan()
-        Boot.init()
-        Boot.forever()
-
-    @staticmethod
-    def console():
-        "console script."
-        import readline
-        readline.redisplay()
-        Boot.boot(Default.txt, MODS)
-        if Main.verbose:
-            Run.banner()
-        Boot.scan()
-        Boot.init(default=False)
-        csl = CSL()
-        csl.start()
-        Boot.forever()
-
-    @staticmethod
-    def control():
-        "cli script."
-        if len(sys.argv) == 1:
-            return
-        Boot.boot(Default.txt, MODS, doall=True)
-        Boot.scan()
-        Run.cmd(Default.txt)
-
-    @staticmethod
-    def service():
-        "service script."
-        Boot.privileges()
-        Boot.boot(Default.txt, MODS, read=True)
-        Boot.scan()
-        Run.banner()
-        Boot.pidfile(Main.name)
-        Boot.init()
-        Boot.forever()
-
-
-check = Run.check
-
-
-def main():
-    "main"
-    Main.default = Default.default
-    Main.version = Default.version
-    Main.wdr = os.path.expanduser(f"~/.{Main.name}")
-    if check('a'): Main.all = True
-    if check('b'): Main.boot = True
-    if check('h'): print(HELP % (Main.name, Main.name))
-    if check('n'): Main.noignore = True
-    if check('r'): Main.read = True
-    if check("u"): Main.user = True
-    if check("v"): Main.verbose = True
-    if check("w"): Main.wait = True
-    if check("d"): Scripts.background()
-    elif check("c"): Boot.wrap(Scripts.console)
-    elif check("s"): Boot.wrap(Scripts.service)
-    else: Boot.wrap(Scripts.control)
-    Boot.shutdown()
-
-
-if __name__ == "__main__":
-    main()
+def __dir__():
+    return (
+        "Runtime",
+    )

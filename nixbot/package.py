@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"module management"
+"module mamagement"
 
 
 import importlib.util as imp
@@ -9,6 +9,8 @@ import logging
 import os
 
 
+from .objects import Base, Object
+from .persist import Workdir
 from .utility import Utils
 
 
@@ -19,21 +21,40 @@ class Mods:
     modules = {}
 
     @classmethod
-    def add(cls, name, path):
+    def add(cls, path, name=None):
         "add modules directory."
+        if os.sep not in path:
+            name = path
+        elif name is None:
+            name = path.split(os.sep)[-2]
         if os.path.exists(path):
             cls.dirs[name] = path
 
     @classmethod
-    def all(cls, force=False):
-        return cls.iter(cls.list(), force=force)
+    def all(cls):
+        "return all modules."
+        return cls.iter(cls.list())
 
     @classmethod
-    def get(cls, modname):
-        "return module."
-        result = list(cls.iter(modname))
-        if result:
-            return result[0][-1]
+    def configure(cls, cfg):
+        "configure module directories."
+        if cfg.user:
+            cls.add(os.path.join(Workdir.wdr, "mods"), "modules")
+            cls.add('mods', 'mods')
+        cls.add(Utils.moddir(), f"{Utils.pkgname(Mods)}.modules")
+
+    @classmethod
+    def get(cls, name):
+        "return module from cache or import module."
+        for pkgname, path in cls.dirs.items():
+            fnm = os.path.join(path, name + ".py")
+            if not os.path.exists(fnm):
+                continue
+            modname = f"{pkgname}.{name}"
+            mod = cls.modules.get(modname, None)
+            if not mod:
+                mod = cls.importer(modname, fnm)
+            return mod
 
     @classmethod
     def has(cls, attr):
@@ -45,26 +66,18 @@ class Mods:
         return ",".join(result)
 
     @classmethod
-    def iter(cls, modlist, ignore="", force=False):
+    def iter(cls, mods="", ignore=""):
         "loop over modules."
         has = []
-        for name in Utils.spl(modlist):
-            if ignore and name in Utils.spl(ignore):
+        for name in Utils.spl(mods):
+            if name in Utils.spl(ignore):
                 continue
             if name in has:
                 continue
-            for pkgname, path in cls.dirs.items():
-                fnm = os.path.join(path, name + ".py")
-                if not os.path.exists(fnm):
-                    continue
-                modname = f"{pkgname}.{name}"
-                mod = cls.modules.get(modname, None)
-                if force or not mod:
-                    mod = cls.importer(modname, fnm)
-                if mod:
-                    has.append(name)
-                    yield name, mod
-                    break
+            mod = cls.get(name)
+            if mod:
+                has.append(name)
+                yield name, mod
 
     @classmethod
     def list(cls, ignore=""):
@@ -93,7 +106,6 @@ class Mods:
         md5sum = Utils.md5sum(spec.loader.path)
         if md5 and md5sum != md5:
             logging.info("mismatch %s", spec.loader.path)
-        cls.md5s[name] = md5sum
         mod = imp.module_from_spec(spec)
         if not mod:
             logging.debug("can't load %s module", name)
@@ -104,17 +116,29 @@ class Mods:
 
     @classmethod
     def path(cls, name):
+        "return existing paths."
         for pkgname, path in cls.dirs.items():
             pth = os.path.join(path, name + ".py")
             if os.path.exists(pth):
                 return pth
 
     @classmethod
-    def pkg(cls, package):
-        return cls.add(package.__name__, package.__path__[0])
+    def pkg(cls, *packages):
+        "register packages their directories."
+        for package in packages:
+            cls.add(package.__path__[0], package.__name__)
+
+    @classmethod
+    def setmd5s(cls):
+        "update md5 sums"
+        md5s = Base()
+        for path in cls.dirs.values():
+            Object.notset(md5s, Utils.md5dir(path))
+        Object.update(cls.md5s, md5s)
 
     @classmethod
     def sums(cls):
+        "load md5 sums from table."
         mod = cls.get("tbl")
         if not mod:
             return

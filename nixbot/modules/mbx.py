@@ -9,12 +9,12 @@ import os
 import time
 
 
-from nixbot.objects import Data, Methods, Object
+from nixbot.objects import Base, Methods, Object
 from nixbot.persist import Disk, Locate
 from nixbot.utility import Time
 
 
-class Email(Data):
+class Email(Base):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -59,9 +59,6 @@ def eml(event):
         event.reply("no emails found.")
 
 
-eml.skip = "irc"
-
-
 def mbx(event):
     if not event.args:
         event.reply("mbx <path>")
@@ -91,6 +88,3 @@ def mbx(event):
         nrs += 1
     if nrs:
         event.reply("ok %s" % nrs)
-
-
-mbx.skip = "irc"

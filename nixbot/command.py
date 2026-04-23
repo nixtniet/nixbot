@@ -7,10 +7,8 @@
 import inspect
 
 
-from .brokers import Broker
 from .objects import Methods
 from .package import Mods
-from .utility import Utils
 
 
 class Commands:
@@ -22,10 +20,12 @@ class Commands:
     def add(cls, *args):
         "add functions to commands."
         for func in args:
-            cls.cmds[func.__name__] = func
+            name = func.__name__
+            cls.cmds[name] = func
             modname = func.__module__.split(".")[-1]
-            if "__" in modname: continue
-            cls.names[func.__name__] = modname
+            if "__" in modname:
+                continue
+            cls.names[name] = modname
 
     @classmethod
     def command(cls, evt):
@@ -35,24 +35,20 @@ class Commands:
         if not func:
             name = cls.names.get(evt.cmd)
             mod = None
-            if name: mod = Mods.get(name)
+            if name:
+                mod = Mods.get(name)
             if mod:
                 cls.scan(mod)
                 func = cls.get(evt.cmd)
         if func:
-            if not cls.skip(func, evt.orig):
-                func(evt)
-                bot = Broker.get(evt.orig)
-                if bot: bot.display(evt)
+            func(evt)
+            evt.display()
         evt.ready()
 
     @classmethod
     def commands(cls, orig):
-        res = []
-        for func in cls.cmds.values():
-            if cls.skip(func, orig): continue
-            res.append(func.__name__)
-        return res
+        "list cpmmands available."
+        return cls.names.keys()
 
     @classmethod
     def get(cls, cmd):
@@ -67,17 +63,12 @@ class Commands:
                 cls.add(cmdz)
 
     @classmethod
-    def skip(cls, func, orig):
-        if "skip" in dir(func):
-            for skp in Utils.spl(func.skip):
-                if skp.lower() in orig.lower(): return True
-        return False
-
-    @classmethod
     def table(cls):
-        mod = cls.get("tbl")
+        "load names from table."
+        mod = Mods.get("tbl")
         names = getattr(mod, "NAMES", None)
-        if names: cls.names.update(names)
+        if names:
+            cls.names.update(names)
 
 
 def __dir__():

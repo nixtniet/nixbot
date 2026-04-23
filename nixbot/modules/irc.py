@@ -14,17 +14,12 @@ import time
 
 
 from nixbot.command import Commands
+from nixbot.configs import Configuration, Main
 from nixbot.handler import Broker, Event, Output
-from nixbot.objects import Configuration, Data, Methods
-from nixbot.persist import Cfg
-from nixbot.runtime import Main
+from nixbot.objects import Base, Methods
+from nixbot.persist import Disk
 from nixbot.threads import Thread
 from nixbot.utility import Utils
-
-
-def configure():
-    for name, bot in Broker.like("IRC"):
-        Cfg.load(bot.cfg)
 
 
 def init():
@@ -108,7 +103,7 @@ class IRC(Output):
         self.buffer = []
         self.cfg = Config()
         self.channels = []
-        self.events = Data()
+        self.events = Base()
         self.events.authed = threading.Event()
         self.events.connected = threading.Event()
         self.events.joined = threading.Event()
@@ -118,7 +113,7 @@ class IRC(Output):
         self.noflood = True
         self.silent = False
         self.sock = None
-        self.state = Data()
+        self.state = Base()
         self.state.error = ""
         self.state.keeprunning = False
         self.state.last = time.time()
@@ -150,7 +145,7 @@ class IRC(Output):
         self.state.nrconnect += 1
         self.events.connected.clear()
         self.events.joined.clear()
-        if self.cfg.word or self.cfg.password:
+        if self.cfg.word or self.cfg.word:
             logging.debug("using SASL")
             self.cfg.sasl = True
             self.cfg.port = "6697"
@@ -190,8 +185,7 @@ class IRC(Output):
         if len(event.result) > 3:
             self.say(event.channel, "command would flood")
             return
-        for key in sorted(event.result):
-            txt = event.result.get(key)
+        for txt in event.result:
             for text in wrapper.wrap(txt):
                 self.dosay(event.channel, text)
 
@@ -440,8 +434,9 @@ class IRC(Output):
             self.buffer.append(line)
         self.state.lastline = splitted[-1]
 
-    def start(self):
-        Cfg.load(self.cfg)
+    def start(self, daemon=True):
+        if not Disk.read(self.cfg, "irc", "config"):
+            Disk.write(self.cfg, "irc", "config")
         if self.cfg.channel not in self.channels:
             self.channels.append(self.cfg.channel)
         self.events.ready.clear()
@@ -449,12 +444,13 @@ class IRC(Output):
         self.events.joined.clear()
         Output.start(self)
         if not self.state.keeprunning:
-            Thread.launch(self.keep)
+            Thread.launch(self.keep, daemon=daemon)
         Thread.launch(
             self.doconnect,
             self.cfg.server or "localhost",
             self.cfg.nick,
             int(self.cfg.port) or 6667,
+            daemon=daemon
         )
 
     def stop(self):
@@ -468,12 +464,12 @@ class IRC(Output):
 
 def cb_auth(evt):
     bot = Broker.get(evt.orig)
-    bot.docommand(f"AUTHENTICATE {bot.cfg.word or bot.cfg.password}")
+    bot.docommand(f"AUTHENTICATE {bot.cfg.word or bot.cfg.word}")
 
 
 def cb_cap(evt):
     bot = Broker.get(evt.orig)
-    if (bot.cfg.word or bot.cfg.password) and "ACK" in evt.arguments:
+    if (bot.cfg.word or bot.cfg.word and "ACK" in evt.arguments):
         bot.direct("AUTHENTICATE PLAIN")
     else:
         bot.direct("CAP REQ :sasl")

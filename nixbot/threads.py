@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"make it non-blocking"
+"threads"
 
 
 import inspect
@@ -45,7 +45,7 @@ class Task(threading.Thread):
     def run(self):
         "run function."
         if time.time() - Task.last < 0.01:
-            time.sleep(0.01)
+            time.sleep(0.001)
         Task.last = time.time()
         func, args = self.queue.get()
         if args and hasattr(args[0], "ready"):
@@ -61,6 +61,35 @@ class Task(threading.Thread):
             self.event.ready()
         _thread.interrupt_main()
 
+    def stop(self):
+        "join thread."
+        self.join()
+
+
+class Thread:
+
+    lock = threading.RLock()
+
+    @classmethod
+    def launch(cls, func, *args, **kwargs):
+        "run function in a thread."
+        with cls.lock:
+            try:
+                task = Task(func, *args, **kwargs)
+                task.start()
+                return task
+            except (KeyboardInterrupt, EOFError):
+                _thread.interrupt_main()
+
+    @classmethod
+    def name(cls, obj):
+        "string of function/method."
+        if inspect.ismethod(obj):
+            return f"{obj.__self__.__class__.__name__}.{obj.__name__}"
+        if inspect.isfunction(obj):
+            return repr(obj).split()[1]
+        return repr(obj)
+
 
 class Timy(threading.Timer):
 
@@ -73,6 +102,9 @@ class Timy(threading.Timer):
         self.state["latest"] = time.time()
         self.state["starttime"] = time.time()
         self.starttime = time.time()
+
+    def stop(self):
+        self.cancel()
 
 
 class Timed:
@@ -95,6 +127,7 @@ class Timed:
 
     def start(self):
         "start timer."
+        self.kwargs["daemon"] = True
         self.kwargs["name"] = self.name
         timer = Timy(self.sleep, self.run, *self.args, **self.kwargs)
         timer.start()
@@ -114,35 +147,7 @@ class Repeater(Timed):
         Thread.launch(self.start)
 
 
-class Thread:
-
-    lock = threading.RLock()
-
-    @classmethod
-    def launch(cls, func, *args, **kwargs):
-        "run function in a thread."
-        with cls.lock:
-            try:
-                task = Task(func, *args, **kwargs)
-                task.start()
-                return task
-            except (KeyboardInterrupt, EOFError):
-                _thread.interrupt_main()
-
-    @classmethod
-    def name(cls, obj):
-        "string of function/method."
-        if inspect.ismethod(obj):
-            return f"{obj.__func__.__qualname__}"
-        if inspect.isfunction(obj):
-            return repr(obj).split()[1]
-        return repr(obj)
-
-
 def __dir__():
     return (
-        'Repeater',
-        'Task',
         'Thread',
-        'Timed'
     )

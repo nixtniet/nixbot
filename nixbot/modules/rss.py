@@ -23,22 +23,26 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus, urlencode
 
 
+from nixbot.configs import Configuration, Main
 from nixbot.handler import Broker
-from nixbot.objects import Configuration, Data, Methods, Object
-from nixbot.persist import Cfg, Disk, Locate
-from nixbot.runtime import Main
+from nixbot.objects import Base, Methods, Object
+from nixbot.persist import Disk, Locate
 from nixbot.threads import Repeater, Thread
 from nixbot.utility import Utils
 
 
 def configure():
-    Cfg.load(Config)
+    Disk.read(Config, "rss", "config")
 
 
 def init():
     Runners.init(1, Runner)
     Run.fetcher.start()
-    logging.warning("%s feeds", Locate.count("rss"))
+    nrs = Locate.count("rss")
+    txt = f"{nrs} feeds"
+    if nrs == 1:
+        txt = txt[:-1]
+    logging.info(txt)
 
 
 def shutdown():
@@ -50,22 +54,23 @@ class Config(Configuration):
     polltime = 300
 
 
-class Feed(Data):
+class Feed(Base):
+
+    link = ""
+    skip = False
+
+
+class Modified(Base):
 
     pass
 
 
-class Modified(Data):
+class Urls(Base):
 
     pass
 
 
-class Urls(Data):
-
-    pass
-
-
-class Rss(Data):
+class Rss(Base):
 
     def __init__(self):
         super().__init__()
@@ -96,7 +101,7 @@ class Fetcher:
     def run(self, silent=False):
         nrs = 0
         for fnm, feed in Locate.find(Methods.fqn(Rss)):
-            if feed.skip:
+            if "skip" in feed and feed.skip:
                 continue
             Runners.put((fnm, feed, silent))
             nrs += 1
@@ -416,14 +421,15 @@ class Helpers:
         return []
 
     @staticmethod
-    def geturl(url):
+    def geturl(url, force=False):
         "fetch an url."
         url = urllib.parse.urlunparse(urllib.parse.urlparse(url))
         req = urllib.request.Request(str(url))
         req.add_header("User-Agent", Helpers.useragent("RSS Fetcher"))
-        since = getattr(State.modified, url, "")
-        if since:
-            req.add_header('If-Modified-Since', since)
+        if not force:
+            since = getattr(State.modified, url, "")
+            if since:
+                req.add_header('If-Modified-Since', since)
         logging.debug("fetching %s %s", url, req.headers)
         with urllib.request.urlopen(req, timeout=5.0) as response:  # nosec
             modi = response.headers.get('Last-Modified', "")
@@ -471,7 +477,11 @@ def atr(event):
         event.reply("atr <stringinurl>")
         return
     for _fnm, obj in Locate.find(Methods.fqn(Rss), {'rss': event.rest}):
-        request = Helpers.geturl(obj.rss)
+        try:
+            request = Helpers.geturl(obj.rss, True)
+        except Exception as ex:
+            event.reply(ex)
+            return
         if obj.rss.endswith('atom'):
             result = list(Parser.getitems(str(request.data, 'utf-8', errors='ignore'), 'entry', 1))
         else:
@@ -499,6 +509,8 @@ def err(event):
     nre = 0
     nrs = 0
     for fnm, obj in Locate.find(Methods.fqn(Rss), event.gets):
+        if "error" not in obj:
+            continue
         if not obj.error:
             continue
         if event.rest and event.rest in obj.error:
@@ -518,9 +530,6 @@ def err(event):
         event.reply(f'{nre} feeds reset.')
 
 
-err.skip = "irc"
-
-
 def exp(event):
     with Run.importlock:
         event.reply(TEMPLATE)
@@ -535,9 +544,6 @@ def exp(event):
         event.reply(" " * 8 + "</outline>")
         event.reply("    <body>")
         event.reply("</opml>")
-
-
-exp.skip = "irc"
 
 
 def imp(event):
@@ -582,9 +588,6 @@ def imp(event):
         event.reply(f"skipped {nrskip} urls.")
     if nrs:
         event.reply(f"added {nrs} urls.")
-
-
-imp.skip = "irc"
 
 
 def nme(event):
@@ -658,9 +661,6 @@ def syn(event):
     fetcher.start(False)
     nrs = fetcher.run(True)
     event.reply(f"{nrs} feeds synced")
-
-
-syn.skip = "irc"
 
 
 TEMPLATE = """<opml version="1.0">

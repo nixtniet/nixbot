@@ -4,21 +4,22 @@
 "configuration"
 
 
-from nixbot.objects import Data, Methods, Object
+from nixbot.objects import Base, Methods, Object
 from nixbot.package import Mods
-from nixbot.persist import Cfg
+from nixbot.persist import Disk
 
 
 def cfg(event):
+    "configure."
     if not event.args:
-        mods = f"cfg <{Mods.has('Config') + ',main'}>"
-        if mods.startswith(","):
-            mods = mods[1:]
-        event.reply(mods)
+        mods = f"{'main,' + Mods.has('Config')}"
+        if mods.endswith(","):
+            mods = mods[:-1]
+        event.reply(f"cfg <{mods}>")
         return
     name = event.args[0]
-    config = Data()
-    Cfg.load(config, name)
+    config = Base()
+    Disk.read(config, name, "config")
     if name != "main" and not config:
         mod = Mods.get(name)
         if not mod:
@@ -38,20 +39,11 @@ def cfg(event):
         )
         return
     Methods.edit(config, event.sets)
-    Cfg.save(config, name)
+    Disk.write(config, name, "config")
     mod = Mods.get(name)
     if mod and "configure" in dir(mod):
         mod.configure()
     event.ok()
 
 
-cfg.skip = "irc"
-
-
-def krn(event):
-    txt = "cfg main " + event.rest
-    Methods.parse(event, txt)
-    cfg(event)
-
-
-krn.skip = "irc"
+cfg.allow = "admin"

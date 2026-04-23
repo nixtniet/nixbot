@@ -11,7 +11,7 @@ import unittest
 from nixbot.brokers import Broker
 from nixbot.encoder import Json
 from nixbot.handler import Client
-from nixbot.objects import Data, Object
+from nixbot.objects import Base, Object
 
 
 class TestBroker(unittest.TestCase):
@@ -25,7 +25,7 @@ class TestBroker(unittest.TestCase):
 
     def test_functioninginstance(self):
         broker = Broker()
-        obj = Data()
+        obj = Base()
         broker.add(obj)
         self.assertTrue(Broker.has(obj))
 
@@ -34,12 +34,12 @@ class TestBroker(unittest.TestCase):
         self.assertTrue(Broker.has(clt))
 
     def test_addobj(self):
-        obj = Data()
+        obj = Base()
         Broker.add(obj)
         self.assertTrue(Broker.has(obj))
 
     def test_getobj(self):
-        obj = Data()
+        obj = Base()
         Broker.add(obj)
         oobj = Broker.get(repr(obj))
         self.assertTrue(oobj is obj)
@@ -50,12 +50,12 @@ class TestBroker(unittest.TestCase):
         self.assertTrue(clt in objs)
 
     def test_has(self):
-        obj = Data()
+        obj = Base()
         Broker.add(obj)
         self.assertTrue(Broker.has(obj))
 
     def test_like(self):
-        obj = Data()
+        obj = Base()
         Broker.add(obj)
         self.assertTrue(Broker.like(repr(obj)))
 
