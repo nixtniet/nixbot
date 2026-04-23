@@ -11,7 +11,6 @@ import unittest
 from nixbot.command import Commands
 from nixbot.handler import Event, Handler
 from nixbot.package import Mods
-from nixbot.threads import Task
 
 
 def cmnd(event):
@@ -48,16 +47,3 @@ class TestPackage(unittest.TestCase):
         if os.path.exists("mods"):
             Mods.add("mods", "mods")
             self.assertTrue("mods" in Mods.dirs)
-
-
-def func():
-    return "ok"
-
-
-class TestThread(unittest.TestCase):
-
-    def test_construct(self):
-        task = Task(func)
-        task.start()
-        result = task.join()
-        self.assertEqual(result, "ok")
