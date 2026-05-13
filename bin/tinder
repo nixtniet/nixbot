@@ -16,24 +16,26 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from nixbot.command import Commands
-from nixbot.configs import Main
-from nixbot.handler import Event, Output
-from nixbot.objects import Methods
-from nixbot.runtime import Runtime
-from nixbot.threads import Thread
-from nixbot.utility import Time
+from nixbot.defines import Boot, Client, Commands, Main, Message, Object
+from nixbot.defines import Mods, Parse, Thread, Time, Utils, Workdir
+
+
+e = os.path.exists
 
 
 Main.debug = True
+Main.other = True
 Main.wdr = ".test"
 Main.user = True
+
+
+Workdir.wdr = Main.wdr
 
 
 events = queue.Queue()
 
 
-class CLI(Output):
+class CLI(Client):
 
     def __init__(self):
         super().__init__()
@@ -42,6 +44,7 @@ class CLI(Output):
     def raw(self, text):
         if Main.verbose:
             print(text.encode('utf-8', 'replace').decode("utf-8"))
+            sys.stdout.flush()
 
 
 class Clients:
@@ -61,7 +64,7 @@ class Clients:
             cls.nrcpu = nrcpu
             for _x in range(Clients.nrcpu):
                 clt = client()
-                clt.start(False)
+                clt.start()
                 cls.add(clt)
 
     @classmethod
@@ -75,7 +78,20 @@ class Clients:
     @classmethod
     def shutdown(cls):
         for client in cls.clients:
+            client.wait()
+        for client in cls.clients:
             client.stop()
+
+
+def check(opts):
+    "check for command line options."
+    for arg in sys.argv:
+        if not arg.startswith("-"):
+            continue
+        for opt in opts:
+            if opt in arg:
+                return True
+    return False
 
 
 def consume():
@@ -88,7 +104,7 @@ def consume():
 def payload(todo):
     for cmd, example in todo.items():
         for ex in example:
-            evt = Event()
+            evt = Message()
             evt.kind = "command"
             evt.text = f"{cmd} {ex}"
             Clients.put(evt)
@@ -96,16 +112,18 @@ def payload(todo):
 
 
 def main():
-    if not Runtime.check('p') and os.path.exists(Main.wdr):
+    if not check('p') and e(Main.wdr):
         shutil.rmtree(Main.wdr)
-    if Runtime.check("v"):
+    Main.user = True
+    if check("v"):
         Main.verbose = True
-    if Runtime.check("t"):
+    if check("t"):
         Main.threaded = True
-    Main.all = True
-    Methods.parse(Main, " ".join(sys.argv[1:]))
-    Runtime.configure(Main)
-    Runtime.scan(Main)
+    Parse.parse(Main, " ".join(sys.argv[1:]))
+    Mods.add("modules", Utils.moddir())
+    Mods.add("mods", "mods")
+    Mods.add("other", "other")
+    Commands.table()
     if Main.threaded:
         Clients.init(os.cpu_count(), CLI)
     else:
@@ -120,33 +138,35 @@ def main():
     thrs = []
     for _x in range(nrs):
         thrs.append(Thread.launch(payload, examples))
-    thrs = []
     for thr in thrs:
         thr.join()
+    thrs = []
     for _x in range(nrs):
         thrs.append(Thread.launch(payload, post))
     for thr in thrs:
         thr.join()
     nrevents = events.qsize()
-    Thread.launch(consume)
-    events.join()
+    # Thread.launch(consume)
+    # events.join()
     Clients.shutdown()
     endtime = time.time()
     lap = Time.elapsed(endtime-starttime)
     percall = (endtime-starttime)/nrevents
     nrs = events.qsize()
     if Main.verbose:
-        print(f"{Methods.fmt(Main, skip='otxt,txt')}")
+        print(f"{Object.fmt(Main, skip='otxt,txt')}")
         print(f"cores: {Clients.nrcpu} events: {nrs}")
         print(f"total: {lap} nrs: {nrevents} call: %.6fs" % percall)
+        print(threading.enumerate())
 
 
 examples = {
     "cmd": [""],
     "dis": [""],
     "dne": ["", "bla"],
-    "dpl": ["hnrss title,url", ""],
+    "dpl": ["hnrss title,link", ""],
     "eml": ["", "root@localhost"],
+    "exp": [""],
     "fie": ["", "log", "todo"],
     "flt": ["", "0"],
     "fnd": ["", "log", "rss", "config", "todo", 'timers'],
@@ -171,6 +191,10 @@ examples = {
 
 
 pre = {
+    "imp": [
+        "",
+        "testing/opml/feeds.opml",
+    ],
     "cfg": [
         '',
         'main',
@@ -186,15 +210,12 @@ pre = {
         'udp nick=mekker',
         'web nick=mekker'
     ],
-    "imp": [
-        "",
-        "testing/opml/feeds.opml",
-    ],
     "log": ["", "test"],
     "rss": ["", "http://hnrss.org/newest"],
     "tdo": ["", "test"],
     "tmr": ["", "22:00 test"],
 }
+
 
 post = {
     "dbg": [""],
@@ -205,4 +226,4 @@ post = {
 
 
 if __name__ == "__main__":
-    main()
+    Boot.wrap(main)
