@@ -36,6 +36,7 @@ classifiers=[
 [tool.setuptools]
 packages = [
     'nixbot',
+    'nixbot.mirrors',
     'nixbot.modules',
     'nixbot.network',
     'nixbot.network.pdf',
