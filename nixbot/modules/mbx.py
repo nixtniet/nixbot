@@ -9,7 +9,7 @@ import os
 import time
 
 
-from nixbot.defines import Base, Disk, Locate, Object, Time
+from nixbot.defines import Base, Disk, Locate, Object, Time, e
 
 
 class Email(Base):
@@ -20,6 +20,7 @@ class Email(Base):
 
 
 def timed(datestr):
+    "return time from string."
     if not datestr:
         return time.time()
     tme = Time.date(datestr)
@@ -29,6 +30,7 @@ def timed(datestr):
 
 
 def eml(event):
+    "search emails."
     nrs = -1
     args = ["From", "Subject"]
     args.extend(event.args)
@@ -62,10 +64,14 @@ def eml(event):
 
 
 def mbx(event):
+    "import emails from mailbox."
     if not event.args:
         event.reply("mbx <path>")
         return
     fnm = os.path.expanduser(event.args[0])
+    if not e(fnm):
+        event.reply("mbx <path>")
+        return
     event.reply("reading from %s" % fnm)
     if os.path.isdir(fnm):
         thing = mailbox.Maildir(fnm, create=False)
@@ -78,15 +84,18 @@ def mbx(event):
     except FileNotFoundError:
         pass
     nrs = 0
-    for mail in thing:
-        obj = Email()
-        Object.update(obj, dict(mail._headers))
-        obj.text = ""
-        for payload in mail.walk():
-            if payload.get_content_type() == 'text/plain':
-                obj.text += payload.get_payload()
-        obj.text = obj.text.replace("\\n", "\n")
-        Disk.write(obj)
-        nrs += 1
-    if nrs:
-        event.reply("ok %s" % nrs)
+    try:
+        for mail in thing:
+            obj = Email()
+            Object.update(obj, dict(mail._headers))
+            obj.text = ""
+            for payload in mail.walk():
+                if payload.get_content_type() == 'text/plain':
+                    obj.text += payload.get_payload()
+            obj.text = obj.text.replace("\\n", "\n")
+            Disk.write(obj)
+            nrs += 1
+        if nrs:
+            event.reply("ok %s" % nrs)
+    except FileNotFoundError as ex:
+        event.reply(str(ex))

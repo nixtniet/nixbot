@@ -1,11 +1,10 @@
 # This file is placed in the Public Domain.
 
 
-"command line options parsing"
+"options parsing"
 
 
-from .objects import Object
-from .objects import Base
+from nixt import Base, Object
 
 
 class Parse:

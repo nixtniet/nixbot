@@ -10,7 +10,7 @@ import logging
 from random import SystemRandom
 
 
-from nixbot.defines import Broker, Disk, Locate, Message, Object, Repeater
+from nixbot.defines import Clients, Disk, Locate, Message, Repeater
 
 
 rand = SystemRandom()
@@ -32,7 +32,7 @@ class State:
 
     def dump(self):
         if not self.fnm:
-            self.fnm = Locate.first(self) or Object.ident(self)
+            self.fnm = Locate.first(self) or Disk.ident(self)
         Disk.write(self, self.fnm)
 
     def load(self):
@@ -56,7 +56,7 @@ def wsd(event):
         state.seen = []
         txt = "* reset"
     state.dump()
-    Broker.announce(txt.strip()[2:])
+    Clients.announce(txt.strip()[2:])
 
 
 TXT = """| wijsheid, wijs !

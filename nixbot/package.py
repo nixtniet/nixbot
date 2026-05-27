@@ -4,12 +4,11 @@
 "module management"
 
 
-import importlib.util
 import logging
 import os
 
 
-from .utility import Utils, e, j
+from nixt import Utils, d, e, j
 
 
 class Mods:
@@ -30,6 +29,7 @@ class Mods:
 
     @classmethod
     def check(cls):
+        "check modules for md5sums."
         ok = True
         for path in cls.dirs.values():
             if not Utils.check(path, cls.md5s):
@@ -42,16 +42,16 @@ class Mods:
         for pkgname, path in cls.dirs.items():
             modname = f"{pkgname}.{name}"
             mod = cls.modules.get(modname, None)
-            if not mod:
-                fnm = j(path, name + ".py")
-                if not e(fnm):
-                    continue
-                if cls.md5s:
-                    md5 = Utils.md5(fnm)
-                    if md5 != cls.md5s.get(name):
-                        logging.warning("mismatch %s", modname)
-                mod = cls.importer(modname, fnm)
-            return mod
+            if mod:
+                return mod
+            fnm = j(path, name + ".py")
+            if not e(fnm):
+                continue
+            if cls.md5s:
+                md5 = Utils.md5(fnm)
+                if md5 != cls.md5s.get(name):
+                    logging.warning("mismatch %s", modname)
+            return cls.importer(modname, fnm)
 
     @classmethod
     def has(cls, attr):
@@ -87,8 +87,14 @@ class Mods:
         return ",".join(sorted(set(mods)))
 
     @classmethod
+    def moddir(cls):
+        "return modules directory."
+        return j(d(__spec__.loader.path), "modules")
+
+    @classmethod
     def importer(cls, name, pth=""):
         "import module by path."
+        import importlib.util
         spec = importlib.util.spec_from_file_location(name, pth)
         cls.modules[name] = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(cls.modules[name])
@@ -112,8 +118,8 @@ class Mods:
     def table(cls):
         "read table,"
         try:
-            from .statics import MD5
-            Mods.md5s.update(MD5)
+            from .statics import MODULES
+            Mods.md5s.update(MODULES)
             return True
         except ImportError:
             return False
@@ -121,5 +127,5 @@ class Mods:
 
 def __dir__():
     return (
-        'Mods'
+        'Mods',
     )

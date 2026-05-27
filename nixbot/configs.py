@@ -1,11 +1,10 @@
 # This file is placed in the Public Domain.
 
 
-"configurations"
+"one config to rule them all"
 
 
-from .objects import Object
-from .utility import Utils
+from nixt import Object, Utils
 
 
 class MainConfig(type):
@@ -21,7 +20,7 @@ class MainConfig(type):
 
 class Main(metaclass=MainConfig):
 
-    name = Utils.pkgname(Object)
+    name = Utils.pkgname(MainConfig)
 
 
 def __dir__():

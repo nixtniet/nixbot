@@ -4,9 +4,11 @@
 "write your own commands"
 
 
+from nixt import Message, Utils
+
+
 from .package import Mods
 from .parsers import Parse
-from .utility import Utils
 
 
 class Commands:
@@ -48,9 +50,9 @@ class Commands:
         return [x for x in cls.names if x not in Utils.spl(ignore)]
 
     @classmethod
-    def get(cls, cmd):
+    def get(cls, name):
         "get function for command."
-        return cls.cmds.get(cmd, None)
+        return cls.cmds.get(name, None)
 
     @classmethod
     def scan(cls, module):
@@ -71,7 +73,18 @@ class Commands:
             return False
 
 
+def cmd(cls, text):
+    Commands.table()
+    evt = Message()
+    evt.kind = "command"
+    evt.text = text
+    Commands.command(evt)
+    evt.wait()
+    yield from evt.result
+
+
 def __dir__():
     return (
         'Commands',
+        'cmd'
     )

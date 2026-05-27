@@ -1,13 +1,13 @@
 # This file is placed in the Public Domain.
 
 
-"administrator"
+"basic commands"
 
 
 import time
 
 
-from nixbot.defines import Commands, Main, Mods, Time, Utils
+from nixbot.defines import Boot, Commands, Main, Mods, Time
 
 
 def cmd(event):
@@ -31,4 +31,4 @@ def upt(event):
 
 def ver(event):
     "show verson."
-    event.reply(f"{Main.name.upper()} {Utils.md5core()}")
+    event.reply(f"{Main.name.upper()} {Boot.core()}")

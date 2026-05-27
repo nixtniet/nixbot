@@ -4,7 +4,7 @@
 "show path to website"
 
 
-from nixbot.utility import d, j
+from nixbot.defines import d, j
 
 
 def pth(event):

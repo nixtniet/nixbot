@@ -18,15 +18,16 @@ import uuid
 import _thread
 
 
-from urllib.error import HTTPError, URLError
+from urllib.error import HTTPError
 from urllib.parse import quote_plus, urlencode
 
 
-from nixbot.defines import Base, Broker, Disk, Locate, Main
-from nixbot.defines import Object, Repeater, Thread, Utils, e
+from nixbot.defines import Base, Clients, Disk, Locate, Main, Object
+from nixbot.defines import Repeater, Thread, Utils, i
 
 
 def init():
+    "initialize rss module."
     Runners.init(1, Runner)
     Run.fetcher.start()
     nrs = Locate.count("rss")
@@ -37,6 +38,7 @@ def init():
 
 
 def shutdown():
+    "shutdown rss module."
     Run.fetcher.stop()
 
 
@@ -90,6 +92,7 @@ class Fetcher:
         self.todo = queue.Queue()
 
     def run(self, silent=False):
+        "do a fetch run of all feeds."
         nrs = 0
         for fnm, feed in Locate.find(Object.fqn(Rss)):
             if "skip" in feed and feed.skip:
@@ -99,15 +102,17 @@ class Fetcher:
         return nrs
 
     def start(self, repeat=True):
+        "start rss fetcher."
         Disk.read(Config, "rss", "config")
-        State.seenfn = Locate.last(State.seen) or Object.ident(State.seen)
-        oid = Object.ident(State.modified)
+        State.seenfn = Locate.last(State.seen) or Disk.ident(State.seen)
+        oid = Disk.ident(State.modified)
         State.modifiedfn = Locate.last(State.modified) or oid
         if repeat:
             repeater = Repeater(Config.polltime, self.run)
             repeater.start()
 
     def stop(self):
+        "sto prss fetcher."
         logging.debug("stopped fetcher")
         if State.modified:
             Disk.write(State.modified, State.modifiedfn)
@@ -124,6 +129,7 @@ class Runner:
         self.todo = queue.Queue()
 
     def display(self, obj):
+        "display feed."
         displaylist = ""
         result = ""
         try:
@@ -142,6 +148,7 @@ class Runner:
         return result[:-2].rstrip()
 
     def loop(self):
+        "loop to handle fetch jobs."
         while self.running.is_set():
             job = self.queue.get()
             if job is None:
@@ -149,6 +156,7 @@ class Runner:
             self.fetch(*job)
 
     def fetch(self, fnm, feed, silent=False):
+        "fetch a feed."
         with Run.fetchlock:
             result = []
             see = getattr(State.seen, feed.rss, [])
@@ -177,24 +185,27 @@ class Runner:
             if silent:
                 return counter
             if not State.seenfn:
-                State.seenfn = Object.ident(State.seen)
+                State.seenfn = Disk.ident(State.seen)
             Disk.write(State.seen, State.seenfn)
         txt = ""
         feedname = getattr(feed, "name", None)
         if feedname:
             txt = f"[{feedname}] "
         for obj in result:
-            Broker.announce(txt + self.display(obj))
+            Clients.announce(txt + self.display(obj))
         return counter
 
     def put(self, args):
+        "put jobs on queue."
         self.queue.put(args)
 
     def start(self, daemon=True):
+        "start runner."
         self.running.set()
         Thread.launch(self.loop, daemon=daemon)
 
     def stop(self):
+        "stop runner."
         self.running.clear()
         self.queue.put(None)
 
@@ -208,10 +219,12 @@ class Runners:
 
     @staticmethod
     def add(client):
+        "add a runner."
         Runners.runners.append(client)
 
     @staticmethod
     def init(nrcpu, cls):
+        "initialize a runner."
         Runners.nrcpu = nrcpu
         for _x in range(Runners.nrcpu):
             clt = cls()
@@ -220,6 +233,7 @@ class Runners:
 
     @staticmethod
     def put(*args):
+        "push job to a runner."
         if not Runners.runners:
             Runners.init(Runners.nrcpu, Runner)
         with Runners.lock:
@@ -234,6 +248,7 @@ class Parser:
 
     @staticmethod
     def getitem(line, item):
+        "return item from line."
         lne = ""
         index1 = line.find(f"<{item}>")
         if index1 == -1:
@@ -246,6 +261,7 @@ class Parser:
 
     @staticmethod
     def getitems(text, token, nrs=None):
+        "get items from text."
         index = 0
         end = len(text)
         stop = False
@@ -266,6 +282,7 @@ class Parser:
 
     @staticmethod
     def parse(txt, toke="item", items="title,link"):
+        "parse feed."
         for line in Parser.getitems(txt, toke):
             line = line.strip()
             obj = {}
@@ -281,10 +298,12 @@ class OPML:
 
     @staticmethod
     def getnames(line):
+        "get names from line."
         return [x.split('="')[0] for x in line.split()]
 
     @staticmethod
     def getvalue(line, attr):
+        "get value from line."
         lne = ""
         index1 = line.find(f'{attr}="')
         if index1 == -1:
@@ -299,6 +318,7 @@ class OPML:
 
     @staticmethod
     def getattrs(line, token):
+        "get attributes from line."
         index = 0
         result = []
         stop = False
@@ -316,6 +336,7 @@ class OPML:
 
     @staticmethod
     def parse(txt, toke="outline", itemz=None):
+        "parse opml from text."
         if itemz is None:
             itemz = ",".join(OPML.getnames(txt))
         for attrz in OPML.getattrs(txt, toke):
@@ -359,6 +380,7 @@ class Helpers:
 
     @staticmethod
     def doskip(errors):
+        "check whether to log."
         for error in Helpers.skip:
             if error in errors:
                 return True
@@ -370,7 +392,7 @@ class Helpers:
         result = [None,]
         try:
             response = Helpers.geturl(feed.rss)
-            if not response.data:
+            if not response or not response.data:
                 return result
             if "link" not in items:
                 items += ",link"
@@ -404,7 +426,6 @@ class Helpers:
                 http.client.HTTPException,
                 ValueError,
                 HTTPError,
-                URLError,
                 UnicodeDecodeError,
                 ConnectionResetError
         ) as ex:
@@ -433,14 +454,16 @@ class Helpers:
         with urllib.request.urlopen(req) as htm:  # nosec
             for txt in htm.readlines():
                 line = txt.decode("UTF-8").strip()
-                i = re.search('data-clipboard-text="(.*?)"', line, re.M)
-                if i:
-                    return i.groups()
+                ii = re.search('data-clipboard-text="(.*?)"', line, re.M)
+                if ii:
+                    return ii.groups()
         return []
 
     @staticmethod
     def geturl(url, force=False):
         "fetch an url."
+        if Main.debug:
+            return
         url = urllib.parse.urlunparse(urllib.parse.urlparse(url))
         req = urllib.request.Request(str(url))
         req.add_header("User-Agent", Helpers.useragent("RSS Fetcher"))
@@ -449,7 +472,7 @@ class Helpers:
             if since:
                 req.add_header('If-Modified-Since', since)
         logging.debug("fetching %s %s", url, req.headers)
-        with urllib.request.urlopen(req, timeout=5.0) as response:  # nosec
+        with urllib.request.urlopen(req, timeout=10.0) as response:  # nosec
             modi = response.headers.get('Last-Modified', "")
             if modi:
                 setattr(State.modified, url, modi)
@@ -491,15 +514,19 @@ class Run:
 
 
 def atr(event):
+    "show attributes of a feed."
     if not event.rest:
         event.reply("atr <stringinurl>")
         return
     for _fnm, obj in Locate.find(Object.fqn(Rss), {'rss': event.rest}):
+        request = None
         try:
             request = Helpers.geturl(obj.rss, True)
         except Exception as ex:
-            event.reply(ex)
+            event.reply(str(ex))
             return
+        if not request:
+            continue
         if obj.rss.endswith('atom'):
             result = list(Parser.getitems(
                                           str(
@@ -527,6 +554,7 @@ def atr(event):
 
 
 def dpl(event):
+    "set feed items to display."
     if len(event.args) < 2:
         event.reply("dpl <stringinurl> <item1,item2>")
         return
@@ -539,6 +567,7 @@ def dpl(event):
 
 
 def err(event):
+    "show errors of a feed."
     nre = 0
     nrs = 0
     for fnm, obj in Locate.find(Object.fqn(Rss), event.gets):
@@ -564,6 +593,7 @@ def err(event):
 
 
 def exp(event):
+    "export opml."
     with Run.importlock:
         event.reply(TEMPLATE)
         nrs = 0
@@ -582,11 +612,12 @@ def exp(event):
 
 
 def imp(event):
+    "import opml."
     if not event.args:
         event.reply("imp <filename>")
         return
     fnm = event.args[0]
-    if not e(fnm):
+    if not i(fnm):
         event.reply(f"no {fnm} file found.")
         return
     with Run.importlock:
@@ -630,6 +661,7 @@ def imp(event):
 
 
 def nme(event):
+    "set name of a feed."
     if len(event.args) == 1:
         name = ""
     elif len(event.args) == 2:
@@ -651,6 +683,7 @@ def nme(event):
 
 
 def rem(event):
+    "remove a feed."
     if len(event.args) != 1:
         event.reply("rem <stringinurl>")
         return
@@ -667,6 +700,7 @@ def rem(event):
 
 
 def res(event):
+    "restore a feed."
     if len(event.args) != 1:
         event.reply("res <stringinurl>")
         return
@@ -686,6 +720,7 @@ def res(event):
 
 
 def rss(event):
+    "add a feed."
     if not event.rest:
         event.reply("rss <url>")
         return
@@ -707,6 +742,7 @@ def rss(event):
 
 
 def syn(event):
+    "synchronize a feed."
     if Main.debug:
         return
     fetcher = Fetcher()

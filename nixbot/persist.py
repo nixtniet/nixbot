@@ -1,9 +1,10 @@
 # This file is placed in the Public Domain.
 
 
-"persistence cache"
+"persistence"
 
 
+import datetime
 import json
 import logging
 import os
@@ -11,10 +12,10 @@ import pathlib
 import threading
 
 
+from nixt import Base, Json, Object, Time, Utils, e, j
+
+
 from .configs import Main
-from .encoder import Json
-from .objects import Base, Object
-from .utility import Time, Utils, e, j
 
 
 class Cache:
@@ -45,6 +46,11 @@ class Disk:
     lock = threading.RLock()
 
     @classmethod
+    def ident(cls, obj):
+        "return ident string for object."
+        return j(Object.fqn(obj), *str(datetime.datetime.now()).split())
+
+    @classmethod
     def read(cls, obj, path, base="store", error=True):
         "read object from path."
         with cls.lock:
@@ -66,7 +72,7 @@ class Disk:
         "write object to disk."
         with cls.lock:
             if path == "":
-                path = Object.ident(obj)
+                path = cls.ident(obj)
             pth = j(Workdir.wdr, base, path)
             if not e(pth):
                 Workdir.skel()
@@ -186,6 +192,10 @@ class Workdir:
                 res = names
                 break
         return res
+
+    @classmethod
+    def moddir(cls):
+        return os.path.join(cls.wdr, "mods")
 
     @classmethod
     def skel(cls):

@@ -1,7 +1,46 @@
 # This file is placed in the Public Domain.
 
 
-"tables"
+"static tables"
+
+
+CORE = {
+    "booting": "b8f320e09a3f26bd9634f26240d7234a",
+    "command": "c5326561ca048480a78cac3ceb05583f",
+    "configs": "af03fd071f9615da0d2950a01f9e4c4b",
+    "defines": "edbf92d574407c13584389199bcb2c8d",
+    "package": "f0328b749704fa9f8317ae69340beadc",
+    "parsers": "794c32ec88fc959b5aa513dd44d77af5",
+    "persist": "c91265b741eb5e3ad9d523ab15b2f4f5",
+    "runtime": "2917fe05c8605d1d1275e0940326c6cd"
+}
+
+
+MODULES = {
+    "adm": "1c23a5bccc907aac653f8794d43f0739",
+    "bsc": "e7e47ebbedb0f6b32a62066972f348f5",
+    "cfg": "c7ca2635cc5833a4ffee0df2422f2cd8",
+    "flt": "1b0f83ce23f7277041a1c7d3780ba2a8",
+    "fnd": "ee36123535cf3483ce2474235b9771e5",
+    "irc": "6b8a0b986c0a9f3719027b03c4b0ea4a",
+    "log": "a453a95054bdf1997cc7427e4d16cca2",
+    "man": "17ab9c3c85a777b73a7f00553bb03b25",
+    "mbx": "5f59c932d36015e974123d91e48b66af",
+    "mdl": "1df9097e30448b1f9328831468718825",
+    "pth": "efa55488ce1a44f7d1d8a9a1163f9b8d",
+    "pwd": "3ce569eae80824787de0c2c5b7874ead",
+    "req": "bc1984d2e9de0310dc1b468f25c7ab8c",
+    "rss": "910680742f7df0455829ff15e5ad9f84",
+    "rst": "f48561f28fa68b6a6b48ffd7953c720c",
+    "sil": "3fcc82b6b8caae7cd2c8ed49b8490466",
+    "slg": "0196cecb8ff67e032bd389a0b1860353",
+    "tdo": "4a14c7a4d644108e383ffa4b741b564c",
+    "thr": "50a6d162131ecec84dc305835a764eb7",
+    "tmr": "efb5219e91de333c633a690c07455162",
+    "udp": "fae514baf77ec67f010256ca8732581e",
+    "web": "27e414f83174af8eba0fd0e3ffd13036",
+    "wsd": "8382fb2deb3ba6a47ea667c285c63c19"
+}
 
 
 NAMES = {
@@ -32,6 +71,7 @@ NAMES = {
     "res": "rss",
     "rss": "rss",
     "sil": "sil",
+    "skl": "adm",
     "slg": "slg",
     "srv": "adm",
     "syn": "rss",
@@ -44,52 +84,4 @@ NAMES = {
     "ver": "bsc",
     "wdr": "adm",
     "wsd": "wsd"
-}
-
-
-CORE = {
-    "booting": "c32611b1a6da2a123a92fbbb63a1faee",
-    "brokers": "18fc6e381479829fbd822b0dc9380daa",
-    "clients": "0635c558909c6871b0d25ae14ef38b9b",
-    "command": "17198e126ff585d5202ea201da9aae94",
-    "configs": "efb82659a3877aba9bf9200abea87b9b",
-    "defines": "a6803f4eb000da9b7e333c6ea34d47bc",
-    "encoder": "4f4f1beb05e2a662fad03932437532dc",
-    "handler": "6a1f490689aef7eb8a49ef095cd74d39",
-    "message": "fb4a091e8dfe9178f3121684f09ff4bd",
-    "objects": "78aedf3ca2ad7e0d65525b78672b1b48",
-    "package": "38ef5ec7af6ab071ab6ee2cd6ab0a573",
-    "parsers": "2eddfe4ff4d6ed1f1261d8a45a473a7a",
-    "persist": "c0964a7387a64be327cf624f2f128a74",
-    "repeats": "7c8492ab2d848c15c780c3bfde8bd8ce",
-    "runtime": "e38395678bb0774cf55aad8b0d24b122",
-    "threads": "b5fae3b7a0bcf3036cd0aedfb184919d",
-    "utility": "e5f6a7db21e07a5a5945859f68527248"
-}
-
-
-MD5 = {
-    "adm": "2e74af196c56532c734ffbde4b05a4d0",
-    "bsc": "8be76bfd2d75e2db2537e62e9774f8e5",
-    "cfg": "c7ca2635cc5833a4ffee0df2422f2cd8",
-    "flt": "6881cd734e6a3a1013d52090120e3024",
-    "fnd": "b77d6e80ba890d5be53ea8843432962c",
-    "irc": "f131ff12540569ee89950a34aeccb91d",
-    "log": "f30a08e49abc04c077896b8a386ed855",
-    "man": "17ab9c3c85a777b73a7f00553bb03b25",
-    "mbx": "941b7f8fa4fec189f85bf97b1c4e1941",
-    "mdl": "1df9097e30448b1f9328831468718825",
-    "pth": "8f5a5222ea9f310a0c4b062c81848d01",
-    "pwd": "c308a6405f500bbcdde84334fc377bb8",
-    "req": "bc1984d2e9de0310dc1b468f25c7ab8c",
-    "rss": "b98a510eda2e3a469cab5bfd07fae39c",
-    "rst": "adcfef6c6c448a3dae69b6b9c09ee2af",
-    "sil": "284d5830a49faa4e9bfe12772824c92f",
-    "slg": "0196cecb8ff67e032bd389a0b1860353",
-    "tdo": "4ed31df7786bf40a09feb6ecde777802",
-    "thr": "5834b85229e56b7081f02200f1096e60",
-    "tmr": "0b35b4528ee089460c6a6ebc694a2860",
-    "udp": "d47d478196eda167077fe35c97fa3f10",
-    "web": "4cff71a69ca32190310c8ed2c8fbc6c0",
-    "wsd": "8382fb2deb3ba6a47ea667c285c63c19"
 }
