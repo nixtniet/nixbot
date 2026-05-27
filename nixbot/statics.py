@@ -26,7 +26,7 @@ MODULES = {
     "log": "a453a95054bdf1997cc7427e4d16cca2",
     "man": "17ab9c3c85a777b73a7f00553bb03b25",
     "mbx": "5f59c932d36015e974123d91e48b66af",
-    "mdl": "1df9097e30448b1f9328831468718825",
+    "mdl": "2ce3ab7e69d6b10369cf5e8bb5d33519",
     "pth": "efa55488ce1a44f7d1d8a9a1163f9b8d",
     "pwd": "3ce569eae80824787de0c2c5b7874ead",
     "req": "bc1984d2e9de0310dc1b468f25c7ab8c",
@@ -39,7 +39,7 @@ MODULES = {
     "tmr": "efb5219e91de333c633a690c07455162",
     "udp": "fae514baf77ec67f010256ca8732581e",
     "web": "27e414f83174af8eba0fd0e3ffd13036",
-    "wsd": "8382fb2deb3ba6a47ea667c285c63c19"
+    "wsd": "f3869598222ba099258c15b927897f8c"
 }
 
 
