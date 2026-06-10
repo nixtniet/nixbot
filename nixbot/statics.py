@@ -75,7 +75,7 @@ MODULES = {
     "log": "8f03440a415418cf007aaff6448c4b14",
     "man": "a8f4d7ac5a3be8ce7ec16db7f670bb8d",
     "mdl": "bf1d80611867d8ffd6b53fa16ed46b6f",
-    "pth": "d7e9ad53e85490c8b664307b243f33cf",
+    "pth": "3bcce32a91b025ec208e9b7329b6dcde",
     "req": "6d1faab15fc20cea90aa5a8cff1a2b31",
     "rss": "97a365133ff0c1bf88b830a9f6233703",
     "rst": "70ff1d0b2eb47b9bf16e2369b8a5b2d8",
