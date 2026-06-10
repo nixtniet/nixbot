@@ -25,19 +25,18 @@ class Arguments:
         "parse commandline arguments."
         Main.name = Main.name or Utils.pkgname(Main)
         theparser = argparse.ArgumentParser(
-                                         prog=Main.name,
-                                         description=f'{Main.name.upper()}',
-                                         epilog='use "%(prog)s cmd" for a list of commands.',
-                                         formatter_class=argparse.RawDescriptionHelpFormatter,
-                                         usage='''%(prog)s [-c|-d|-h|-s] [-a] [-u] [-v] [-w] [-l level] [-m m1,m2] [-p path]\n       %(prog)s [mod] [cmd] [key=val] [key==val]'''
-                                        )
+            prog=Main.name,
+            description=f'{Main.name.upper()}',
+            epilog='use "%(prog)s cmd" for a list of commands.',
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            usage='''%(prog)s [-c|-d|-h|-s] [-a] [-v] [-w] [-l level] [-m m1,m2] [-p path]\n       %(prog)s [cmd] [key=val] [key==val]'''
+        )
         group = theparser.add_mutually_exclusive_group()
         group.add_argument("-c", "--console", action="store_true", help="run as console.")
         group.add_argument("-d", "--daemon", action="store_true", help="run as background daemon.")
         group.add_argument("-s", "--service", action="store_true", help="run as service.")
         parser = theparser.add_argument_group()
         parser.add_argument("-a", "--all", action="store_true", help="load all modules.")
-        parser.add_argument("-u", "--user", action="store_false", help="use local mods directory.")
         parser.add_argument("-v", "--verbose", action='store_true', help='enable verbose.')
         parser.add_argument("-w", "--wait", action='store_true', help='wait for services to start.')
         optionparser = theparser.add_argument_group()
@@ -50,6 +49,7 @@ class Arguments:
         optparser.add_argument("--default", default="irc,rss", help=argparse.SUPPRESS)
         optparser.add_argument("--nochdir", action="store_true", help=argparse.SUPPRESS)
         optparser.add_argument("--read", action="store_true", help=argparse.SUPPRESS)
+        optparser.add_argument("--user", action="store_true", help="use local mods directory.")
         args, arguments = theparser.parse_known_args()
         Main.otxt = " ".join(arguments)
         Object.update(Main, args)
