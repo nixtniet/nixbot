@@ -10,10 +10,10 @@ import unittest
 from nixbot.defines import Base, Disk, Object
 
 
-import nixt.objects
+import nixbot.objects
 
 
-TARGET = nixt.objects
+TARGET = nixbot.objects
 
 
 class TestObject(unittest.TestCase):

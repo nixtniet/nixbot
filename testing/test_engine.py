@@ -7,7 +7,8 @@
 import unittest
 
 
-from nixbot.defines import Message, Engine
+from nixbot.message import Message
+from nixbot.engines import Engine
 
 
 buffer = []

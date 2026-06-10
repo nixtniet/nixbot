@@ -7,7 +7,7 @@
 import unittest
 
 
-from nixt import Client, Message
+from nixbot.defines import Client, Message
 
 
 buffer = []

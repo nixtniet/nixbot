@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"the message"
+"message"
 
 
 import threading
@@ -20,6 +20,7 @@ class Message(Base):
         self.args = []
         self.channel = ""
         self.cmd = ""
+        self.mod = ""
         self.index = 0
         self.kind = "event"
         self.orig = ""
@@ -31,6 +32,13 @@ class Message(Base):
         bot = Broker.get(self.orig)
         if bot:
             bot.display(self)
+
+    def iface(self, txt):
+        "show interface."
+        txt = f"{self.cmd} {txt}"
+        if txt.startswith("."):
+            txt = txt[1:]
+        self.reply(txt)
 
     def ok(self, txt=""):
         "print ok response."

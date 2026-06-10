@@ -4,10 +4,16 @@
 "show path to website"
 
 
-from nixbot.defines import d, j
+from nixbot.defines import d, e, j
+
+
+whitelist = ['pth']
 
 
 def pth(event):
     path = d(d(__file__))
     path = j(path, "network", "index.html")
-    event.reply(f"file://{path}")
+    if e(path):
+        event.reply(f"file://{pth}")
+    else:
+        event.reply("no index.html")
