@@ -501,6 +501,7 @@ class Helpers:
 
     @staticmethod
     def unquote(url):
+        "unquote an url."
         return urllib.parse.unquote(url, errors='ignore')
 
     @staticmethod

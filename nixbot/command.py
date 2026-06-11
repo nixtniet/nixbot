@@ -30,10 +30,12 @@ class Commands:
 
     @classmethod
     def commands(cls):
+        "list all commands."
         return [x.split(".")[-1] for x in cls.completions]
 
     @classmethod
     def find(cls, name):
+        "find a command."
         modname = ""
         for nme in cls.completions:
             try:

@@ -11,6 +11,7 @@ whitelist = ['pth']
 
 
 def pth(event):
+    "create and show path to website."
     path = d(d(__file__))
     path = j(path, "network", "index.html")
     if e(path):

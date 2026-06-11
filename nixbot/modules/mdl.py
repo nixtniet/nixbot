@@ -74,6 +74,7 @@ jaar["totaal"] = 168678
 
 
 def getalias(txt):
+    "return aliased name."
     result = ""
     for key, value in aliases.items():
         if txt.lower() in key.lower():
@@ -83,12 +84,14 @@ def getalias(txt):
 
 
 def getday():
+    "get midnite timestamp."
     day = datetime.datetime.now()
     day = day.replace(hour=0, minute=0, second=0, microsecond=0)
     return day.timestamp()
 
 
 def getnr(nme):
+    "return number of cases."
     for k in Object.keys(oorzaken):
         if nme.lower() in k.lower():
             return int(getattr(oorzaken, k))
@@ -96,12 +99,14 @@ def getnr(nme):
 
 
 def seconds(nrs):
+    "return number of seconds."
     if not nrs:
         return nrs
     return 60*60*24*365 / float(nrs)
 
 
 def iswanted(k, line):
+    "see whether a key is in a line of text."
     for word in line:
         if word in k:
             return True
@@ -109,6 +114,7 @@ def iswanted(k, line):
 
 
 def daily():
+    "run daily."
     while 1:
         time.sleep(24*60*60)
         evt = Message()
@@ -116,6 +122,7 @@ def daily():
 
 
 def hourly():
+    "run hourly."
     while 1:
         time.sleep(60*60)
         evt = Message()
@@ -123,6 +130,7 @@ def hourly():
 
 
 def cbnow(evt):
+    "callback for current status."
     delta = time.time() - STARTTIME
     txt = Time.elapsed(delta) + " "
     for nme in sorted(Object.keys(oorzaken), key=lambda x: seconds(getnr(x))):
@@ -136,6 +144,7 @@ def cbnow(evt):
 
 
 def cbstats(evt):
+    "callback for current statistics."
     nme = evt.rest or "Psych"
     needed = seconds(getnr(nme))
     if needed:
@@ -158,6 +167,7 @@ def cbstats(evt):
 
 
 def dis(event):
+    "show disease numbers."
     delta = time.time() - STARTTIME
     txt = Time.elapsed(delta) + " "
     for nme in sorted(Object.keys(oorzaken), key=lambda x: seconds(getnr(x))):
@@ -172,6 +182,7 @@ def dis(event):
 
 
 def now(event):
+    "show current status."
     nme = event.rest or "Psych"
     needed = seconds(getnr(nme))
     if needed:
@@ -394,6 +405,7 @@ oorzaken = Base()
 
 
 def boot():
+    "create model data."
     _nr = -1
     for key in Object.keys(oorzaak):
         _nr += 1

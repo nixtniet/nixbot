@@ -64,6 +64,7 @@ class Completer(rlcompleter.Completer):
         self.options = options
 
     def complete(self, text, state):
+        "word completion."
         if state == 0:
             if text:
                 self.matches = [s for s in Commands.completions if s.startswith(text)]
@@ -76,6 +77,7 @@ class Completer(rlcompleter.Completer):
 
     @staticmethod
     def enable(modlist=""):
+        "enable tab completion."
         completer = Completer(modlist)
         readline.set_completer(completer.complete)
         readline.parse_and_bind("tab: complete")

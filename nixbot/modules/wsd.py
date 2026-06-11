@@ -46,6 +46,7 @@ state = State()
 
 
 def wsd(event):
+    "show a wisdom quote."
     txt = ""
     if 'seen' not in dir(state):
         state.seen = []

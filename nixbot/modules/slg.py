@@ -8,4 +8,5 @@ whitelist = ['slg']
 
 
 def slg(event):
+    "show slogan."
     event.reply(__doc__)
