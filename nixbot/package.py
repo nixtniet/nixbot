@@ -101,7 +101,7 @@ class Mods:
             cls.md5s.update(MODULES)
             cls.core.update(CORE)
         except (ImportError, SyntaxError, ValueError):
-            logging.warning("can't load md5")
+            logging.debug("can't load md5")
 
 
 def __dir__():

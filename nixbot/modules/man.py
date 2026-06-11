@@ -10,8 +10,9 @@
 **SYNOPSIS**
 
 
-    | ``%s [-c|d|h|s] [-a] [-v] [-u] [-l level] [-m m1,m2] [-w] [--wdr]``
-    | ``%s [cmd] [arg=val] [arg==val]
+    | ``%s`` [-c|d|h|s] [-a] [-v] [-u] [-l level] [-m m1,m2] [-w] [--wdr]
+    | ``%s`` [cmd] [arg=val] [arg==val]
+
 
 **DESCRIPTION**
 

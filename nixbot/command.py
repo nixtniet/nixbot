@@ -81,7 +81,7 @@ class Commands:
             from .statics import COMPLETIONS
             cls.completions = COMPLETIONS
         except (ImportError, SyntaxError, ValueError):
-            logging.warning("running scanner")
+            logging.debug("running scanner")
             cls.scanner()
 
 
