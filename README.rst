@@ -1,47 +1,32 @@
-|
-
 **NAME**
 
-    ``NIXBOT`` - Since 4 March 2019.
+    | ``nixbot`` - NIXBOT
+    |
 
 
 **SYNOPSIS**
 
-    ``nixbot`` [-h] [-a] [-c] [-d] [-l LEVEL] [-m MODS] [-n] [-s] [-v] [-w] [-u] [--wdr WDR]
-    
-    | ``nixbot <cmd> [key=val] [key==val]``
-    | ``nixbot -cvaw [mods=mod1,mod2]``
-    |
+
+    | ``nixbot`` [-c|-d|-h|-s] [-a] [-v] [-w] [-l level] [-m m1,m2] [-p path]
+    | ``nixbot`` [cmd] [key=val] [key==val]
+
 
 **DESCRIPTION**
 
-    ``NIXBOT`` holds evidence that king
-    netherlands is doing a nixbot, a
-    :ref:`written response <king>` where king
-    netherlands confirmed taking note
-    of “what i have written”, namely
-    :ref:`proof  <evidence>` that medicine
-    he uses in treatment laws like zyprexa,
-    haldol, abilify and clozapine are not medicine
-    but poison.
+    ``NIXBOT`` has all you need to program a unix cli program, such as disk
+    perisistence for configuration files, event handler to handle the
+    client/server connection, bork on exit for have an early exit, etc.
 
-    Poison that makes impotent, is both
-    physical (contracted muscles) and
-    mental (make people hallucinate)
-    torture and kills members of the
-    victim groups: Elderly, Handicapped, Criminals
-    and Psychiatric patients.
+    ``NIXBOT`` contains python3 code to program objects in a functional way.
+    it provides an "clean namespace" Object class that only has dunder
+    objects, so the namespace is not cluttered with method names. This
+    makes storing and reading to/from json possible.
 
-    ``NIXBOT`` contains :ref:`correspondence
-    <writings>` with the International Criminal
-    Court, asking for arrest of the king of the
-    netherlands, for the nixbot he is committing
-    with his new treatment laws.
+    ``NIXBOT`` is a python3 IRC bot, it can connect to IRC, fetch and
+    display RSS feeds, take todo notes, keep a shopping list and log
+    text. You can run it under systemd for 24/7 presence in a IRC channel.
 
-    Current status is a :ref:`"no basis to proceed"
-    <writings>` judgement of the prosecutor which
-    requires a :ref:`"basis to prosecute" <reconsider>`
-    to have the king actually arrested.
+    ``NIXBOT`` is Public Domain.
 
 
 **INSTALL**
@@ -54,7 +39,7 @@
     |
     | <new terminal>
     |
-    | ``$ nixbot srv > genocide.service``
+    | ``$ nixbot srv > nixbot.service``
     | ``$ sudo mv nixbot.service /etc/systemd/system/``
     | ``$ sudo systemctl enable nixbot --now``
     |
@@ -73,56 +58,41 @@
 
     * the -h option will show you possible options
 
-    |
-    | ``$ nixbot -h``
-    |
 
-    .. list-table::
-      :align: left
+    ``$ nixbot -h``
 
-      * - Options
-        - Description
+    ::
 
-      * - -h, --help
-        - show this help message and exit
-      * - -a, --all
-        - load all modules.
-      * - -c, --console
-        - start console.
-      * - -d, --daemon
-        - start background daemon.
-      * - -i, --ignore IGNORE
-        -  modules to ignore.
-      * - -l, --level LEVEL
-        -  set loglevel.
-      * - -m, --mods MODS
-        - modules to load.
-      * - -n, --index INDEX
-        - set index to use.
-      * - -r, --read
-        - read modules on start.
-      * - -s, --service
-        - start service.
-      * - -v, --verbose
-        - enable verbose.
-      * - -w, --wait
-        - wait for services to start.
-      * - -u, --user
-        - use local mods directory.
-      * - -x, --admin
-        - enable admin mode.
-      * - --wdr WDR
-        - set working directory.
-      * - --nochdir
-        - set working directory.
+      usage: nixbot [-c|d|h|s] [-a] [-v] [-u] [-l level] [-m m1,m2] [-w] [--wdr]
+             nixbot [cmd] [arg=val] [arg==val]
+
+      NIXT
+
+      options:
+        -h, --help         show this help message and exit
+        -c, --console      run as console.
+        -d, --daemon       run as background daemon.
+        -s, --service      run as service.
+
+        -a, --all          load all modules.
+        -v, --verbose      enable verbose.
+        -w, --wait         wait for services to start.
+
+        -l, --level level  set loglevel.
+        -m, --mods m1,m2   modules to load.
+        -p, --path path    path to working directory.
+
+        --admin        enable admin mode
+        --user         use local mods directory.
+
+        use "nixbot cmd" for a list of commands.
 
 
     * see list of commands
-    
+
     | ``$ nixbot cmd``
-    | ``atr,cfg,cmd,dis,dne,dpl,err,exp,fie,flt,fnd,imp,``
-    | ``log,lou,man,mod,nme,now,pth,pwd,rem,req,res,rss,``
-    | ``sil,slg,srv,syn,tbl,tdo,thr,tmr,upt,ver,wdr``
+    | ``cfg,cmd,dne,dpl,err,exp,imp,log,mod,mre,nme,``
+    | ``pwd,rem,req,res,rss,srv,syn,tdo,thr,upt``
     |
 
     * start console
@@ -138,8 +108,8 @@
     * list available modules
 
     | ``$ nixbot mod``
-    | ``adm,bsc,cfg,fie,flt,fnd,irc,log,man,mbx,mdl,pth,pwd``
-    | ``req,rss,rst,sil,slg,tbl,tdo,thr,tmr,udp,wdr,web,wsd``
+    | ``err,flt,fnd,irc,llm,log,mbx,mdl,mod,req,rss,``
+    | ``rst,slg,tdo,thr,tmr,udp,upt``
     |
 
     * start daemon
@@ -157,7 +127,9 @@
 
 **COMMANDS**
 
+
     * here is a list of available commands
+
 
     | ``atr`` - show attributes
     | ``cfg`` - irc configuration
@@ -178,7 +150,7 @@
     | ``mbx`` - import mailbox
     | ``mod`` - show available modules
     | ``nme`` - set name of a feed
-    | ``now`` - show nixbot stats of today
+    | ``now`` - show genocide stats of today
     | ``pth`` - show path to website on disk
     | ``pwd`` - sasl nickserv name/pass
     | ``rem`` - removes a rss feed
@@ -186,6 +158,7 @@
     | ``res`` - restore objects
     | ``rss`` - add a feed
     | ``sil`` - enable silent mode
+    | ``srv`` - create service file
     | ``syn`` - sync rss feeds
     | ``tbl`` - create table module
     | ``tdo`` - add todo item
@@ -196,7 +169,7 @@
     | ``ver`` - version
     | ``wdr`` - show working directory
     | ``wsd`` - show wisdom
-    |
+
 
 **CONFIGURATION**
 
@@ -231,18 +204,20 @@
 
 **PROGRAMMING**
 
-    nixbot has it's user modules in the ~/.genocide/mods directory so for a
-    hello world command you would  edit a file in ~/.nixbot/mods/hello.py
-    and add the following
-    
+    | nixbot has it's user modules in the ~/.nixbot/mods directory so for a
+    | hello world command you would edit a file in ~/.nixbot/mods/hello.py
+    | and add the following
+    |
+
     ::
 
         def hello(event):
             event.reply("hello world !!")
 
 
-    typing the hello command would result into a nice hello world !!
-    
+    |
+    | typing the hello command would result into a nice hello world !!
+    |
 
     ::
 
@@ -250,18 +225,16 @@
         hello world !!
 
 
-    commands run in their own thread and the program borks on exit to enable a
-    short debug cycle, output gets flushed on print so exceptions appear in the
-    systemd logs. modules can contain your own written python3 code.
-    
+    |
+    | commands run in their own thread and the program borks on exit to enable a
+    | short debug cycle, output gets flushed on print so exceptions appear in the
+    | systemd logs. modules can contain your own written python3 code.
+    |
 
-**SOURCE**
-
-    source is at `https://github.com/bthate/nixbot <https://github.com/bthate/nixbot>`_
-    
 
 **FILES**
 
+    |
     | ``~/.nixbot``
     | ``~/.local/bin/nixbot``
     | ``~/.local/share/pipx/venvs/nixbot/*``
@@ -269,9 +242,13 @@
 
 **AUTHOR**
 
-    ``Bart Thate`` <``bthate@dds.nl``>
-    
+    |
+    | ``Nixt Niet`` <``nixtniet@gmail.com``>
+    |
 
 **COPYRIGHT**
 
-    ``NIXBOT`` is Public Domain.
+    |
+    | ``NIXBOT`` is Public Domain.
+    |
+
