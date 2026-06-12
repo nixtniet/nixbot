@@ -65,8 +65,8 @@ nixbot - NIXBOT
 
     $ nixbot -h
 
-    usage: nixbot [-c|d|h|s] [-a] [-v] [-u] [-l level] [-m m1,m2] [-w] [--wdr]
-           nixbot [cmd] [arg=val] [arg==val]
+    usage: nixbot [-c|-d|-h|-s] [-a] [-v] [-w] [-l level] [-m m1,m2] [-p path]
+           nixbot [cmd] [key=val] [key==val]
 
     NIXT
 
@@ -92,7 +92,7 @@ nixbot - NIXBOT
 
 * see list of commands::
 
-    $ nixbot cmd``
+    $ nixbot cmd
     cfg,cmd,dne,dpl,err,exp,imp,log,mod,mre,nme,
     pwd,rem,req,res,rss,srv,syn,tdo,thr,upt
 
@@ -114,7 +114,6 @@ nixbot - NIXBOT
 
     $ nixbot -d
     $
- 
 
 * start service::
 
@@ -170,34 +169,26 @@ nixbot - NIXBOT
 **CONFIGURATION**
 
 
-* irc
-
-::
+* irc::
 
     $ nixbot cfg irc server=<server>
     $ nixbot cfg irc hannel=<channel>
     $ nixbot cfg irc nick=<nick>
 
-* sasl
-
-::
+* sasl::
 
     $ nixbot pwd <nsnick> <nspass>
     $ nixbot cfg irc password=<frompwd>
 
 
-* rss
-
-::
+* rss::
 
     $ nixbot rss <url>
     $ nixbot dpl <url> <item1,item2>
     $ nixbot rem <url>
     $ nixbot nme <url> <name>
 
-* opml
-
-::
+* opml::
 
     $ nixbot exp
     $ nixbot imp <filename>
@@ -205,19 +196,18 @@ nixbot - NIXBOT
 
 **PROGRAMMING**
 
-::
+^ nixbot support modules::
 
-    nixbot has it's user modules in the ~/.nixbot/mods directory::
-    for a hello world command you would edit a file in ~/.nixbot/mods/hello.py
-    and add the following::
+    nixbot has it's user modules in the ~/.nixbot/mods directory for a hello world
+    command you would edit a file in ~/.nixbot/mods/hello.py and add the following
 
-    def hello(event):
-        event.reply("hello world !!")
+        def hello(event):
+            event.reply("hello world !!")
 
     typing the hello command would result into a nice hello world !!
 
-    $ nixbot hello
-    hello world !!
+        $ nixbot hello
+        hello world !!
 
 
     commands run in their own thread and the program borks on exit to enable a
@@ -227,7 +217,7 @@ nixbot - NIXBOT
 
 **FILES**
 
-::
+* pipx install into three placed::
 
     ~/.nixbot
     ~/.local/bin/nixbot
@@ -236,15 +226,15 @@ nixbot - NIXBOT
 
 **AUTHOR**
 
-::
+* email address::
 
-Nixt Niet <nixtniet@gmail.com>
+    Nixt Niet <nixtniet@gmail.com>
 
 
 **COPYRIGHT**
 
-::
+* no copyroght/license::
 
-NIXBOT is Public Domain.
+    NIXBOT is Public Domain.
 
 

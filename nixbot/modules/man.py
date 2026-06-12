@@ -68,8 +68,8 @@
 
     $ %s -h
 
-    usage: %s [-c|d|h|s] [-a] [-v] [-u] [-l level] [-m m1,m2] [-w] [--wdr]
-           %s [cmd] [arg=val] [arg==val]
+    usage: %s [-c|-d|-h|-s] [-a] [-v] [-w] [-l level] [-m m1,m2] [-p path]
+           %s [cmd] [key=val] [key==val]
 
     NIXT
 
@@ -95,7 +95,7 @@
 
 * see list of commands::
 
-    $ %s cmd``
+    $ %s cmd
     cfg,cmd,dne,dpl,err,exp,imp,log,mod,mre,nme,
     pwd,rem,req,res,rss,srv,syn,tdo,thr,upt
 
@@ -117,7 +117,6 @@
 
     $ %s -d
     $
- 
 
 * start service::
 
@@ -173,34 +172,26 @@
 **CONFIGURATION**
 
 
-* irc
-
-::
+* irc::
 
     $ %s cfg irc server=<server>
     $ %s cfg irc hannel=<channel>
     $ %s cfg irc nick=<nick>
 
-* sasl
-
-::
+* sasl::
 
     $ %s pwd <nsnick> <nspass>
     $ %s cfg irc password=<frompwd>
 
 
-* rss
-
-::
+* rss::
 
     $ %s rss <url>
     $ %s dpl <url> <item1,item2>
     $ %s rem <url>
     $ %s nme <url> <name>
 
-* opml
-
-::
+* opml::
 
     $ %s exp
     $ %s imp <filename>
@@ -208,19 +199,18 @@
 
 **PROGRAMMING**
 
-::
+^ %s support modules::
 
-    %s has it's user modules in the ~/.%s/mods directory::
-    for a hello world command you would edit a file in ~/.%s/mods/hello.py
-    and add the following::
+    %s has it's user modules in the ~/.%s/mods directory for a hello world
+    command you would edit a file in ~/.%s/mods/hello.py and add the following
 
-    def hello(event):
-        event.reply("hello world !!")
+        def hello(event):
+            event.reply("hello world !!")
 
     typing the hello command would result into a nice hello world !!
 
-    $ %s hello
-    hello world !!
+        $ %s hello
+        hello world !!
 
 
     commands run in their own thread and the program borks on exit to enable a
@@ -230,7 +220,7 @@
 
 **FILES**
 
-::
+* pipx install into three placed::
 
     ~/.%s
     ~/.local/bin/%s
@@ -239,16 +229,16 @@
 
 **AUTHOR**
 
-::
+* email address::
 
-%s <%s>
+    %s <%s>
 
 
 **COPYRIGHT**
 
-::
+* no copyroght/license::
 
-%s is Public Domain.
+    %s is Public Domain.
 
 """
 
@@ -268,7 +258,7 @@ def man(event):
         name.upper(),
         *(name,) * 2,
         *(name.upper(),) * 4,
-        *(name,) * 36,
+        *(name,) * 37,
         author,
         email,
         name.upper()
