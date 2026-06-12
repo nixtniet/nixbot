@@ -21,7 +21,7 @@ class MainConfig(type):
 
 class Main(metaclass=MainConfig):
 
-    level = "info"
+    level = "warn"
     name = Utils.pkgname(Object)
 
 

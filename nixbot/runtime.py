@@ -146,8 +146,6 @@ class Boot:
             Mods.add("other", "other")
         Logging.size(len(Main.name))
         Logging.level(Main.level)
-        Mods.sums()
-        Commands.scanner()
         Commands.bork = Main.bork
 
     @classmethod
@@ -212,7 +210,9 @@ class Boot:
 
     init = Mods.init
     pid = Workdir.pid
-
+    scanner = Commands.scanner
+    sums = Mods.sums
+    
 
 class Scripts:
 
@@ -222,6 +222,8 @@ class Scripts:
         Boot.daemon(Main.verbose, Main.nochdir)
         Boot.privileges()
         Boot.pid(Main.name)
+        Boot.sums()
+        Boot.scanner()
         Boot.init(Main.mods or Main.default)
         Boot.forever()
 
@@ -233,6 +235,8 @@ class Scripts:
             Boot.banner()
         if Main.all:
             Main.mods = ",".join(Mods.list())
+        Boot.sums()
+        Boot.scanner()
         if not Boot.init(Main.mods, Main.wait):
             return
         Completer.enable(Commands.completions)
@@ -243,6 +247,8 @@ class Scripts:
     @staticmethod
     def control():
         "cli script."
+        Boot.sums()
+        Boot.scanner()
         cli = CLI()
         cli.silent = False
         cli.cmd(Main.otxt)
@@ -252,6 +258,8 @@ class Scripts:
         "service script."
         Boot.privileges()
         Boot.pid(Main.name)
+        Boot.sums()
+        Boot.scanner()
         Boot.init(Main.mods or Main.default)
         Boot.forever()
 

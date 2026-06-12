@@ -166,7 +166,7 @@
 
 ::
 
-    %s has it's user modules in the ~/.%s/mods directory for a hello world
+    %s has it's user modules in the ~/.%s/mods directory, for a hello world
     command you would edit a file in ~/.%s/mods/hello.py and add the following
 
         whitelist = ["hello"]
@@ -205,9 +205,7 @@
 
 ::
 
-    %s is Public Domain.
-
-"""
+    %s is Public Domain."""
 
 
 whitelist = ['man']
@@ -227,7 +225,9 @@ def man(event):
         *(name.upper(),) * 4,
         *(name,) * 9,
         name.upper(),
-        *(name,) * 20,
+        *(name,) * 13,
+        name.upper(),
+        *(name,) * 6,
         author,
         email,
         name.upper()

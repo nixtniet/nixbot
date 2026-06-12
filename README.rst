@@ -54,12 +54,12 @@
 
 ::
 
-    $ NIXBOT -h
+    $ nixbot -h
 
     usage: nixbot [-c|-d|-h|-s] [-a] [-v] [-w] [-l level] [-m m1,m2] [-p path]
            nixbot [cmd] [key=val] [key==val]
 
-    nixbot
+    NIXBOT
 
     options:
       -h, --help         show this help message and exit
@@ -88,7 +88,7 @@
 
 **COMMANDS**
 
-;;
+::
 
     atr - show attributes
     cfg - irc configuration
@@ -163,8 +163,10 @@
 
 ::
 
-    nixbot has it's user modules in the ~/.nixbot/mods directory for a hello world
+    NIXBOT has it's user modules in the ~/.nixbot/mods directory, for a hello world
     command you would edit a file in ~/.nixbot/mods/hello.py and add the following
+
+        whitelist = ["hello"]
 
         def hello(event):
             event.reply("hello world !!")
@@ -201,5 +203,3 @@
 ::
 
     NIXBOT is Public Domain.
-
-
