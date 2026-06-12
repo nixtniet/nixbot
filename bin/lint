@@ -1,4 +1,5 @@
 ruff check nixbot bin/tinder testing
 pylint nixbot bin/tinder testing
 flake8 nixbot bin/tinder testing
+bin/tinder
 
