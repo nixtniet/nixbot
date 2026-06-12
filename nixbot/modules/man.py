@@ -91,7 +91,7 @@
 
 **COMMANDS**
 
-;;
+::
 
     atr - show attributes
     cfg - irc configuration
@@ -169,6 +169,8 @@
     %s has it's user modules in the ~/.%s/mods directory for a hello world
     command you would edit a file in ~/.%s/mods/hello.py and add the following
 
+        whitelist = ["hello"]
+
         def hello(event):
             event.reply("hello world !!")
 
@@ -223,9 +225,9 @@ def man(event):
         name.upper(),
         *(name,) * 2,
         *(name.upper(),) * 4,
-        *(name,) * 6,
+        *(name,) * 9,
         name.upper(),
-        *(name,) * 23,
+        *(name,) * 20,
         author,
         email,
         name.upper()

@@ -88,7 +88,6 @@ class CLI(Client):
     def cmd(self, text):
         "do command."
         evt = Message()
-        evt.kind = "command"
         evt.orig = repr(self)
         evt.text = text
         Commands.command(evt)
@@ -148,7 +147,7 @@ class Boot:
         Logging.size(len(Main.name))
         Logging.level(Main.level)
         Mods.sums()
-        Commands.table()
+        Commands.scanner()
         Commands.bork = Main.bork
 
     @classmethod

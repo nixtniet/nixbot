@@ -10,6 +10,7 @@ import logging
 
 from .package import Mods
 from .parsers import Parse
+from .utility import Utils
 
 
 class Commands:
@@ -73,16 +74,6 @@ class Commands:
         for name in Mods.list():
             for cmd in cls.getcmds(name):
                 cls.completions.append(f"{name}.{cmd}")
-
-    @classmethod
-    def table(cls):
-        "read table,"
-        try:
-            from .statics import COMPLETIONS
-            cls.completions = COMPLETIONS
-        except (ImportError, SyntaxError, ValueError):
-            logging.debug("running scanner")
-            cls.scanner()
 
 
 def __dir__():

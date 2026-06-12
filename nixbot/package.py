@@ -37,8 +37,11 @@ class Mods:
                 continue
             if cls.md5s:
                 md5 = Md5.md5(fnm)
-                if md5 != cls.md5s.get(name):
+                md5s = cls.md5s.get(name)
+                if md5s and md5 != md5s:
                     logging.warning("mismatch %s", modname)
+                else:
+                    logging.debug("no md5 for %s", modname)
             return cls.importer(modname, fnm)
 
     @classmethod
@@ -85,12 +88,7 @@ class Mods:
         for pkgname, path in cls.dirs.items():
             if not e(path):
                 continue
-            mods.extend([
-                x[:-3] for x in os.listdir(path)
-                if x.endswith(".py") and
-                not x.startswith("__") and
-                x[:-3] not in Utils.spl(ignore)
-            ])
+            mods.extend(Utils.listdir(path, ignore))
         return sorted(set(mods))
 
     @classmethod

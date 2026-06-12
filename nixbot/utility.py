@@ -201,6 +201,15 @@ class Utils:
         return """<!doctype html>\n<html>   %s\n</html>""" % text
 
     @staticmethod
+    def listdir(path, ignore=""):
+        return [
+                x[:-3] for x in os.listdir(path)
+                if x.endswith(".py") and
+                not x.startswith("__") and
+                x[:-3] not in Utils.spl(ignore)
+               ]
+
+    @staticmethod
     def moddir():
         "return modules directory."
         return j(os.path.dirname(__spec__.loader.path), "modules")
