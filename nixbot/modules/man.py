@@ -3,34 +3,39 @@
 
 """**NAME**
 
-| ``%s`` - %s
-|
+::
+
+%s - %s
+
 
 
 **SYNOPSIS**
 
+::
 
-| ``%s`` [-c|-d|-h|-s] [-a] [-v] [-w] [-l level] [-m m1,m2] [-p path]
-| ``%s`` [cmd] [key=val] [key==val]
-|
+    %s [-c|-d|-h|-s] [-a] [-v] [-w] [-l level] [-m m1,m2] [-p path]
+    %s [cmd] [key=val] [key==val]
 
 
 **DESCRIPTION**
 
-**%s** has all you need to program a unix cli program, such as disk
-perisistence for configuration files, event handler to handle the
-client/server connection, bork on exit for have an early exit, etc.
 
-**%s** contains python3 code to program objects in a functional way.
-it provides an "clean namespace" Object class that only has dunder
-objects, so the namespace is not cluttered with method names. This
-makes storing and reading to/from json possible.
+::
 
-**%s** is a python3 IRC bot, it can connect to IRC, fetch and
-display RSS feeds, take todo notes, keep a shopping list and log
-text. You can run it under systemd for 24/7 presence in a IRC channel.
+    %s has all you need to program a unix cli program, such as disk
+    perisistence for configuration files, event handler to handle the
+    client/server connection, bork on exit for have an early exit, etc.
 
-**%s** is Public Domain.
+    %s contains python3 code to program objects in a functional way.
+    it provides an "clean namespace" Object class that only has dunder
+    objects, so the namespace is not cluttered with method names. This
+    makes storing and reading to/from json possible.
+
+    %s is a python3 IRC bot, it can connect to IRC, fetch and
+    display RSS feeds, take todo notes, keep a shopping list and log
+    text. You can run it under systemd for 24/7 presence in a IRC channel.
+
+    %s is Public Domain.
 
 
 **INSTALL**
@@ -168,26 +173,34 @@ text. You can run it under systemd for 24/7 presence in a IRC channel.
 **CONFIGURATION**
 
 
-* irc::
+* irc
+
+::
 
     $ %s cfg irc server=<server>
     $ %s cfg irc hannel=<channel>
     $ %s cfg irc nick=<nick>
 
-* sasl::
+* sasl
+
+::
 
     $ %s pwd <nsnick> <nspass>
     $ %s cfg irc password=<frompwd>
 
 
-* rss::
+* rss
+
+::
 
     $ %s rss <url>
     $ %s dpl <url> <item1,item2>
     $ %s rem <url>
     $ %s nme <url> <name>
 
-* opml::
+* opml
+
+::
 
     $ %s exp
     $ %s imp <filename>
@@ -195,23 +208,24 @@ text. You can run it under systemd for 24/7 presence in a IRC channel.
 
 **PROGRAMMING**
 
-%s has it's user modules in the ~/.%s/mods directory so for a
-hello world command you would edit a file in ~/.%s/mods/hello.py
-and add the following::
+::
+
+    %s has it's user modules in the ~/.%s/mods directory::
+    for a hello world command you would edit a file in ~/.%s/mods/hello.py
+    and add the following::
 
     def hello(event):
         event.reply("hello world !!")
 
-
-typing the hello command would result into a nice hello world !!::
+    typing the hello command would result into a nice hello world !!
 
     $ %s hello
     hello world !!
 
 
-commands run in their own thread and the program borks on exit to enable a
-short debug cycle, output gets flushed on print so exceptions appear in the
-systemd logs. modules can contain your own written python3 code.
+    commands run in their own thread and the program borks on exit to enable a
+    short debug cycle, output gets flushed on print so exceptions appear in the
+    systemd logs. modules can contain your own written python3 code.
 
 
 **FILES**
@@ -225,12 +239,16 @@ systemd logs. modules can contain your own written python3 code.
 
 **AUTHOR**
 
-``%s`` <``%s``>
+::
+
+%s <%s>
 
 
 **COPYRIGHT**
 
-``%s`` is Public Domain.
+::
+
+%s is Public Domain.
 
 """
 
