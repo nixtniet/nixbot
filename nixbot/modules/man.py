@@ -10,8 +10,8 @@
 **SYNOPSIS**
 
 
-    | ``%s`` [-c|d|h|s] [-a] [-v] [-u] [-l level] [-m m1,m2] [-w] [--wdr]
-    | ``%s`` [cmd] [arg=val] [arg==val]
+    | ``%s`` [-c|-d|-h|-s] [-a] [-v] [-w] [-l level] [-m m1,m2] [-p path]
+    | ``%s`` [cmd] [key=val] [key==val]
 
 
 **DESCRIPTION**
@@ -35,14 +35,14 @@
 **INSTALL**
 
 
-    installation is done with pipx
+    * installation is done with pipx
 
     | ``$ pipx install %s``
     | ``$ pipx ensurepath``
     |
     | <new terminal>
     |
-    | ``$ %s -x srv > %s.service``
+    | ``$ %s srv > %s.service``
     | ``$ sudo mv %s.service /etc/systemd/system/``
     | ``$ sudo systemctl enable %s --now``
     |
@@ -53,71 +53,75 @@
 **USAGE**
 
 
-    use ``%s`` to control the program, default it does nothing
+    * use ``%s`` to control the program, default it does nothing
 
     | ``$ %s``
     | ``$``
     |
 
-    the -h option will show you possible options
+    * the -h option will show you possible options
 
 
-    | ``$ %s -h``
-    | usage: %s [-c|d|h|s] [-a] [-v] [-u] [-l level] [-m m1,m2] [-w] [--wdr]
-    |        %s [cmd] [arg=val] [arg==val]
-    |
-    | NIXT
-    |
-    | options:
-    |  -h, --help         show this help message and exit
-    |  -c, --console      run as console.
-    |  -d, --daemon       run as background daemon.
-    |  -s, --service      run as service.
-    |
-    |  -a, --all          load all modules.
-    |  -l, --level level  set loglevel.
-    |  -m, --mods m1,m2   modules to load.
-    |  -v, --verbose      enable verbose.
-    |  -w, --wait         wait for services to start.
-    |  -u, --user         use local mods directory.
-    |
-    |  --default DEFAULT  use default values.
-    |  --wdr wdr          set working directory.
-    |
-    | use "%s cmd" for a list of commands.
-    |
+    ``$ %s -h``
 
-    see list of commands
+    ::
+
+      usage: %s [-c|d|h|s] [-a] [-v] [-u] [-l level] [-m m1,m2] [-w] [--wdr]
+             %s [cmd] [arg=val] [arg==val]
+
+      NIXT
+
+      options:
+        -h, --help         show this help message and exit
+        -c, --console      run as console.
+        -d, --daemon       run as background daemon.
+        -s, --service      run as service.
+
+        -a, --all          load all modules.
+        -v, --verbose      enable verbose.
+        -w, --wait         wait for services to start.
+
+        -l, --level level  set loglevel.
+        -m, --mods m1,m2   modules to load.
+        -p, --path path    path to working directory.
+
+        --admin        enable admin mode
+        --user         use local mods directory.
+
+        use "%s cmd" for a list of commands.
+
+
+    * see list of commands
 
     | ``$ %s cmd``
     | ``cfg,cmd,dne,dpl,err,exp,imp,log,mod,mre,nme,``
     | ``pwd,rem,req,res,rss,srv,syn,tdo,thr,upt``
     |
 
-    start console
+    * start console
 
     | ``$ %s -c``
     |
 
-    start console and run irc and rss clients
+    * start console and run irc and rss clients
 
     | ``$ %s -c mods=irc,rss``
     |
 
-    list available modules
+    * list available modules
 
     | ``$ %s mod``
     | ``err,flt,fnd,irc,llm,log,mbx,mdl,mod,req,rss,``
     | ``rst,slg,tdo,thr,tmr,udp,upt``
     |
 
-    start daemon
+    * start daemon
 
     | ``$ %s -d``
     | ``$``
     |
 
-    start service
+    * start service
 
     | ``$ %s -s``
     | ``<runs until ctrl-c>``
@@ -127,7 +131,7 @@
 **COMMANDS**
 
 
-    here is a list of available commands
+    * here is a list of available commands
 
 
     | ``atr`` - show attributes
@@ -173,20 +177,20 @@
 **CONFIGURATION**
 
 
-    irc
+    * irc
 
     | ``$ %s cfg irc server=<server>``
     | ``$ %s cfg irc hannel=<channel>``
     | ``$ %s cfg irc nick=<nick>``
     |
 
-    sasl
+    * sasl
 
     | ``$ %s pwd <nsnick> <nspass>``
     | ``$ %s cfg irc password=<frompwd>``
     |
 
-    rss
+    * rss
 
     | ``$ %s rss <url>``
     | ``$ %s dpl <url> <item1,item2>``
@@ -194,7 +198,7 @@
     | ``$ %s nme <url> <name>``
     |
 
-    opml
+    * opml
 
     | ``$ %s exp``
     | ``$ %s imp <filename>``
@@ -204,7 +208,7 @@
 **PROGRAMMING**
 
     | %s has it's user modules in the ~/.%s/mods directory so for a
-    | hello world command you would  edit a file in ~/.%s/mods/hello.py
+    | hello world command you would edit a file in ~/.%s/mods/hello.py
     | and add the following
     |
 
@@ -261,7 +265,7 @@ def man(event):
     try:
         name, email, author = args[0], args[1], " ".join(args[2:])
     except (ValueError, IndexError):
-        event.reply("man create <name> <email> <author>")
+        event.iface("<name> <email> <author>")
         return
     event.reply(__doc__ % (
         name,

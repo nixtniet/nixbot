@@ -33,6 +33,14 @@ classifiers=[
 "source" = "https://github.com/nixtniet/nixbot"
 
 
+[tool.pylint."messages control"]
+disable = ["C,R,W,E0401,E0402"]
+
+
+[tool.ruff.lint]
+ignore = ["E501", "E701", "E702"]
+
+
 [tool.setuptools]
 packages = [
     'nixbot',
