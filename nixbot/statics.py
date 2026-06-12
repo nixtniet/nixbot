@@ -73,7 +73,7 @@ MODULES = {
     "fnd": "d75e98259750ed9519b2a66a665190bd",
     "irc": "0efcc424efbe3bc9742b1d6ab018beab",
     "log": "8f03440a415418cf007aaff6448c4b14",
-    "man": "2091b6d0081c7cfe96e76fa50671e4e6",
+    "man": "46cde0536d34d6520a15e3f3d540c69b",
     "mdl": "3ef57de7b6bf76dd3cc589dfc8a22001",
     "pth": "e639a63e7c2453eaf0a68db87560bf2f",
     "req": "6d1faab15fc20cea90aa5a8cff1a2b31",

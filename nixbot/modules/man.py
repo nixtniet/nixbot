@@ -53,42 +53,39 @@ text. You can run it under systemd for 24/7 presence in a IRC channel.
 **USAGE**
 
 
-* use ``%s`` to control the program, default it does nothing
+* use ``%s`` to control the program, default it does nothing::
 
-| ``$ %s``
-| ``$``
-|
+    $ %s
+    $
 
-* the -h option will show you possible options
+* the -h option will show you possible options::
 
 
-``$ %s -h``
+    $ %s -h
 
-::
+    usage: %s [-c|d|h|s] [-a] [-v] [-u] [-l level] [-m m1,m2] [-w] [--wdr]
+           %s [cmd] [arg=val] [arg==val]
 
-  usage: %s [-c|d|h|s] [-a] [-v] [-u] [-l level] [-m m1,m2] [-w] [--wdr]
-         %s [cmd] [arg=val] [arg==val]
+    NIXT
 
-  NIXT
+    options:
+      -h, --help         show this help message and exit
+      -c, --console      run as console.
+      -d, --daemon       run as background daemon.
+      -s, --service      run as service.
 
-  options:
-    -h, --help         show this help message and exit
-    -c, --console      run as console.
-    -d, --daemon       run as background daemon.
-    -s, --service      run as service.
+      -a, --all          load all modules.
+      -v, --verbose      enable verbose.
+      -w, --wait         wait for services to start.
 
-    -a, --all          load all modules.
-    -v, --verbose      enable verbose.
-    -w, --wait         wait for services to start.
+      -l, --level level  set loglevel.
+      -m, --mods m1,m2   modules to load.
+      -p, --path path    path to working directory.
 
-    -l, --level level  set loglevel.
-    -m, --mods m1,m2   modules to load.
-    -p, --path path    path to working directory.
+      --admin            enable admin mode
+      --user             use local mods directory.
 
-    --admin            enable admin mode
-    --user             use local mods directory.
-
-    use "%s cmd" for a list of commands.
+      use "%s cmd" for a list of commands.
 
 
 * see list of commands
@@ -172,7 +169,7 @@ text. You can run it under systemd for 24/7 presence in a IRC channel.
 | ``ver`` - version
 | ``wdr`` - show working directory
 | ``wsd`` - show wisdom
-
+|
 
 **CONFIGURATION**
 
@@ -218,7 +215,6 @@ text. You can run it under systemd for 24/7 presence in a IRC channel.
         event.reply("hello world !!")
 
 
-|
 | typing the hello command would result into a nice hello world !!
 |
 
@@ -228,7 +224,6 @@ text. You can run it under systemd for 24/7 presence in a IRC channel.
     hello world !!
 
 
-|
 | commands run in their own thread and the program borks on exit to enable a
 | short debug cycle, output gets flushed on print so exceptions appear in the
 | systemd logs. modules can contain your own written python3 code.
@@ -237,7 +232,6 @@ text. You can run it under systemd for 24/7 presence in a IRC channel.
 
 **FILES**
 
-|
 | ``~/.%s``
 | ``~/.local/bin/%s``
 | ``~/.local/share/pipx/venvs/%s/*``
@@ -245,13 +239,11 @@ text. You can run it under systemd for 24/7 presence in a IRC channel.
 
 **AUTHOR**
 
-|
 | ``%s`` <``%s``>
 |
 
 **COPYRIGHT**
 
-|
 | ``%s`` is Public Domain.
 |
 """
