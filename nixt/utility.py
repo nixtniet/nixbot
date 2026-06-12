@@ -220,6 +220,10 @@ class Utils:
         return obj.__module__.split(".")[-1]
 
     @staticmethod
+    def pkgdir(obj):
+        return d(inspect.getfile(obj))
+
+    @staticmethod
     def pkgname(obj):
         "return package name of an object."
         return obj.__module__.split(".", maxsplit=1)[0]

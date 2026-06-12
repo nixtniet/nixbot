@@ -8,8 +8,7 @@ import inspect
 import os
 
 
-from nixbot.defines import Commands, Json, Main, Md5, Mods
-from nixbot.defines import d, j
+from nixbot.defines import Json, Main, Md5, Mods, d, j
 
 
 whitelist = ['srv', 'tbl']
@@ -30,7 +29,6 @@ def srv(event):
 
 def tbl(event):
     "create table."
-    completions = []
     core = {}
     md5s = {}
     for name in Mods.list():

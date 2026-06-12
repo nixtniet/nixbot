@@ -10,12 +10,6 @@ import unittest
 from nixbot.defines import Base, Disk, Object
 
 
-import nixbot.objects
-
-
-TARGET = nixbot.objects
-
-
 class TestObject(unittest.TestCase):
 
     def test_constructor(self):

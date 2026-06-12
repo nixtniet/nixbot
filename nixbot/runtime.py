@@ -5,6 +5,7 @@
 
 
 import argparse
+import inspect
 import logging
 import os
 import readline
@@ -15,7 +16,10 @@ import _thread
 
 
 from .defines import Client, Commands, Logging, Main, Message
-from .defines import Mods, Md5, Object, Utils, Workdir
+from .defines import Mods, Md5, Object, Utils, Workdir, j
+
+
+Main.name = Utils.pkgname(Commands)
 
 
 class Arguments:
@@ -139,7 +143,7 @@ class Boot:
     def configure(cls):
         "configure program."
         Workdir.wdr = Main.path or os.path.expanduser(f"~/.{Main.name}")
-        Mods.add(f"{Main.name}.modules", Utils.moddir())
+        Mods.add(f"{Main.name}.modules", j(Utils.pkgdir(Boot), 'modules'))
         Mods.add("modules", Workdir.moddir())
         if Main.user:
             Mods.add("mods", "mods")
@@ -212,7 +216,7 @@ class Boot:
     pid = Workdir.pid
     scanner = Commands.scanner
     sums = Mods.sums
-    
+
 
 class Scripts:
 

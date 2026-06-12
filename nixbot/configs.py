@@ -4,8 +4,7 @@
 "one config to rule them all"
 
 
-from .objects import Object
-from .utility import Utils
+from nixt import Object, Utils
 
 
 class MainConfig(type):

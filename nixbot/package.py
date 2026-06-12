@@ -5,11 +5,9 @@
 
 
 import logging
-import os
 
 
-from .threads import Thread
-from .utility import Md5, Utils, e, j
+from nixt import Md5, Thread, Utils, e, j
 
 
 class Mods:

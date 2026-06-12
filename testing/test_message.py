@@ -7,7 +7,7 @@
 import unittest
 
 
-from nixbot.message import Message
+from nixbot.defines import Message
 
 
 class TestMessage(unittest.TestCase):
