@@ -5,8 +5,7 @@
 
 ::
 
-%s - %s
-
+    %s - %s
 
 
 **SYNOPSIS**
@@ -40,8 +39,7 @@
 
 **INSTALL**
 
-
-* installation is done with pipx::
+::
 
     $ pipx install %s
     $ pipx ensurepath
@@ -57,21 +55,14 @@
 
 **USAGE**
 
-
-* use ``%s`` to control the program, default it does nothing::
-
-    $ %s
-    $
-
-* the -h option will show you possible options::
-
+::
 
     $ %s -h
 
     usage: %s [-c|-d|-h|-s] [-a] [-v] [-w] [-l level] [-m m1,m2] [-p path]
            %s [cmd] [key=val] [key==val]
 
-    NIXT
+    %s
 
     options:
       -h, --help         show this help message and exit
@@ -93,41 +84,14 @@
       use "%s cmd" for a list of commands.
 
 
-* see list of commands::
-
     $ %s cmd
     cfg,cmd,dne,dpl,err,exp,imp,log,mod,mre,nme,
     pwd,rem,req,res,rss,srv,syn,tdo,thr,upt
 
-* start console::
-
-    $ %s -c
-    
-* start console and run irc and rss clients::
-
-    $ %s -c mods=irc,rss
-
-* list available modules::
-
-    $ %s mod
-    err,flt,fnd,irc,llm,log,mbx,mdl,mod,req,rss,
-    rst,slg,tdo,thr,tmr,udp,upt
-
-* start daemon::
-
-    $ %s -d
-    $
-
-* start service::
-
-    $ %s -s
-    <runs until ctrl-c>
-
 
 **COMMANDS**
 
-
-* here is a list of available commands::
+;;
 
     atr - show attributes
     cfg - irc configuration
@@ -171,27 +135,28 @@
 
 **CONFIGURATION**
 
+::
 
-* irc::
+    irc
 
     $ %s cfg irc server=<server>
     $ %s cfg irc hannel=<channel>
     $ %s cfg irc nick=<nick>
 
-* sasl::
+    sasl
 
     $ %s pwd <nsnick> <nspass>
     $ %s cfg irc password=<frompwd>
 
 
-* rss::
+    rss
 
     $ %s rss <url>
     $ %s dpl <url> <item1,item2>
     $ %s rem <url>
     $ %s nme <url> <name>
 
-* opml::
+    opml
 
     $ %s exp
     $ %s imp <filename>
@@ -199,7 +164,7 @@
 
 **PROGRAMMING**
 
-^ %s support modules::
+::
 
     %s has it's user modules in the ~/.%s/mods directory for a hello world
     command you would edit a file in ~/.%s/mods/hello.py and add the following
@@ -220,7 +185,7 @@
 
 **FILES**
 
-* pipx install into three placed::
+::
 
     ~/.%s
     ~/.local/bin/%s
@@ -229,14 +194,14 @@
 
 **AUTHOR**
 
-* email address::
+::
 
     %s <%s>
 
 
 **COPYRIGHT**
 
-* no copyroght/license::
+::
 
     %s is Public Domain.
 
@@ -258,7 +223,9 @@ def man(event):
         name.upper(),
         *(name,) * 2,
         *(name.upper(),) * 4,
-        *(name,) * 37,
+        *(name,) * 6,
+        name.upper(),
+        *(name,) * 23,
         author,
         email,
         name.upper()
