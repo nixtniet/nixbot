@@ -7,9 +7,6 @@
 from nixbot.defines import Base, Disk, Locate
 
 
-whitelist = ['dne', 'tdo']
-
-
 class Todo(Base):
 
     def __init__(self):

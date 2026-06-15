@@ -81,12 +81,13 @@ class Buffer(Output):
 
     def stop(self):
         "stop output loop."
-        self.wait()
+        # self.wait()
         self.ostopped.set()
         self.oqueue.put(None)
 
     def wait(self):
         "wait for output to finish."
+        print(f"wait {str(self)}")
         try:
             self.oqueue.join()
         except Exception as ex:

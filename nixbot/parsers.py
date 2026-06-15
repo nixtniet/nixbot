@@ -4,7 +4,7 @@
 "option parsing"
 
 
-from nixt import Base, Object
+from .objects import Base, Object
 
 
 class Parse:

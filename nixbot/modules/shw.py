@@ -8,19 +8,13 @@ import threading
 import time
 
 
-from nixbot.defines import Broker, Commands, Locate, Main, Md5
+from nixbot.defines import Broker, Locate, Main, Md5, Mods
 from nixbot.defines import Object, Time, Workdir
-
-
-whitelist = ['cmd', 'fie', 'flt', 'thr', 'upt', 'ver']
 
 
 def cmd(event):
     "list available commands."
-    if not event.args:
-        event.reply(",".join(sorted(Commands.commands())))
-    else:
-        event.reply(",".join(sorted(Commands.getcmds(event.args[0]))))
+    event.reply(",".join(sorted(Mods.cmds)))
 
 
 def fie(event):

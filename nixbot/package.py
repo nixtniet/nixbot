@@ -4,21 +4,39 @@
 "module management"
 
 
+import inspect
 import logging
 
 
-from nixt import Md5, Thread, Utils, e, j
+from .parsers import Parse
+from .utility import Md5, Utils, e, j
 
 
 class Mods:
 
+    cmds = {}
     core = {}
     dirs = {}
     md5s = {}
     modules = {}
 
     @classmethod
-    def add(cls, pkgname, path):
+    def add(cls, func):
+        "register a command."
+        cls.cmds[func.__name__] = func
+
+    @classmethod
+    def command(cls, evt):
+        "command callback."
+        Parse.parse(evt, evt.text)
+        func = cls.cmds.get(evt.cmd, None)
+        if func:
+            func(evt)
+            evt.display()
+        evt.ready()
+
+    @classmethod
+    def dir(cls, pkgname, path):
         "add module/patgh."
         cls.dirs[pkgname] = path
 
@@ -63,23 +81,6 @@ class Mods:
         return cls.modules[name]
 
     @classmethod
-    def init(cls, modlist, wait=False):
-        "call init of modules that have an init function."
-        thrs = []
-        for name in Utils.spl(modlist):
-            mod = cls.get(name)
-            if not mod or "init" not in dir(mod):
-                continue
-            thrs.append(Thread.launch(mod.init))
-        if thrs and wait:
-            for thr in thrs:
-                try:
-                    thr.join()
-                except (KeyboardInterrupt, EOFError):
-                    return False
-        return True
-
-    @classmethod
     def list(cls, ignore=""):
         "comma seperated list of available modules."
         mods = []
@@ -88,6 +89,19 @@ class Mods:
                 continue
             mods.extend(Utils.listdir(path, ignore))
         return sorted(set(mods))
+
+    @classmethod
+    def scan(cls, mod):
+        "scan module for commands."
+        for nme, func in inspect.getmembers(mod, inspect.isfunction):
+            if 'event' in inspect.signature(func).parameters:
+                cls.add(func)
+
+    @classmethod
+    def scanner(cls):
+        "scan all modules."
+        for name in cls.list():
+            cls.scan(cls.get(name))
 
     @classmethod
     def sums(cls):

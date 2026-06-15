@@ -28,7 +28,8 @@ class Handler:
             event = self.poll()
             if event is None:
                 break
-            self.handle(event)
+            event.orig = repr(self)
+            event._thr = Thread.launch(self.handle, event)
         self.idone.set()
 
     def poll(self):
@@ -47,8 +48,8 @@ class Handler:
 
     def stop(self):
         "stop polling loop."
-        self.istopped.set()
-        self.idone.wait()
+        # self.istopped.set()
+        # self.idone.wait()
 
 
 def __dir__():

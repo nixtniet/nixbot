@@ -7,9 +7,6 @@
 from nixbot.defines import Base, Disk, Object, Mods
 
 
-whitelist = ['cfg']
-
-
 def cfg(event):
     "configure modules."
     if not event.args:
