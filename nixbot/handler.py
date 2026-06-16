@@ -15,6 +15,8 @@ from .threads import Thread
 
 class Handler:
 
+    bork = False
+
     def __init__(self):
         self.idone = threading.Event()
         self.iqueue = queue.Queue()
@@ -41,6 +43,7 @@ class Handler:
             except Exception as ex:
                 logging.exception(ex)
                 logging.debug(str(event))
+            if self.bork:
                 os._exit(0)
             self.iqueue.task_done()
         self.idone.set()
