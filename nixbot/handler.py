@@ -4,6 +4,8 @@
 "event handler"
 
 
+import logging
+import os
 import queue
 import threading
 
@@ -32,13 +34,19 @@ class Handler:
                 self.iqueue.task_done()
                 break
             event.orig = repr(self)
-            self.handle(event)
+            try:
+                self.handle(event)
+            except (KeyboardInterrupt, EOFError):
+                _thread.interrupt_main()
+            except Exception as ex:
+                logging.exception(ex)
+                logging.debug(str(event))
+                os._exit(0)
             self.iqueue.task_done()
         self.idone.set()
 
     def poll(self):
         "return event."
-        return self.iqueue.get()
 
     def put(self, event):
         "put event on queue."

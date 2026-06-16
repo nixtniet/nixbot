@@ -55,12 +55,12 @@ class Task(threading.Thread):
         except Exception as ex:
             logging.exception(ex)
             logging.debug("%s %s", str(func), self.event)
-        if self.event:
-            self.event.ready()
         if self.bork:
             os._exit(1)
         else:
             _thread.interrupt_main()
+        if self.event:
+            self.event.ready()
 
 
 class Thread:
