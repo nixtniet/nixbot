@@ -8,7 +8,7 @@ import logging
 import os
 import queue
 import threading
-
+import _thread
 
 from .threads import Thread
 
@@ -43,8 +43,8 @@ class Handler:
             except Exception as ex:
                 logging.exception(ex)
                 logging.debug(str(event))
-            if self.bork:
-                os._exit(0)
+                if self.bork:
+                    os._exit(0)
             self.iqueue.task_done()
         self.idone.set()
 
