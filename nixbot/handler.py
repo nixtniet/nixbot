@@ -25,11 +25,15 @@ class Handler:
     def poller(self):
         "polling loop."
         while not self.istopped.is_set():
-            event = self.poll()
+            self.poll()
+            event = self.iqueue.get()
             if event is None:
+                event.ready()
+                self.iqueue.task_done()
                 break
             event.orig = repr(self)
-            event._thr = Thread.launch(self.handle, event)
+            self.handle(event)
+            self.iqueue.task_done()
         self.idone.set()
 
     def poll(self):
@@ -48,8 +52,11 @@ class Handler:
 
     def stop(self):
         "stop polling loop."
-        # self.istopped.set()
-        # self.idone.wait()
+        self.istopped.set()
+
+    def wait(self):
+        "wait for handler to finish."
+        self.iqueue.join()
 
 
 def __dir__():

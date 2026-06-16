@@ -90,6 +90,7 @@ class Console(CLI):
         evt.orig = repr(self)
         evt.text = input("> ")
         evt.kind = "command"
+        self.put(evt)
         return evt
 
 
