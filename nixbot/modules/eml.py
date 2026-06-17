@@ -56,11 +56,11 @@ def eml(event):
 def mbx(event):
     "import emails from mailbox."
     if not event.args:
-        event.iface("read <path>")
+        event.iface("<path>")
         return
     fnm = os.path.expanduser(event.args[0])
     if not e(fnm):
-        event.reply("mbx <path>")
+        event.iface("<path>")
         return
     event.reply("reading from %s" % fnm)
     if os.path.isdir(fnm):

@@ -613,7 +613,7 @@ def cb_quit(evt):
 def pwd(event):
     "generate sasl password."
     if len(event.args) != 2:
-        event.iface("pwd <nick> <password>")
+        event.iface("<nick> <password>")
         return
     import base64
     arg1 = event.args[0]

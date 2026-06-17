@@ -13,20 +13,7 @@ import time
 import _thread
 
 
-class Errors:
-
-    errors = []
-
-    @classmethod
-    def defer(cls, exc):
-        ex = exc.with_traceback(ex.__traceback__)
-        cls.errors.append(ex)
-       _thread.interrupt_main()
-
-
 class Task(threading.Thread):
-
-    bork = False
 
     def __init__(self, func, *args, daemon=True, **kwargs):
         super().__init__(None, self.run, None, (), daemon=daemon)
@@ -51,7 +38,7 @@ class Task(threading.Thread):
         except (KeyboardInterrupt, EOFError):
             if self.event:
                 self.event.ready()
-            _thread.interrupt_main()
+            os._exit(1)
 
     def run(self):
         "run function."
@@ -66,8 +53,8 @@ class Task(threading.Thread):
         except (KeyboardInterrupt, EOFError):
             _thread.interrupt_main()
         except Exception as ex:
-            Errors.defer(ex)
-            _thread.interupt_main()
+            logging.exception(ex)
+            os._exit(1)
 
 
 class Thread:

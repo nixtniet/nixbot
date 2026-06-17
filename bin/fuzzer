@@ -24,7 +24,7 @@ from nixbot.defines import Workdir, e
 
 
 Main.debug = True
-Main.name = "fuzzer"
+Main.name = "nixbot"
 Main.user = True
 Main.wdr = ".test"
 #Handler.bork = Task.bork = True
@@ -86,24 +86,9 @@ class ClientPool:
         time.sleep(0.01)
 
 
-
 class Run:
 
     nrs = 0
-
-    @classmethod
-    def banner(cls):
-        "hello"
-        tme = time.ctime(time.time()).replace("  ", " ")
-        txt = "%s %s since %s %s (%s)" % (
-            Main.name.upper(),
-            Main.version,
-            tme,
-            Main.level.upper() or "INFO",
-            Boot.core()
-        )
-        print(txt.replace("  ", " "))
-        sys.stdout.flush()
 
     @staticmethod
     def check(opts):
@@ -177,7 +162,7 @@ def main():
         shutil.rmtree(Main.wdr)
     if Run.check("v"):
         Main.verbose = True
-        Run.banner()
+        print(Boot.banner())
     Main.md5 = True
     Parse.parse(Main, " ".join(sys.argv[1:]))
     Boot.configure()
@@ -217,4 +202,3 @@ arguments = [
 
 if __name__ == "__main__":
     Run.wrap(main, dofinal=final)
-    Boot.shutdown()

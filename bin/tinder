@@ -21,7 +21,7 @@ from nixbot.defines import Parse, Task, Thread, Time, Utils, Workdir, e
 
 
 Main.debug = True
-Main.name = "tinder"
+Main.name = "nixbot"
 Main.wdr = ".test"
 Main.user = True
 
@@ -96,20 +96,6 @@ class Runs:
 
     nrs = 0
 
-    @classmethod
-    def banner(cls):
-        "hello"
-        tmr = time.ctime(time.time()).replace("  ", " ")
-        txt = "%s %s since %s %s (%s)" % (
-            Main.name.upper(),
-            Main.version,
-            tmr,
-            Main.level.upper() or "INFO",
-            Boot.core()
-        )
-        print(txt.replace("  ", " "))
-        sys.stdout.flush()
-
     @staticmethod
     def check(opts):
         "check for command line options."
@@ -173,7 +159,7 @@ def main():
         shutil.rmtree(Main.wdr)
     if Runs.check("v"):
         Main.verbose = True
-        Runs.banner()
+        print(Boot.banner())
     if Runs.check("t"):
         Main.threaded = True
     Parse.parse(Main, " ".join(sys.argv[1:]))
@@ -267,4 +253,3 @@ post = {
 
 if __name__ == "__main__":
     Runs.wrap(main, dofinal=final)
-    Boot.shutdown()

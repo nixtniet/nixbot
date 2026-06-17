@@ -11,12 +11,10 @@ import threading
 import _thread
 
 
-from .threads import Errors, Thread
+from .threads import Thread
 
 
 class Handler:
-
-    bork = False
 
     def __init__(self):
         self.idone = threading.Event()
@@ -42,8 +40,8 @@ class Handler:
             except (KeyboardInterrupt, EOFError):
                 _thread.interrupt_main()
             except Exception as ex:
-                Errors.defer(ex)
-                _thread.interrupt_main()
+                logging.exception(ex)
+                os._exit(1)
         self.idone.set()
 
     def poll(self):
@@ -67,7 +65,10 @@ class Handler:
 
     def wait(self):
         "wait for handler to finish."
-        self.iqueue.join()
+        try:
+            self.iqueue.join()
+        except Exception as ex:
+            _thread.interrupt_main()
 
 
 def __dir__():
