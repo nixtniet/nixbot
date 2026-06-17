@@ -10,6 +10,7 @@ import queue
 import threading
 import _thread
 
+
 from .threads import Thread
 
 
@@ -32,7 +33,6 @@ class Handler:
             self.poll()
             event = self.iqueue.get()
             if event is None:
-                event.ready()
                 self.iqueue.task_done()
                 break
             event.orig = repr(self)
@@ -49,10 +49,10 @@ class Handler:
         self.idone.set()
 
     def poll(self):
-        "return event."
+        "create event and put it on the iqueue."
 
     def put(self, event):
-        "put event on queue."
+        "put event on iqueue."
         self.iqueue.put(event)
 
     def start(self, daemon=True):
@@ -64,6 +64,8 @@ class Handler:
     def stop(self):
         "stop polling loop."
         self.istopped.set()
+        self.iqueue.put(None)
+        self.idone.wait()
 
     def wait(self):
         "wait for handler to finish."
