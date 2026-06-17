@@ -44,7 +44,9 @@ class Handler:
                 logging.exception(ex)
                 logging.debug(str(event))
                 if self.bork:
-                    os._exit(0)
+                    os._exit(1)
+                else:
+                    _thread.interrupt_main()
             self.iqueue.task_done()
         self.idone.set()
 

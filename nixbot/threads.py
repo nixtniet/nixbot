@@ -49,18 +49,18 @@ class Task(threading.Thread):
             self.event = args[0]
         try:
             self.result = func(*args)
-            return self.result
         except (KeyboardInterrupt, EOFError):
             _thread.interrupt_main()
         except Exception as ex:
             logging.exception(ex)
             logging.debug("%s %s", str(func), self.event)
-        if self.bork:
-            os._exit(1)
-        else:
-            _thread.interrupt_main()
+            if self.bork:
+                os._exit(1)
+            else:
+                _thread.interrupt_main()
         if self.event:
             self.event.ready()
+        return self.result
 
 
 class Thread:
