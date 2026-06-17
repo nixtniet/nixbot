@@ -49,7 +49,7 @@ class Arguments:
         optionparser.add_argument("-m", "--mods", default="", help='modules to load.', metavar="m1,m2")
         optionparser.add_argument("-p", "--path", default="", help='path to working directory.', metavar="path")
         optparser = theparser.add_argument_group()
-        optparser.add_argument("--default", default="irc,rss", help=argparse.SUPPRESS)
+        optparser.add_argument("--default", default="irc,mdl,rss,wsd", help=argparse.SUPPRESS)
         optparser.add_argument("--md5", action="store_true", help="do a md5 check on available modules.")
         optparser.add_argument("--nochdir", action="store_true", help=argparse.SUPPRESS)
         optparser.add_argument("--user", action="store_true", help="use local mods directory.")

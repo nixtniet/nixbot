@@ -402,7 +402,7 @@ class IRC(Engine, Buffered):
             txt = self.buffer.pop(0)
         except IndexError:
             txt = ""
-        return self.event(txt)
+        self.iqueue.put(self.event(txt))
 
     def raw(self, text):
         "raw output to the server."
