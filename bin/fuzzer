@@ -27,7 +27,7 @@ Main.debug = True
 Main.name = "fuzzer"
 Main.user = True
 Main.wdr = ".test"
-Handler.bork = Task.bork = True
+#Handler.bork = Task.bork = True
 Workdir.wdr = Main.wdr
 
 
@@ -217,3 +217,4 @@ arguments = [
 
 if __name__ == "__main__":
     Run.wrap(main, dofinal=final)
+    Boot.shutdown()

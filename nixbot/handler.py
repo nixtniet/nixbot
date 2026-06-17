@@ -11,7 +11,7 @@ import threading
 import _thread
 
 
-from .threads import Thread
+from .threads import Errors, Thread
 
 
 class Handler:
@@ -38,16 +38,12 @@ class Handler:
             event.orig = repr(self)
             try:
                 self.handle(event)
+                self.iqueue.task_done()
             except (KeyboardInterrupt, EOFError):
                 _thread.interrupt_main()
             except Exception as ex:
-                logging.exception(ex)
-                logging.debug(str(event))
-                if self.bork:
-                    os._exit(1)
-                else:
-                    _thread.interrupt_main()
-            self.iqueue.task_done()
+                Errors.defer(ex)
+                _thread.interrupt_main()
         self.idone.set()
 
     def poll(self):

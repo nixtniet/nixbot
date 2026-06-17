@@ -223,6 +223,7 @@ def main():
         Runs.wrap(Scripts.service)
     else:
         Runs.wrap(Scripts.control)
+    Boot.shutdown()
 
 
 if __name__ == "__main__":

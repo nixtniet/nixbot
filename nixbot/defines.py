@@ -18,7 +18,7 @@ from .package import Mods
 from .parsers import Parse
 from .persist import Disk, Locate, Workdir
 from .repeats import Repeater
-from .threads import Task, Thread
+from .threads import Errors, Task, Thread
 from .utility import Md5, Time, Utils, a, d ,e , i, j
 
 
@@ -33,6 +33,7 @@ def __dir__():
        'Clients',
        'Disk',
        'Engine',
+       'Errors',
        'Handler',
        'Json',
        'Locate',

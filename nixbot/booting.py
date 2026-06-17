@@ -4,9 +4,11 @@
 "in the beginning"
 
 
+import logging
 import os
 import threading
 import time
+import traceback
 import _thread
 
 
@@ -14,7 +16,7 @@ from .configs import Main
 from .loggers import Logging
 from .package import Mods
 from .persist import Workdir
-from .threads import Task, Thread
+from .threads import Errors, Task, Thread
 from .utility import Md5, Utils, j
 
 
@@ -69,6 +71,12 @@ class Boot:
                 except (KeyboardInterrupt, EOFError):
                     return False
         return True
+
+    @classmethod
+    def shutdown(cls):
+         for obj in Errors.errors:
+             tb = ''.join(traceback.format_exception(None, obj, obj.__traceback__))
+             logging.error(tb)
 
     @classmethod
     def wait(cls, nr=1):

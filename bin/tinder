@@ -267,3 +267,4 @@ post = {
 
 if __name__ == "__main__":
     Runs.wrap(main, dofinal=final)
+    Boot.shutdown()

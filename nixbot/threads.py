@@ -13,6 +13,17 @@ import time
 import _thread
 
 
+class Errors:
+
+    errors = []
+
+    @classmethod
+    def defer(cls, exc):
+        ex = exc.with_traceback(ex.__traceback__)
+        cls.errors.append(ex)
+       _thread.interrupt_main()
+
+
 class Task(threading.Thread):
 
     bork = False
@@ -49,18 +60,14 @@ class Task(threading.Thread):
             self.event = args[0]
         try:
             self.result = func(*args)
+            if self.event:
+                self.event.ready()
+            return self.result
         except (KeyboardInterrupt, EOFError):
             _thread.interrupt_main()
         except Exception as ex:
-            logging.exception(ex)
-            logging.debug("%s %s", str(func), self.event)
-            if self.bork:
-                os._exit(1)
-            else:
-                _thread.interrupt_main()
-        if self.event:
-            self.event.ready()
-        return self.result
+            Errors.defer(ex)
+            _thread.interupt_main()
 
 
 class Thread:
