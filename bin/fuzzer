@@ -5,6 +5,8 @@
 "fuzzer"
 
 
+import builtins
+import inspect
 import logging
 import os
 import queue
@@ -197,6 +199,16 @@ arguments = [
              Base,
              Base()
             ]
+
+
+def isexception(x):
+    try:
+        return issubclass(x, Exception)
+    except TypeError:
+        return False
+
+arguments2 = [x[1] for x in inspect.getmembers(builtins, isexception)]
+arguments.extend(arguments2)
 
 
 if __name__ == "__main__":
