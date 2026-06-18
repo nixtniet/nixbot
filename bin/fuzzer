@@ -26,9 +26,8 @@ from nixbot.defines import Workdir, e
 Main.debug = True
 Main.name = "nixbot"
 Main.user = True
-Main.wdr = ".test"
-#Handler.bork = Task.bork = True
-Workdir.wdr = Main.wdr
+Main.path = ".test"
+Workdir.wdr = Main.path
 
 
 class CLI(Buffered):
