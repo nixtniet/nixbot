@@ -4,11 +4,9 @@
 "in the beginning"
 
 
-import logging
 import os
 import threading
 import time
-import traceback
 import _thread
 
 

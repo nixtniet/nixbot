@@ -67,7 +67,7 @@ class Handler:
         "wait for handler to finish."
         try:
             self.iqueue.join()
-        except Exception as ex:
+        except Exception:
             _thread.interrupt_main()
 
 
