@@ -186,7 +186,7 @@ class Scripts:
     @staticmethod
     def control():
         "cli script."
-        Runs.configure
+        Runs.configure()
         Runs.scanner()
         cli = CLI()
         cli.silent = False
