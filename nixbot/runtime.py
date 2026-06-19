@@ -162,7 +162,6 @@ class Scripts:
         Runs.daemon(Main.verbose, Main.nochdir)
         Runs.privileges()
         Runs.pid(Main.name)
-        Runs.configure()
         Runs.scanner()
         Runs.init(Main.mods or Main.default)
         Runs.forever()
@@ -171,7 +170,6 @@ class Scripts:
     def console():
         "console script."
         readline.redisplay()
-        Runs.configure()
         if Main.verbose:
             Runs.banner()
         if Main.all:
@@ -186,7 +184,6 @@ class Scripts:
     @staticmethod
     def control():
         "cli script."
-        Runs.configure()
         Runs.scanner()
         cli = CLI()
         cli.silent = False
@@ -195,8 +192,6 @@ class Scripts:
     @staticmethod
     def service():
         "service script."
-        Main.systemd = True
-        Runs.configure()
         Runs.privileges()
         Runs.pid(Main.name)
         Runs.scanner()
@@ -207,6 +202,7 @@ class Scripts:
 def main():
     "main"
     Arguments.getargs()
+    Runs.configure()
     if Main.daemon:
         Runs.wrap(Scripts.background)
     elif Main.console:

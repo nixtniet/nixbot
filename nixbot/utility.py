@@ -205,7 +205,7 @@ class Utils:
 
     @staticmethod
     def clsname(obj):
-        "reutrn classname of an object."
+        "return classname of an object."
         return obj.__class__.__name__
 
     @staticmethod
@@ -296,7 +296,6 @@ class Utils:
 
 def __dir__():
     return (
-        'TIMES',
         'Md5',
         'Time',
         'Utils',
