@@ -1,4 +1,3 @@
-##!/usr/bin/env python3
 # This file is placed in the Public Domain.
 
 
@@ -6,21 +5,14 @@
 
 
 import argparse
-import logging
 import os
 import readline
 import sys
 import time
 
 
-# sys.path.insert(0, os.getcwd())
-
-
-from nixbot.defines import Boot, Client, Main, Message
-from nixbot.defines import Mods, Object, Utils, Workdir
-
-
-Main.name = Utils.pkgname(Mods)
+from .defines import Boot, Client, Main, Message
+from .defines import Mods, Object, Utils, Workdir
 
 
 class Arguments:
@@ -56,6 +48,7 @@ class Arguments:
         args, arguments = theparser.parse_known_args()
         Main.otxt = " ".join(arguments)
         Object.update(Main, args)
+        Main.name = Main.name or Utils.pkgname(Mods)
 
 
 class CLI(Client):
@@ -143,23 +136,18 @@ class Runs(Boot):
         os.setuid(pwnam2.pw_uid)
 
     @classmethod
-    def wrap(cls, func, *args, final=None):
+    def wrap(cls, func, *args, dofinal=None):
         "restore console."
         import termios
         try:
             old = termios.tcgetattr(sys.stdin.fileno())
         except termios.error:
             old = False
-        try:
-            func(*args)
-        except (KeyboardInterrupt, EOFError):
-            print("")
-        except Exception as ex:
-            logging.exception(ex)
+        Utils.wrapped(func, *args)
         if old:
             termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old)
-        if final:
-            final()
+        if dofinal:
+            dofinal()
 
     forever = Boot.forever
     pid = Workdir.pid
@@ -174,6 +162,7 @@ class Scripts:
         Runs.daemon(Main.verbose, Main.nochdir)
         Runs.privileges()
         Runs.pid(Main.name)
+        Runs.configure()
         Runs.scanner()
         Runs.init(Main.mods or Main.default)
         Runs.forever()
@@ -182,6 +171,7 @@ class Scripts:
     def console():
         "console script."
         readline.redisplay()
+        Runs.configure()
         if Main.verbose:
             Runs.banner()
         if Main.all:
@@ -196,6 +186,7 @@ class Scripts:
     @staticmethod
     def control():
         "cli script."
+        Runs.configure
         Runs.scanner()
         cli = CLI()
         cli.silent = False
@@ -204,6 +195,8 @@ class Scripts:
     @staticmethod
     def service():
         "service script."
+        Main.systemd = True
+        Runs.configure()
         Runs.privileges()
         Runs.pid(Main.name)
         Runs.scanner()
@@ -214,7 +207,6 @@ class Scripts:
 def main():
     "main"
     Arguments.getargs()
-    Runs.configure()
     if Main.daemon:
         Runs.wrap(Scripts.background)
     elif Main.console:
