@@ -42,7 +42,6 @@ class Arguments:
         optionparser.add_argument("-p", "--path", default="", help='path to working directory.', metavar="path")
         optparser = theparser.add_argument_group()
         optparser.add_argument("--default", default="irc,mdl,rss,wsd", help=argparse.SUPPRESS)
-        optparser.add_argument("--md5", action="store_true", help="do a md5 check on available modules.")
         optparser.add_argument("--nochdir", action="store_true", help=argparse.SUPPRESS)
         optparser.add_argument("--user", action="store_true", help="use local mods directory.")
         args, arguments = theparser.parse_known_args()
@@ -115,17 +114,19 @@ class Runs(Boot):
         if pid2 != 0:
             os._exit(0)
         if not verbose:
-            with open('/dev/null', 'r', encoding="utf-8") as sis:
-                os.dup2(sis.fileno(), sys.stdin.fileno())
-            with open('/dev/null', 'a+', encoding="utf-8") as sos:
-                os.dup2(sos.fileno(), sys.stdout.fileno())
-            with open('/dev/null', 'a+', encoding="utf-8") as ses:
-                os.dup2(ses.fileno(), sys.stderr.fileno())
+            cls.null(sys.stdin)
+            cls.null(sys.stdout)
+            cls.null(sys.stderr)
         os.umask(0)
         if not nochdir:
             os.chdir("/")
         os.nice(10)
 
+    @classmethod
+    def null(cls, io):
+        with open('/dev/null', 'r', encoding="utf-8") as sis:
+            os.dup2(sis.fileno(), io.fileno())
+        
     @classmethod
     def privileges(cls):
         "drop privileges."

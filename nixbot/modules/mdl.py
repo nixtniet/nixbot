@@ -12,9 +12,6 @@ import time
 from nixbot.defines import Base, Clients, Message, Object, Repeater, Time
 
 
-whitelist = ['dis', 'now']
-
-
 def init():
     for key in Object.keys(oorzaken):
         if "Psych" not in key:

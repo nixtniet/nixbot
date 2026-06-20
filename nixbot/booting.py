@@ -45,8 +45,7 @@ class Boot:
         Logging.size(len(Main.name))
         Logging.level(Main.level)
         Task.bork = Main.bork
-        if Main.md5:
-            Mods.sums()
+        Mods.sums()
 
     @classmethod
     def core(cls):

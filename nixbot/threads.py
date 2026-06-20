@@ -36,20 +36,13 @@ class Task(threading.Thread):
             super().join(timeout or None)
             return self.result
         except (KeyboardInterrupt, EOFError):
-            if self.event:
-                self.event.ready()
-            os._exit(1)
+            _thread.interrupt_main()
 
     def run(self):
         "run function."
         func, args = self.queue.get()
-        if args and hasattr(args[0], "ready"):
-            self.event = args[0]
         try:
             self.result = func(*args)
-            if self.event:
-                self.event.ready()
-            return self.result
         except (KeyboardInterrupt, EOFError):
             _thread.interrupt_main()
         except Exception as ex:
@@ -64,21 +57,21 @@ class Thread:
     @classmethod
     def launch(cls, func, *args, **kwargs):
         "run function in a thread."
-        with cls.lock:
-            try:
-                task = Task(func, *args, **kwargs)
-                task.start()
-                return task
-            except (KeyboardInterrupt, EOFError):
-                _thread.interrupt_main()
+        task = Task(func, *args, **kwargs)
+        task.start()
+        return task
+
+    @classmethod
+    def clsname(cls, obj):
+        if "__self__" in dir(obj):
+            return obj.__self__.__class__.__name__
+        return obj.__class__.__name_
 
     @classmethod
     def name(cls, obj):
         "string of function/method."
         if inspect.ismethod(obj):
-            if "__self__" in dir(obj):
-                return f"{obj.__self__.__class__.__name__}.{obj.__name__}"
-            return f"{obj.__class__.__name__}.{obj.__name__}"
+            return f"{cls.clsname(obj)}.{obj.__name__}"
         if inspect.isfunction(obj):
             return repr(obj).split()[1]
         return repr(obj)

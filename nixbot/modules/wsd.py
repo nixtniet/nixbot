@@ -13,9 +13,6 @@ from random import SystemRandom
 from nixbot.defines import Clients, Disk, Locate, Message, Repeater
 
 
-whitelist = ['wsd']
-
-
 rand = SystemRandom()
 
 
