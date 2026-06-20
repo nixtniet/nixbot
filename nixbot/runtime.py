@@ -124,9 +124,10 @@ class Runs(Boot):
 
     @classmethod
     def null(cls, io):
+        "rout to dev/null."
         with open('/dev/null', 'r', encoding="utf-8") as sis:
             os.dup2(sis.fileno(), io.fileno())
-        
+
     @classmethod
     def privileges(cls):
         "drop privileges."
