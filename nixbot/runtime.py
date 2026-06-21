@@ -11,8 +11,7 @@ import sys
 import time
 
 
-from .defines import Boot, Client, Main, Message
-from .defines import Mods, Object, Utils, Workdir
+from .defines import Boot, Client, Main, Message, Mods, Object, Utils, Workdir
 
 
 class Arguments:
@@ -42,6 +41,7 @@ class Arguments:
         optionparser.add_argument("-p", "--path", default="", help='path to working directory.', metavar="path")
         optparser = theparser.add_argument_group()
         optparser.add_argument("--default", default="irc,mdl,rss,wsd", help=argparse.SUPPRESS)
+        optparser.add_argument("--moddir", default=Utils.moddir(), help="set modules directory.")
         optparser.add_argument("--nochdir", action="store_true", help=argparse.SUPPRESS)
         optparser.add_argument("--user", action="store_true", help="use local mods directory.")
         args, arguments = theparser.parse_known_args()
@@ -196,6 +196,7 @@ class Scripts:
         "service script."
         Runs.privileges()
         Runs.pid(Main.name)
+        Runs.banner()
         Runs.scanner()
         Runs.init(Main.mods or Main.default)
         Runs.forever()

@@ -52,8 +52,6 @@ class Task(threading.Thread):
 
 class Thread:
 
-    lock = threading.RLock()
-
     @classmethod
     def launch(cls, func, *args, **kwargs):
         "run function in a thread."

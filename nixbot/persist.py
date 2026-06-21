@@ -171,6 +171,10 @@ class Workdir:
     wdr = ""
 
     @classmethod
+    def home(cls, name):
+        return os.path.expanduser(f"~/.{name}")
+
+    @classmethod
     def kinds(cls):
         "show kind on objects in cache."
         assert cls.wdr
