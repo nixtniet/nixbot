@@ -61,6 +61,7 @@ class Thread:
 
     @classmethod
     def clsname(cls, obj):
+        "class name of an object."
         if "__self__" in dir(obj):
             return obj.__self__.__class__.__name__
         return obj.__class__.__name_

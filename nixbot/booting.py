@@ -21,7 +21,7 @@ class Boot:
 
     @classmethod
     def banner(cls):
-        "hello"
+        "hello."
         tmr = time.ctime(time.time()).replace("  ", " ")
         txt = "%s %s since %s %s (%s)" % (
             Main.name.upper(),
@@ -36,7 +36,7 @@ class Boot:
     def configure(cls):
         "configure program."
         Workdir.wdr = Main.path or Workdir.home(Main.name)
-        Mods.dir(f"{Main.name}.modules", Main.moddir)
+        Mods.dir(f"{Main.name}.modules", Main.moddir or Utils.moddir())
         Mods.dir("modules", Workdir.moddir())
         if Main.user:
             Mods.dir("mods", "mods")

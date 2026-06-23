@@ -172,6 +172,7 @@ class Workdir:
 
     @classmethod
     def home(cls, name):
+        "return home working directory."
         return os.path.expanduser(f"~/.{name}")
 
     @classmethod
