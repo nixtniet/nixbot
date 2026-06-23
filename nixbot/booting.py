@@ -17,7 +17,7 @@ from .threads import Thread
 from .utility import Md5, Utils
 
 
-class Boot:
+class Kernel:
 
     @classmethod
     def banner(cls):
@@ -88,8 +88,10 @@ class Boot:
                 break
             time.sleep(0.01)
 
+    scanner = Mods.scanner
+
 
 def __dir__():
     return (
-        'Boot',
+        'Kernel',
     )

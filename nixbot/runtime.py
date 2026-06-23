@@ -11,7 +11,8 @@ import sys
 import time
 
 
-from .defines import Boot, Client, Main, Message, Mods, Object, Utils, Workdir
+from .defines import Client, Kernel, Main, Message, Mods, Object
+from .defines import Utils, Workdir
 
 
 class Arguments:
@@ -87,7 +88,7 @@ class Console(CLI):
         return evt
 
 
-class Runs(Boot):
+class Boot(Kernel):
 
     @classmethod
     def banner(cls):
@@ -151,9 +152,7 @@ class Runs(Boot):
         if dofinal:
             dofinal()
 
-    forever = Boot.forever
     pid = Workdir.pid
-    scanner = Mods.scanner
 
 
 class Scripts:
@@ -161,32 +160,32 @@ class Scripts:
     @staticmethod
     def background():
         "background script."
-        Runs.daemon(Main.verbose, Main.nochdir)
-        Runs.privileges()
-        Runs.pid(Main.name)
-        Runs.scanner()
-        Runs.init(Main.mods or Main.default)
-        Runs.forever()
+        Boot.daemon(Main.verbose, Main.nochdir)
+        Boot.privileges()
+        Boot.pid(Main.name)
+        Boot.scanner()
+        Boot.init(Main.mods or Main.default)
+        Boot.forever()
 
     @staticmethod
     def console():
         "console script."
         readline.redisplay()
         if Main.verbose:
-            Runs.banner()
+            Boot.banner()
         if Main.all:
             Main.mods = ",".join(Mods.list())
-        Runs.scanner()
-        if not Runs.init(Main.mods, Main.wait):
+        Boot.scanner()
+        if not Boot.init(Main.mods, Main.wait):
             return
         csl = Console()
         csl.start()
-        Runs.forever()
+        Boot.forever()
 
     @staticmethod
     def control():
         "cli script."
-        Runs.scanner()
+        Boot.scanner()
         cli = CLI()
         cli.silent = False
         cli.cmd(Main.otxt)
@@ -194,26 +193,26 @@ class Scripts:
     @staticmethod
     def service():
         "service script."
-        Runs.privileges()
-        Runs.pid(Main.name)
-        Runs.banner()
-        Runs.scanner()
-        Runs.init(Main.mods or Main.default)
-        Runs.forever()
+        Boot.privileges()
+        Boot.pid(Main.name)
+        Boot.banner()
+        Boot.scanner()
+        Boot.init(Main.mods or Main.default)
+        Boot.forever()
 
 
 def main():
     "main"
     Arguments.getargs()
-    Runs.configure()
+    Boot.configure()
     if Main.daemon:
-        Runs.wrap(Scripts.background)
+        Boot.wrap(Scripts.background)
     elif Main.console:
-        Runs.wrap(Scripts.console)
+        Boot.wrap(Scripts.console)
     elif Main.service:
-        Runs.wrap(Scripts.service)
+        Boot.wrap(Scripts.service)
     else:
-        Runs.wrap(Scripts.control)
+        Boot.wrap(Scripts.control)
 
 
 if __name__ == "__main__":
