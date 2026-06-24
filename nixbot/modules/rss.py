@@ -108,8 +108,7 @@ class Fetcher:
         oid = Disk.ident(State.modified)
         State.modifiedfn = Locate.last(State.modified) or oid
         if repeat:
-            repeater = Repeater(Config.polltime, self.run)
-            repeater.start()
+            Repeater.add(Config.polltime, self.run)
 
     def stop(self):
         "sto prss fetcher."

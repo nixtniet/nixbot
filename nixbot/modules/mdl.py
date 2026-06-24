@@ -23,8 +23,7 @@ def init():
             evt.rest = key
             sec = seconds(val)
             name = aliases.get(key)
-            repeater = Repeater(sec, cbstats, evt, thrname=name)
-            repeater.start()
+            Repeater.add(sec, cbstats, evt, thrname=name)
             logging.warning(Time.elapsed(time.time()-STARTTIME))
 
 

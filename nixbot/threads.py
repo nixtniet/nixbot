@@ -47,7 +47,7 @@ class Task(threading.Thread):
             _thread.interrupt_main()
         except Exception as ex:
             logging.exception(ex)
-            os._exit(1)
+            _thread.interrupt_main()
 
 
 class Thread:

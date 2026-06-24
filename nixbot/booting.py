@@ -28,7 +28,7 @@ class Kernel:
             Main.version,
             tmr,
             Main.level.upper() or "INFO",
-            Boot.core()
+            cls.core()
         )
         return txt.replace("  ", " ")
 
