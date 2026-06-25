@@ -40,7 +40,6 @@ class Repeater:
                 slept = float(sleep)
                 if cls.counter % slept != 0:
                     continue
-                print("yo!")
                 for func, args, kwargs in cls.todo[sleep]:
                     Thread.launch(func, *args, **kwargs)
 

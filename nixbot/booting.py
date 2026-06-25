@@ -59,7 +59,7 @@ class Kernel:
         "run forever until ctrl-c."
         while True:
             try:
-                time.sleep(0.01)
+                time.sleep(1.0)
             except (KeyboardInterrupt, EOFError):
                 _thread.interrupt_main()
 
