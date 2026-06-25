@@ -16,8 +16,8 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from nixbot.defines import Boot, Buffer, Engine, Logging, Main, Message, Mods, Object
-from nixbot.defines import Parse, Task, Thread, Time, Utils, Workdir, e
+from nixbot.defines import Buffer, Engine, Kernel, Logging, Main, Message, Mods
+from nixbot.defines import Object, Parse, Task, Thread, Time, Utils, Workdir, e
 
 
 Main.debug = True
@@ -159,7 +159,7 @@ def main():
         shutil.rmtree(Main.wdr)
     if Runs.check("v"):
         Main.verbose = True
-        print(Boot.banner())
+        print(Kernel.banner())
     if Runs.check("t"):
         Main.threaded = True
     Parse.parse(Main, " ".join(sys.argv[1:]))

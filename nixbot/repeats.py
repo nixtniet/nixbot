@@ -9,12 +9,12 @@ import time
 
 
 from .objects import Base
-from .persist import Disk, Locate
 from .threads import Thread
 
 
 class Repeater:
 
+    counter = 0
     fnm = ""
     running = threading.Event()
     stopped = threading.Event()
@@ -25,37 +25,36 @@ class Repeater:
         "add a repeater."
         if not cls.running.is_set():
             cls.start()
-        todotime = str(time.time() + sleep)
-        cls.todo[todotime] = (sleep, func, args, kwargs)
+        sleep = str(sleep)
+        if sleep not in cls.todo:
+            cls.todo[sleep] = []
+        cls.todo[sleep].append((func, args, kwargs))
 
     @classmethod
     def loop(cls):
         "repeater loop."
         while not cls.stopped.is_set():
             time.sleep(1.0)
-            next = []
-            now = time.time()
-            for todotime in cls.todo:
-                if now > float(todotime):
-                    sleep, func, args, kwargs = getattr(cls.todo, todotime)
+            cls.counter += 1
+            for sleep in cls.todo:
+                slept = float(sleep)
+                if cls.counter % slept != 0:
+                    continue
+                print("yo!")
+                for func, args, kwargs in cls.todo[sleep]:
                     Thread.launch(func, *args, **kwargs)
-                    next.append(todotime)
-            for todotime in next:
-                    sleep, func, args, kwargs = getattr(cls.todo, todotime)
-                    cls.add(sleep, func, *args, **kwargs)
-                    del cls.todo[todotime]
 
     @classmethod
     def start(cls):
         "start repeater loop."
         cls.running.set()
         cls.stopped.clear()
-        Thread.launch(cls.loop)
+        Thread.launch(cls.loop, name="Repeater.loop")
 
     @classmethod
     def stop(cls):
         "stop repeater loop."
-        cls.stopped.set()                
+        cls.stopped.set()
 
 
 def __dir__():
