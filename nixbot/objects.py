@@ -124,21 +124,6 @@ class Object:
         return "__deleted__" in dir(obj) and obj.__deleted__
 
     @staticmethod
-    def difference(obj, *others):
-        "return a new object with elements that are not in the others."
-        raise NotImplementedError
-
-    @staticmethod
-    def difference_update(obj, *others):
-        "update the object, removing elements found in others."
-        raise NotImplementedError
-
-    @staticmethod
-    def discard(obj):
-        "remove an element from a object if it is a member."
-        raise NotImplementedError
-
-    @staticmethod
     def edit(obj, setter={}, skip=False):
         "update object with dict."
         for key, val in Object.items(setter):
@@ -193,31 +178,6 @@ class Object:
     def get(obj, key, default=None):
         "return value for key if key is in the object, otherwise return default."
         return obj.__dict__.get(key, default)
-
-    @staticmethod
-    def intersection(obj, *others):
-        "return a new object with elements common to all others."
-        raise NotImplementedError
-
-    @staticmethod
-    def intersection_update(obj, *others):
-        "update the object, keeping only elements found in it and all others."
-        raise NotImplementedError
-
-    @staticmethod
-    def isdisjoint(obj, other):
-        "return True if two objects have a null intersection."
-        raise NotImplementedError
-
-    @staticmethod
-    def isubset(obj, other):
-        "report whether another object contains this object's keys."
-        raise NotImplementedError
-
-    @staticmethod
-    def isuperset(obj, other):
-        "report whether this object contains another object's keys."
-        raise NotImplementedError
 
     @staticmethod
     def items(obj):
@@ -315,16 +275,6 @@ class Object:
         return res
 
     @staticmethod
-    def symmetric_difference(obj, other):
-        "return a new  object with elements in either the object or other but not both."
-        raise NotImplementedError
-
-    @staticmethod
-    def symmetric_difference_update(obj, other):
-        "update the object, keeping only elements found in either object, but not in both."
-        raise NotImplementedError
-
-    @staticmethod
     def typed(obj, key, val):
         "assign proper types."
         if not val:
@@ -342,11 +292,6 @@ class Object:
         except ValueError:
             pass
         setattr(obj, key, val)
-
-    @staticmethod
-    def union(obj, *others):
-        "return a new object with elements from the object and all others."
-        raise NotImplementedError
 
     @staticmethod
     def update(obj, data, empty=True):
