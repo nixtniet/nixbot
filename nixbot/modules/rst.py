@@ -13,7 +13,7 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
-from nixbot.defines import Base, Locate, Main, Thread, Workdir, a, j
+from nixbot.defines import Base, Locate, Main, Thread, Workdir
 
 
 def init():
@@ -90,8 +90,8 @@ class RESTHandler(BaseHTTPRequestHandler):
             fnm = self.path[1:]
         else:
             fnm = self.path
-        fnm = j(Workdir.wdr, "store", fnm)
-        fnm = a(fnm)
+        fnm = os.path.join(Workdir.wdr, "store", fnm)
+        fnm = os.path.abspath(fnm)
         if os.path.isdir(fnm):
             self.write_header("text/html")
             txt = ""

@@ -9,7 +9,7 @@ import os
 import time
 
 
-from nixbot.defines import Base, Disk, Locate, Object, Time, e
+from nixbot.defines import Base, Disk, Locate, Object, Time
 
 
 class Email(Base):
@@ -59,7 +59,7 @@ def mbx(event):
         event.iface("<path>")
         return
     fnm = os.path.expanduser(event.args[0])
-    if not e(fnm):
+    if not os.path.exists(fnm):
         event.iface("<path>")
         return
     event.reply("reading from %s" % fnm)

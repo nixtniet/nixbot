@@ -22,7 +22,7 @@ sys.path.insert(0, os.getcwd())
 
 from nixbot.defines import Base, Boot, Buffered, Client, Handler, Logging
 from nixbot.defines import Main, Message, Mods, Object, Parse, Task, Thread
-from nixbot.defines import Time, Workdir, e
+from nixbot.defines import Time, Workdir
 
 
 Main.debug = True
@@ -159,7 +159,7 @@ def final():
 
 
 def main():
-    if e(Main.wdr):
+    if os.path.exists(Main.wdr):
         shutil.rmtree(Main.wdr)
     if Run.check("v"):
         Main.verbose = True

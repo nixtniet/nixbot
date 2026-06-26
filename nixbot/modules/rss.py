@@ -8,6 +8,7 @@ import html
 import html.parser
 import http.client
 import logging
+import os
 import queue
 import re
 import threading
@@ -23,7 +24,7 @@ from urllib.parse import quote_plus, urlencode
 
 
 from nixbot.defines import Base, Clients, Disk, Locate, Main, Object
-from nixbot.defines import Repeater, Thread, Utils, i
+from nixbot.defines import Repeater, Thread, Utils
 
 
 def init():
@@ -617,7 +618,7 @@ def imp(event):
         event.iface("<filename>")
         return
     fnm = event.args[0]
-    if not i(fnm):
+    if not os.path.isfile(fnm):
         event.reply(f"no {fnm} file found.")
         return
     with Run.importlock:

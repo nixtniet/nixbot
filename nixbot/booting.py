@@ -80,6 +80,8 @@ class Boot:
                     return False
         return True
 
+    scanner = Mods.scanner
+
     @classmethod
     def wait(cls, nr=1):
         "wait until nr threads left running."
@@ -87,8 +89,6 @@ class Boot:
             if len(threading.enumerate()) == nr:
                 break
             time.sleep(0.01)
-
-    scanner = Mods.scanner
 
 
 def __dir__():
