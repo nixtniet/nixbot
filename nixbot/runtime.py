@@ -11,8 +11,7 @@ import sys
 import time
 
 
-from .defines import Client, Kernel, Main, Message, Mods, Object
-from .defines import Utils, Workdir
+from .defines import Boot, Client, Main, Message, Mods, Object, Utils, Workdir
 
 
 class Arguments:
@@ -88,7 +87,7 @@ class Console(CLI):
         return evt
 
 
-class Boot(Kernel):
+class Kernel(Boot):
 
     @classmethod
     def banner(cls):
@@ -160,32 +159,32 @@ class Scripts:
     @staticmethod
     def background():
         "background script."
-        Boot.daemon(Main.verbose, Main.nochdir)
-        Boot.privileges()
-        Boot.pid(Main.name)
-        Boot.scanner()
-        Boot.init(Main.mods or Main.default)
-        Boot.forever()
+        Kernel.daemon(Main.verbose, Main.nochdir)
+        Kernel.privileges()
+        Kernel.pid(Main.name)
+        Kernel.scanner()
+        Kernel.init(Main.mods or Main.default)
+        Kernel.forever()
 
     @staticmethod
     def console():
         "console script."
         readline.redisplay()
         if Main.verbose:
-            Boot.banner()
+            Kernel.banner()
         if Main.all:
             Main.mods = ",".join(Mods.list())
-        Boot.scanner()
-        if not Boot.init(Main.mods, Main.wait):
+        Kernel.scanner()
+        if not Kernel.init(Main.mods, Main.wait):
             return
         csl = Console()
         csl.start()
-        Boot.forever()
+        Kernel.forever()
 
     @staticmethod
     def control():
         "cli script."
-        Boot.scanner()
+        Kernel.scanner()
         cli = CLI()
         cli.silent = False
         cli.cmd(Main.otxt)
@@ -193,26 +192,26 @@ class Scripts:
     @staticmethod
     def service():
         "service script."
-        Boot.privileges()
-        Boot.pid(Main.name)
-        Boot.banner()
-        Boot.scanner()
-        Boot.init(Main.mods or Main.default)
-        Boot.forever()
+        Kernel.privileges()
+        Kernel.pid(Main.name)
+        Kernel.banner()
+        Kernel.scanner()
+        Kernel.init(Main.mods or Main.default)
+        Kernel.forever()
 
 
 def main():
     "main"
     Arguments.getargs()
-    Boot.configure()
+    Kernel.configure()
     if Main.daemon:
-        Boot.wrap(Scripts.background)
+        Kernel.wrap(Scripts.background)
     elif Main.console:
-        Boot.wrap(Scripts.console)
+        Kernel.wrap(Scripts.console)
     elif Main.service:
-        Boot.wrap(Scripts.service)
+        Kernel.wrap(Scripts.service)
     else:
-        Boot.wrap(Scripts.control)
+        Kernel.wrap(Scripts.control)
 
 
 if __name__ == "__main__":

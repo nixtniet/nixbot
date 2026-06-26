@@ -20,7 +20,7 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from nixbot.defines import Base, Buffered, Client, Handler, Kernel, Logging
+from nixbot.defines import Base, Boot, Buffered, Client, Handler, Logging
 from nixbot.defines import Main, Message, Mods, Object, Parse, Task, Thread
 from nixbot.defines import Time, Workdir, e
 
@@ -163,10 +163,10 @@ def main():
         shutil.rmtree(Main.wdr)
     if Run.check("v"):
         Main.verbose = True
-        print(Kernel.banner())
+        print(Boot.banner())
     Main.md5 = True
     Parse.parse(Main, " ".join(sys.argv[1:]))
-    Kernel.configure()
+    Boot.configure()
     Mods.scanner()
     ClientPool.init(CLI)
     Run.nrs = Main.index or 1
@@ -176,10 +176,6 @@ def main():
     for thr in thrs:
         thr.join()
     ClientPool.shutdown()
-    # while 1:
-    #     if len(threading.enumerate()) == ClientPool.nrcpu + 1:
-    #        break
-    #     time.sleep(0.01)
 
 
 arguments = [

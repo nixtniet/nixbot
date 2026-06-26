@@ -17,7 +17,7 @@ from .threads import Thread
 from .utility import Md5, Utils
 
 
-class Kernel:
+class Boot:
 
     @classmethod
     def banner(cls):
