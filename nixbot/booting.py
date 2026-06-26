@@ -27,7 +27,7 @@ class Boot:
             Main.name.upper(),
             Main.version,
             tmr,
-            Main.level.upper() or "INFO",
+            Main.level.upper() or "WARNING",
             cls.core()
         )
         return txt.replace("  ", " ")
@@ -42,7 +42,7 @@ class Boot:
             Mods.dir("mods", "mods")
             Mods.dir("other", "other")
         Logging.size(len(Main.name))
-        Logging.level(Main.level)
+        Logging.level(Main.level or "warning")
         Mods.sums()
 
     @classmethod
@@ -93,5 +93,5 @@ class Boot:
 
 def __dir__():
     return (
-        'Kernel',
+        'Boot',
     )

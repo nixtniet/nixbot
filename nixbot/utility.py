@@ -21,8 +21,8 @@ j = os.path.join
 
 class Md5:
 
-    @staticmethod
-    def md5(path):
+    @classmethod
+    def md5(cls, path):
         "calculate md5sum of a file."
         import hashlib
         md5 = hashlib.md5()
@@ -39,8 +39,8 @@ class Md5:
             return ""
         return cls.source(Utils.source(statics))[:7].upper()
 
-    @staticmethod
-    def dir(path, md5):
+    @classmethod
+    def dir(cls, path, md5):
         "create a md5 for a directory."
         for fnm in os.listdir(path):
             if not fnm.endswith(".py"):
@@ -49,8 +49,8 @@ class Md5:
             with open(mpath, "r", encoding="utf-8") as file:
                 md5.update(file.read().encode("utf-8"))
 
-    @staticmethod
-    def source(src):
+    @classmethod
+    def source(cls, src):
         "determine md5 of source code."
         import hashlib
         md5 = hashlib.md5()

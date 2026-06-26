@@ -36,7 +36,7 @@ class Arguments:
         parser.add_argument("-v", "--verbose", action='store_true', help='enable verbose.')
         parser.add_argument("-w", "--wait", action='store_true', help='wait for services to start.')
         optionparser = theparser.add_argument_group()
-        optionparser.add_argument("-l", "--level", default=Main.level, help='set loglevel.', metavar="level")
+        optionparser.add_argument("-l", "--level", default="warning", help='set loglevel.', metavar="level")
         optionparser.add_argument("-m", "--mods", default="", help='modules to load.', metavar="m1,m2")
         optionparser.add_argument("-p", "--path", default="", help='path to working directory.', metavar="path")
         optparser = theparser.add_argument_group()
