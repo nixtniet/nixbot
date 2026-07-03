@@ -7,13 +7,13 @@
 import unittest
 
 
-from nixbot.defines import Base, Parse
+from nixbot.defines import Object, Parse
 
 
 class TestParse(unittest.TestCase):
 
     def test_parse(self):
-        obj = Base()
+        obj = Object()
         obj.cmd = ""
         Parse.parse(obj, "cmd")
         print(obj)
