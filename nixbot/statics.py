@@ -19,13 +19,36 @@ CORE = {
     "parsers": "11b60a600984f3420d6589da98f68ecf",
     "persist": "5b0efac784bf62e8eceaea8287bd2db1",
     "repeats": "5f6ee691ff3dd90df68d34805b229298",
-    "runtime": "dd000164dcbe7945aa0e0fbba03625eb",
+    "runtime": "b68b5d0ede5310d3b83a74f5d46cecfc",
     "threads": "114d11abe25dd85f13a8b0fa574c7a97",
     "utility": "7f8e2d95c52f316396283d8b37016b20"
 }
 
 
 MODULES = {
-    "cfg": "3ab59836ef8384957e576167dc9c5bbd",
-    "fnd": "c13df8fd240810d7a949fd95b79a89d8"
+    "adm": "a9e634f378d53b268b5795824550db41",
+    "cfg": "a9b18e90a3c643c9431335725fb11b78",
+    "cmd": "fc2750fa8985e1488e6c0b17d04d05ac",
+    "eml": "f1c4cd310553ee68f5fac9747295f92d",
+    "fie": "0872ed6a02dd678870f502267d9367c6",
+    "flt": "1fa811bc0ab9cb5b5b6613ca046f9c3f",
+    "fnd": "a33eb8f575e9b24524edc02743c7df1a",
+    "irc": "696ff885dc1f3a398a403a828621f2f2",
+    "log": "d00ffe7b1d60c72affbd534005301f05",
+    "man": "920599410f7739c9503e0eea9e4e5885",
+    "mdl": "45a5b46146a97a033f68c5257dedef02",
+    "pth": "de5a301a26d1cc548fb53ac4aa5550db",
+    "req": "bc1984d2e9de0310dc1b468f25c7ab8c",
+    "rss": "929ad586d7227ea88181708f806288d4",
+    "rst": "524608311cb71e686ab34b65adaf4d17",
+    "sil": "60356cb9f75370652837eebb17ac98b9",
+    "slg": "e68f11973ddc2e3edeb0de0e16e9fe7a",
+    "tdo": "4d46394dc7b7929ce763104d478ef035",
+    "thr": "fe766abec159f550fc91e8a0d2966db7",
+    "tmr": "74df1496d1c3eec1b65b3641a2456750",
+    "udp": "e9a4f41e0f29382335ff6d3d57f980ec",
+    "upt": "847a09522abd97a7799a5f5474182064",
+    "ver": "e43d64ec467f26dcb0549eaa4d7f5794",
+    "web": "2dfed28ed230347c4d6190a7f647d4ca",
+    "wsd": "f160d4246e688fba633ae35bd45c7788"
 }
