@@ -5,8 +5,6 @@
 "fuzzer"
 
 
-import builtins
-import inspect
 import logging
 import os
 import queue
@@ -20,22 +18,25 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from nixbot.defines import Base, Boot, Buffered, Client, Handler, Logging
-from nixbot.defines import Main, Message, Mods, Object, Parse, Task, Thread
-from nixbot.defines import Time, Workdir
+from nixbot.defines import Object, Boot, Buffered, Client, Logging, Main, Md5
+from nixbot.defines import Message, Mods, Method, Parse, Task, Thread, Time
+from nixbot.defines import Workdir
 
 
 Main.debug = True
-Main.name = "nixbot"
+Main.name = "fuzzer"
 Main.user = True
-Main.path = ".test"
-Workdir.wdr = Main.path
+Workdir.wdr = Main.path = ".test"
 
 
 class CLI(Buffered):
 
-    def handle(self, event):
-        Mods.command(event)
+    def __init__(self):
+        Buffered.__init__(self)
+        self.register("command", Mods.command)
+
+    def post(self, event):
+        event.wait()
 
     def raw(self, text):
         if Main.verbose:
@@ -79,7 +80,7 @@ class ClientPool:
     @classmethod
     def shutdown(cls):
         "shutdown"
-        for client in cls.clients[::-1]:
+        for client in cls.clients:
             client.wait()
         time.sleep(0.01)
         for client in cls.clients:
@@ -87,9 +88,24 @@ class ClientPool:
         time.sleep(0.01)
 
 
+
 class Run:
 
     nrs = 0
+
+    @classmethod
+    def banner(cls):
+        "hello"
+        tme = time.ctime(time.time()).replace("  ", " ")
+        txt = "%s %s since %s %s (%s)" % (
+            Main.name.upper(),
+            Main.version,
+            tme,
+            Main.level.upper() or "INFO",
+            Md5.core()
+        )
+        print(txt.replace("  ", " "))
+        sys.stdout.flush()
 
     @staticmethod
     def check(opts):
@@ -121,11 +137,9 @@ class Run:
         except termios.error:
             pass
         try:
-            function(*args)
+            Boot.wrapped(function, *args)
         except (KeyboardInterrupt, EOFError):
             pass
-        except Exception as exc:
-            logging.exception(exc)
         if oldie:
             termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, oldie)
         if dofinal:
@@ -138,13 +152,13 @@ def final():
     lap = Time.elapsed(endtime-Time.starttime)
     if Main.verbose and total:
         percall = (endtime-Time.starttime)/total
-        print(f"{Object.fmt(Main, skip='otxt,txt')}")
+        print(f"{Method.fmt(Main, skip='otxt,txt')}")
         print(f"cores: {ClientPool.nrcpu} events: {total}")
         print(f"total: {lap} nrs: {ClientPool.nrevents - total} call: %.6fs" % percall)
         res = ""
         gotcha = False
         for client in ClientPool.clients:
-            sze = client.iqueue.qsize()
+            sze = client.queue.qsize()
             if sze:
                 gotcha = True
             res += str(sze) + " "
@@ -152,7 +166,7 @@ def final():
         if gotcha:
             for client in ClientPool.clients:
                 try:
-                    print(client.iqueue.get_nowait())
+                    print(client.queue.get_nowait())
                 except queue.Empty:
                     pass
         print(threading.enumerate())
@@ -163,10 +177,11 @@ def main():
         shutil.rmtree(Main.wdr)
     if Run.check("v"):
         Main.verbose = True
-        print(Boot.banner())
+        Run.banner()
     Main.md5 = True
     Parse.parse(Main, " ".join(sys.argv[1:]))
     Boot.configure()
+    Mods.dir("mods", "mods")
     Mods.scanner()
     ClientPool.init(CLI)
     Run.nrs = Main.index or 1
@@ -176,6 +191,11 @@ def main():
     for thr in thrs:
         thr.join()
     ClientPool.shutdown()
+    while 1:
+        if len(threading.enumerate()) == 1:
+            break
+        time.sleep(0.01)
+
 
 
 arguments = [
@@ -189,22 +209,12 @@ arguments = [
              "nick=mekker",
              "http://hnrss.org/newest",
              "22:00 test",
-             "nixt nixtniet@gmail.com Nixt Niet",
+             "nixbot nixtniet@gmail.com Nixt Niet",
              '10',
              10,
-             Base,
-             Base()
+             Object,
+             Object()
             ]
-
-
-def isexception(x):
-    try:
-        return issubclass(x, Exception)
-    except TypeError:
-        return False
-
-arguments2 = [x[1] for x in inspect.getmembers(builtins, isexception)]
-arguments.extend(arguments2)
 
 
 if __name__ == "__main__":
