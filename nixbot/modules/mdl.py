@@ -9,11 +9,11 @@ import logging
 import time
 
 
-from nixbot.defines import Base, Clients, Message, Object, Repeater, Time
+from nixbot.defines import Object, Clients, Message, Method, Repeater, Time
 
 
 def init():
-    for key in Object.keys(oorzaken):
+    for key in Method.keys(oorzaken):
         if "Psych" not in key:
             continue
         val = getattr(oorzaken, key, None)
@@ -54,7 +54,7 @@ aliases["Zwangerschap"] = "pregnancy"
 aliases["Suicide"] = "suicide"
 
 
-demo = Base()
+demo = Object()
 demo.gehandicapten = 2000000
 demo.ggz = 800000
 demo.population = 17440000
@@ -88,7 +88,7 @@ def getday():
 
 def getnr(nme):
     "return number of cases."
-    for k in Object.keys(oorzaken):
+    for k in Method.keys(oorzaken):
         if nme.lower() in k.lower():
             return int(getattr(oorzaken, k))
     return 0
@@ -129,7 +129,7 @@ def cbnow(evt):
     "callback for current status."
     delta = time.time() - STARTTIME
     txt = Time.elapsed(delta) + " "
-    for nme in sorted(Object.keys(oorzaken), key=lambda x: seconds(getnr(x))):
+    for nme in sorted(Method.keys(oorzaken), key=lambda x: seconds(getnr(x))):
         needed = seconds(getnr(nme))
         if needed > 60*60:
             continue
@@ -166,7 +166,7 @@ def dis(event):
     "show disease numbers."
     delta = time.time() - STARTTIME
     txt = Time.elapsed(delta) + " "
-    for nme in sorted(Object.keys(oorzaken), key=lambda x: seconds(getnr(x))):
+    for nme in sorted(Method.keys(oorzaken), key=lambda x: seconds(getnr(x))):
         needed = seconds(getnr(nme))
         if needed > 60*60:
             continue
@@ -395,15 +395,15 @@ aantal = """
          """.split(";")
 
 
-oorzaak = Base()
-Object.construct(oorzaak, zip([x.strip() for x in oor], [int(x.strip()) for x in aantal]))
-oorzaken = Base()
+oorzaak = Object()
+Method.construct(oorzaak, zip([x.strip() for x in oor], [int(x.strip()) for x in aantal]))
+oorzaken = Object()
 
 
 def boot():
     "create model data."
     _nr = -1
-    for key in Object.keys(oorzaak):
+    for key in Method.keys(oorzaak):
         _nr += 1
         if _nr == 0:
             continue

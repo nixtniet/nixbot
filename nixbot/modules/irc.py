@@ -14,8 +14,8 @@ import time
 import _thread
 
 
-from nixbot.defines import Base, Broker, Buffered, Disk, Engine, Main
-from nixbot.defines import Message, Mods, Object, Thread, Utils
+from nixbot.defines import Object, Broker, Buffered, Disk, Main
+from nixbot.defines import Message, Mods, Method, Thread, Utils
 
 
 def init():
@@ -27,7 +27,7 @@ def init():
     except (KeyboardInterrupt, EOFError):
         _thread.interrupt_main()
     if irc.events.joined.is_set():
-        logging.warning("%s", Object.fmt(irc.cfg, skip=[
+        logging.warning("%s", Method.fmt(irc.cfg, skip=[
             "ignore",
             "xname",
             "realname",
@@ -46,7 +46,7 @@ def shutdown():
         bot.stop()
 
 
-class Config(Base):
+class Config(Object):
 
     name = Main.name or Utils.pkgname(Mods)
     channel = f"#{name}"
@@ -98,15 +98,14 @@ class TextWrap(textwrap.TextWrapper):
 wrapper = TextWrap()
 
 
-class IRC(Engine, Buffered):
+class IRC(Buffered):
 
     def __init__(self):
-        Engine.__init__(self)
         Buffered.__init__(self)
         self.buffer = []
         self.cfg = Config()
         self.channels = []
-        self.events = Base()
+        self.events = Object()
         self.events.authed = threading.Event()
         self.events.connected = threading.Event()
         self.events.joined = threading.Event()
@@ -116,7 +115,7 @@ class IRC(Engine, Buffered):
         self.noflood = True
         self.silent = False
         self.sock = None
-        self.state = Base()
+        self.state = Object()
         self.state.error = ""
         self.state.keeprunning = False
         self.state.last = time.time()
@@ -282,10 +281,6 @@ class IRC(Engine, Buffered):
             self.docommand("NICK", nck)
         return evt
 
-    def handle(self, event):
-        "handle an event by sending it to the callback engine."
-        Engine.put(self, event)
-
     def joinall(self):
         "join all chennels."
         for channel in self.channels:
@@ -409,7 +404,7 @@ class IRC(Engine, Buffered):
             txt = self.buffer.pop(0)
         except IndexError:
             txt = ""
-        self.iqueue.put(self.event(txt))
+        self.put(self.event(txt))
 
     def raw(self, text):
         "raw output to the server."
@@ -495,7 +490,6 @@ class IRC(Engine, Buffered):
         self.events.connected.clear()
         self.events.joined.clear()
         Buffered.start(self)
-        Engine.start(self)
         if not self.state.keeprunning:
             Thread.launch(self.keep, daemon=daemon)
         Thread.launch(
@@ -509,7 +503,6 @@ class IRC(Engine, Buffered):
     def stop(self):
         "stop client."
         self.state.stopkeep = True
-        Engine.stop(self)
         Buffered.stop(self)
 
     def wait(self):
@@ -540,7 +533,7 @@ def cb_error(evt):
     bot = Broker.get(evt.orig)
     bot.state.nrerror += 1
     bot.state.error = evt.text
-    logging.debug(Object.fmt(evt))
+    logging.debug(Method.fmt(evt))
 
 
 def cb_h903(evt):

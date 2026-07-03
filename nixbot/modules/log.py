@@ -4,10 +4,10 @@
 "text logging"
 
 
-from nixbot.defines import Base, Disk
+from nixbot.defines import Object, Disk
 
 
-class Log(Base):
+class Log(Object):
 
     def __init__(self):
         super().__init__()

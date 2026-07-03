@@ -4,10 +4,10 @@
 "todo"
 
 
-from nixbot.defines import Base, Disk, Locate
+from nixbot.defines import Object, Disk, Locate
 
 
-class Todo(Base):
+class Todo(Object):
 
     def __init__(self):
         super().__init__()

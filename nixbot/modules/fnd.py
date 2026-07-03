@@ -7,7 +7,7 @@
 import time
 
 
-from nixbot.defines import Locate, Object, Time, Workdir
+from nixbot.defines import Locate, Method, Time, Workdir
 
 
 def fnd(event):
@@ -26,7 +26,7 @@ def fnd(event):
                            key=lambda x: Time.fntime(x[0])
                           ):
         diff = time.time()-Time.fntime(fnm)
-        event.reply(f"{nmr} {Object.fmt(obj)} {Time.elapsed(diff)}")
+        event.reply(f"{nmr} {Method.fmt(obj)} {Time.elapsed(diff)}")
         nmr += 1
     if not nmr:
         event.reply("no result")
