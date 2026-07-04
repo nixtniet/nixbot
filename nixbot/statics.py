@@ -19,7 +19,7 @@ CORE = {
     "parsers": "11b60a600984f3420d6589da98f68ecf",
     "persist": "5b0efac784bf62e8eceaea8287bd2db1",
     "repeats": "5f6ee691ff3dd90df68d34805b229298",
-    "runtime": "128fe316fb92aa3a267f3f698daf7f03",
+    "runtime": "6e55661715ac9cc5ddebd043ed3d2cd6",
     "threads": "c3b9f5dee3dc03d102895c308e542d0d",
     "utility": "2c3178d19655ce359e8ab5ac917ec458"
 }
@@ -44,7 +44,7 @@ MODULES = {
     "sil": "ef684642ba5a2d83194d96dcfd5e329f",
     "slg": "e68f11973ddc2e3edeb0de0e16e9fe7a",
     "tdo": "4d46394dc7b7929ce763104d478ef035",
-    "thr": "140404e071e272fe4bc0a52a5798466f",
+    "thr": "a59544c0c0026efd975cf75e210caeb6",
     "tmr": "74df1496d1c3eec1b65b3641a2456750",
     "udp": "e9a4f41e0f29382335ff6d3d57f980ec",
     "upt": "847a09522abd97a7799a5f5474182064",
