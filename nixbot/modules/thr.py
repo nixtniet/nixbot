@@ -12,46 +12,6 @@ from nixbot.defines import Broker, Locate, Main, Md5, Mods
 from nixbot.defines import Method, Time, Workdir
 
 
-def cmd(event):
-    "list available commands."
-    event.reply(",".join(sorted(Mods.cmds)))
-
-
-def fie(event):
-    "show fields of a type."
-    if not event.rest:
-        res = sorted({x.split('.')[-1].lower() for x in Workdir.kinds()})
-        if res:
-            event.reply(",".join(res))
-        else:
-            event.reply("no types")
-        return
-    itms = Locate.attrs(event.args[0])
-    if not itms:
-        event.reply("no attributes")
-    else:
-        event.reply(",".join(itms))
-
-
-def flt(event):
-    "list of running clients."
-    try:
-        index = int(event.args[0])
-    except (IndexError, ValueError):
-        index = None
-    clts = list(Broker.objs("announce"))
-    if not clts:
-        event.reply("no clients")
-        return
-    if index is None:
-        event.reply(' | '.join([Method.fqn(o).split(".")[-1] for o in clts]))
-        return
-    if index < len(clts):
-        event.reply(str(clts[index]))
-    else:
-        event.reply("no matching client.")
-
-
 def thr(event):
     "list of running threads."
     result = []
@@ -73,13 +33,3 @@ def thr(event):
         event.reply(" ".join(res))
     else:
         event.reply("no threads")
-
-
-def upt(event):
-    "show uptiome."
-    event.reply(Time.elapsed(time.time()-Time.starttime))
-
-
-def ver(event):
-    "show verson."
-    event.reply(f"{Main.name.upper()} {Md5.core()}")

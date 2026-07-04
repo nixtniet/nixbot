@@ -59,8 +59,8 @@ class Thread:
 
     @classmethod
     def launch(cls, func, *args, **kwargs):
+        "run function in a thread."
         with cls.lock:
-            "run function in a thread."
             task = Task(func, *args, **kwargs)
             task.start()
             return task

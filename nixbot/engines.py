@@ -47,7 +47,7 @@ class Engine:
         self.done.set()
 
     def poll(self):
-        "pre queue fetch."
+        "pre polling, should put event in the queue."
 
     def put(self, event):
         "put event on queue."

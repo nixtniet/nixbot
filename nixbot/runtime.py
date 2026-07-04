@@ -99,20 +99,6 @@ class Console(CLI):
 class Kernel(Boot):
 
     @classmethod
-    def banner(cls):
-        "hello"
-        tme = time.ctime(time.time()).replace("  ", " ")
-        txt = "%s %s since %s %s (%s)" % (
-            Main.name.upper(),
-            Main.version,
-            tme,
-            Main.level.upper() or "INFO",
-            Md5.core()
-        )
-        print(txt.replace("  ", " "))
-        sys.stdout.flush()
-
-    @classmethod
     def daemon(cls, verbose=False, nochdir=False):
         "run in the background."
         pid = os.fork()
@@ -180,7 +166,8 @@ class Scripts:
         "console script."
         readline.redisplay()
         if Main.verbose:
-            Kernel.banner()
+            print(Kernel.banner())
+            sys.stdout.flush()
         if Main.all:
             Main.mods = ",".join(Mods.list())
         Kernel.scanner()

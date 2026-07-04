@@ -8,7 +8,7 @@ from nixbot.defines import Broker
 
 
 def lou(event):
-    "enable silent mode."
+    "disable silent mode."
     bot = Broker.get(event.orig)
     if not bot:
         event.reply("no bot in fleet.")
@@ -18,7 +18,7 @@ def lou(event):
 
 
 def sil(event):
-    "disable silent mode."
+    "enable silent mode."
     bot = Broker.get(event.orig)
     if not bot:
         event.reply("no bot in fleet.")
