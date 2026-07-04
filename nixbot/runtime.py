@@ -8,10 +8,9 @@ import argparse
 import os
 import readline
 import sys
-import time
 
 
-from .defines import Boot, Client, Main, Md5, Message, Mods, Method
+from .defines import Boot, Client, Main, Message, Mods, Method
 from .defines import Utils, Workdir
 
 

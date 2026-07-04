@@ -8,8 +8,7 @@ import threading
 import time
 
 
-from nixbot.defines import Broker, Locate, Main, Md5, Mods
-from nixbot.defines import Method, Time, Workdir
+from nixbot.defines import Time
 
 
 def thr(event):
