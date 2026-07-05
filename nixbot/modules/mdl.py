@@ -19,11 +19,11 @@ def init():
         val = getattr(oorzaken, key, None)
         if val and int(val) > 10000:
             evt = Message()
-            evt.txt = ""
+            evt.text = ""
             evt.rest = key
             sec = seconds(val)
             name = aliases.get(key)
-            Repeater.add(sec, cbstats, evt, thrname=name)
+            Repeater.add(sec, cbstats, evt, name=name)
             logging.warning(Time.elapsed(time.time()-STARTTIME))
 
 
@@ -98,7 +98,7 @@ def seconds(nrs):
     "return number of seconds."
     if not nrs:
         return nrs
-    return 60*60*24*365 / float(nrs)
+    return int(60*60*24*365 / float(nrs))
 
 
 def iswanted(k, line):

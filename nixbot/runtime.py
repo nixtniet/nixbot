@@ -189,7 +189,8 @@ class Scripts:
         "service script."
         Kernel.privileges()
         Kernel.pid(Main.name)
-        Kernel.banner()
+        print(Kernel.banner())
+        sys.stdout.flush()
         Kernel.scanner()
         Kernel.init(Main.mods or Main.default)
         Kernel.forever()
