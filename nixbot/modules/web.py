@@ -78,7 +78,7 @@ class HTTPHandler(BaseHTTPRequestHandler):
     def setup(self):
         "setup handler."
         BaseHTTPRequestHandler.setup(self)
-        self._path = os.path.join(Utils.where(Object), "network")
+        self._path = os.path.join(Utils.where(Object), "numbers")
         self._size = 0
         self._ip = self.client_address[0]
 
