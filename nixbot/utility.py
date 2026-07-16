@@ -198,22 +198,6 @@ class Utils:
             pth.parent.mkdir(parents=True, exist_ok=True)
 
     @staticmethod
-    def check(path, md5s):
-        "check for md5sums in a given path."
-        ok = True
-        if not os.path.exists(path):
-            return False
-        for pth in os.listdir(path):
-            if pth.startswith("__") or not pth.endswith(".py") or "statics" in pth:
-                continue
-            name = pth[:-3]
-            modpath = os.path.join(path, pth)
-            if Md5.md5(modpath) != md5s.get(name):
-                logging.warning("mismatch %s", name)
-                ok = False
-        return ok
-
-    @staticmethod
     def clsname(obj):
         "return classname of an object."
         return obj.__class__.__name__
@@ -265,7 +249,7 @@ class Utils:
 
     @staticmethod
     def skipped(obj):
-        "yield values without underscore keys."
+        "yield values without underscored keys."
         for key in dir(obj):
             if key.startswith("_"):
                 continue

@@ -8,10 +8,10 @@ import threading
 
 
 from .brokers import Broker
-from .objects import Object
+from .objects import Default
 
 
-class Message(Object):
+class Message(Default):
 
     def __init__(self):
         super().__init__()
@@ -22,11 +22,6 @@ class Message(Object):
         self.kind = "message"
         self.result = []
 
-    def __getattr__(self, key):
-        if key in dir(self):
-            return self.__getattribute__(self, key)
-        return ""
-
     def display(self):
         "print results."
         bot = Broker.get(self.orig)
@@ -36,8 +31,6 @@ class Message(Object):
     def iface(self, txt):
         "show interface."
         txt = f"{self.cmd} {txt}"
-        if txt.startswith("."):
-            txt = txt[1:]
         self.reply(txt)
 
     def ok(self, txt=""):

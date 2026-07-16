@@ -7,7 +7,6 @@
 import logging
 import queue
 import threading
-import time
 import _thread
 
 
@@ -50,6 +49,17 @@ class Output:
     def say(self, channel, text):
         "say text in channel."
         self.raw(text)
+
+
+class Client(Engine, Output):
+
+    def __init__(self):
+        Engine.__init__(self)
+        Output.__init__(self)
+
+    def raw(self, text):
+        "raw output."
+        raise NotImplementedError
 
 
 class Buffer(Output):
@@ -112,41 +122,10 @@ class Buffered(Engine, Buffer):
         Buffer.stop(self)
 
 
-class Client(Engine, Output):
-
-    def __init__(self):
-        Engine.__init__(self)
-        Output.__init__(self)
-
-    def raw(self, text):
-        "raw output."
-        raise NotImplementedError
-
-
-class Clients:
-
-    @staticmethod
-    def announce(txt):
-        "announce text on all clients."
-        for obj in Broker.objs("announce"):
-            obj.announce(txt)
-
-    @staticmethod
-    def shutdown():
-        "call stop on clients."
-        for client in Broker.objs("wait"):
-            client.wait()
-        time.sleep(0.01)
-        for client in Broker.objs("stop"):
-            client.stop()
-        time.sleep(0.01)
-
-
 def __dir__():
     return (
         'Buffer',
         'Buffered',
         'Client',
-        'Clients',
         'Output'
     )

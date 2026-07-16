@@ -13,7 +13,7 @@ import threading
 
 
 from .encoder import Json
-from .objects import Object, Method
+from .objects import Default, Method
 from .utility import Time, Utils
 
 
@@ -107,7 +107,7 @@ class Locate:
             for pth in cls.fns(Workdir.long(kind)):
                 obj = Cache.get(pth)
                 if obj is None:
-                    obj = Object()
+                    obj = Default()
                     Disk.read(obj, pth)
                     Cache.add(pth, obj)
                 if not removed and Method.deleted(obj):
@@ -179,7 +179,6 @@ class Workdir:
     @classmethod
     def kinds(cls):
         "show kind on objects in cache."
-        assert cls.wdr
         path = os.path.join(cls.wdr, "store")
         if not os.path.exists(path):
             cls.skel()
@@ -201,13 +200,11 @@ class Workdir:
     @classmethod
     def moddir(cls):
         "return modules directory."
-        assert cls.wdr
         return os.path.join(cls.wdr, "mods")
 
     @classmethod
     def pid(cls, name):
         "write pidfile."
-        assert cls.wdr
         filename = os.path.join(cls.wdr, f"{name}.pid")
         if os.path.exists(filename):
             os.unlink(filename)
@@ -219,7 +216,6 @@ class Workdir:
     @classmethod
     def skel(cls):
         "create directories."
-        assert cls.wdr
         if not os.path.exists(cls.wdr):
             Utils.cdir(cls.wdr)
         path = os.path.abspath(cls.wdr)

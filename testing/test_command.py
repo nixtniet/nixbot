@@ -7,7 +7,7 @@
 import unittest
 
 
-from nixbot.defines import Engine, Mods, Message
+from nixbot.defines import Commands, Engine, Message
 
 
 def cmnd(event):
@@ -17,22 +17,22 @@ def cmnd(event):
 class TestCommands(unittest.TestCase):
 
     def test_construct(self):
-        cmds = Mods()
-        self.assertEqual(type(cmds), Mods)
+        cmds = Commands()
+        self.assertEqual(type(cmds), Commands)
 
     def test_add(self):
-        Mods.add(cmnd)
-        self.assertTrue("cmnd" in Mods.cmds)
+        Commands.add(cmnd)
+        self.assertTrue("cmnd" in Commands.cmds)
 
     def test_get(self):
-        Mods.add(cmnd)
-        self.assertTrue(Mods.cmds.get("cmnd"))
+        Commands.add(cmnd)
+        self.assertTrue(Commands.cmds.get("cmnd"))
 
     def test_command(self):
         clt = Engine()
-        Mods.add(cmnd)
+        Commands.add(cmnd)
         evt = Message()
         evt.text = "cmnd"
         evt.orig = repr(clt)
-        Mods.command(evt)
+        Commands.command(evt)
         self.assertTrue("yo!" in evt.result)

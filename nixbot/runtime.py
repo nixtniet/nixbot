@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # This file is placed in the Public Domain.
 
 
@@ -10,8 +11,11 @@ import readline
 import sys
 
 
-from .defines import Boot, Client, Main, Message, Mods, Method
-from .defines import Utils, Workdir
+sys.path.insert(0, os.getcwd())
+
+
+from nixbot.defines import Boot, Client, Commands, Main, Message
+from nixbot.defines import Mods, Method, Utils, Workdir
 
 
 class Arguments:
@@ -50,24 +54,23 @@ class Arguments:
         Main.name = Main.name or Utils.pkgname(Mods)
 
 
+class Cmd:
+
+    @classmethod
+    def cmd(cls, event):
+        "list available commands."
+        event.reply(",".join(sorted(Commands.cmds)))
+
+
 class CLI(Client):
 
     def __init__(self):
         super().__init__()
-        self.register("command", Mods.command)
+        self.register("command", Commands.command)
 
     def after(self, event):
         "wait for event to finish"
         event.wait()
-
-    def cmd(self, text):
-        "do command."
-        evt = Message()
-        evt.orig = repr(self)
-        evt.text = text
-        Mods.command(evt)
-        evt.wait()
-        return evt
 
     def raw(self, text):
         "write to console."
@@ -83,7 +86,7 @@ class Console(CLI):
 
     def handle(self, event):
         "handle event."
-        Mods.command(event)
+        Commands.command(event)
 
     def poll(self):
         "return event."
@@ -146,6 +149,7 @@ class Kernel(Boot):
             dofinal()
 
     pid = Workdir.pid
+    scanner = Mods.scanner
 
 
 class Scripts:
@@ -157,7 +161,7 @@ class Scripts:
         Kernel.privileges()
         Kernel.pid(Main.name)
         Kernel.scanner()
-        Kernel.init(Main.mods or Main.default)
+        Kernel.init()
         Kernel.forever()
 
     @staticmethod
@@ -168,9 +172,9 @@ class Scripts:
             print(Kernel.banner())
             sys.stdout.flush()
         if Main.all:
-            Main.mods = ",".join(Mods.list())
+            Main.sets.mods = ",".join(Mods.list())
         Kernel.scanner()
-        if not Kernel.init(Main.mods, Main.wait):
+        if not Kernel.init():
             return
         csl = Console()
         csl.start()
@@ -182,7 +186,10 @@ class Scripts:
         Kernel.scanner()
         cli = CLI()
         cli.silent = False
-        cli.cmd(Main.otxt)
+        evt = Message()
+        evt.orig = repr(cli)
+        evt.text = Main.otxt
+        Commands.command(evt)
 
     @staticmethod
     def service():
@@ -192,7 +199,7 @@ class Scripts:
         print(Kernel.banner())
         sys.stdout.flush()
         Kernel.scanner()
-        Kernel.init(Main.mods or Main.default)
+        Kernel.init()
         Kernel.forever()
 
 
@@ -200,6 +207,7 @@ def main():
     "main"
     Arguments.getargs()
     Kernel.configure()
+    Commands.add(Cmd.cmd)
     if Main.daemon:
         Kernel.wrap(Scripts.background)
     elif Main.console:

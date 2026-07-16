@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"in the beginning"
+"booting"
 
 
 import logging
@@ -13,7 +13,8 @@ import _thread
 from .clients import Output
 from .configs import Main
 from .loggers import Logging
-from .package import Mods
+from .package import Commands, Mods
+from .parsers import Parse
 from .persist import Workdir
 from .threads import Task, Thread
 from .utility import Md5, Utils
@@ -21,15 +22,18 @@ from .utility import Md5, Utils
 
 class Boot:
 
+    command = Commands.command
+    parse = Parse.parse
+    scanner = Mods.scanner
+
     @classmethod
     def banner(cls):
         "hello."
         tmr = time.ctime(time.time()).replace("  ", " ")
-        txt = "%s %s since %s %s (%s)" % (
+        txt = "%s since %s %s (%s)" % (
             Main.name.upper(),
-            Main.version,
             tmr,
-            Main.level.upper() or "WARNING",
+            Main.sets.level.upper() or "WARNING",
             Md5.core()
         )
         return txt.replace("  ", " ")
@@ -37,16 +41,14 @@ class Boot:
     @classmethod
     def configure(cls):
         "configure program."
-        Workdir.wdr = Main.path or Workdir.home(Main.name)
-        Mods.dir(f"{Main.name}.modules", Main.moddir or Utils.moddir())
-        Mods.dir("modules", Workdir.moddir())
-        if Main.user:
-            Mods.dir("mods", "mods")
+        Workdir.wdr = Workdir.wdr or Workdir.home(Main.name)
+        Workdir.skel()
+        Mods.dir("modules", Utils.moddir())
+        Mods.dir("mods", Workdir.moddir())
         Logging.size(len(Main.name))
-        Logging.level(Main.level or "warning")
+        Logging.level(Main.sets.level or "warning")
         Mods.sums()
         Md5.check(Mods.core)
-        Workdir.skel()
 
     @classmethod
     def forever(cls):
@@ -58,23 +60,21 @@ class Boot:
                 break
 
     @classmethod
-    def init(cls, modlist, wait=False):
+    def init(cls):
         "call init of modules that have an init function."
         thrs = []
-        for name in Utils.spl(modlist):
+        for name in Utils.spl(Main.sets.mods or Main.sets.default):
             mod = Mods.get(name)
             if not mod or "init" not in dir(mod):
                 continue
             thrs.append(Thread.launch(mod.init))
-        if thrs and wait:
+        if thrs and Main.sets.wait:
             for thr in thrs:
                 try:
                     thr.join()
                 except (KeyboardInterrupt, EOFError):
                     return False
         return True
-
-    scanner = Mods.scanner
 
     @classmethod
     def wait(cls, nr=1):
