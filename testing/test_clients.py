@@ -7,7 +7,7 @@
 import unittest
 
 
-from nixbot.defines import Client, Message
+from nixbot.defines import Client, Engine, Message
 
 
 buffer = []
@@ -18,9 +18,10 @@ def hello(event):
     event.ready()
 
 
-class MyClient(Client):
+class MyClient(Client, Engine):
 
     def __init__(self):
+        Engine.__init__(self)
         Client.__init__(self)
         self.register("hello", hello)
 
