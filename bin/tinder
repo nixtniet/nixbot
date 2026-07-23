@@ -5,7 +5,6 @@
 "stress test"
 
 
-import logging
 import os
 import shutil
 import sys
@@ -16,177 +15,64 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from nixbot.defines import Boot, Buffer, Clients, Commands, Engine, Logging
-from nixbot.defines import Main, Message, Mods, Method, Parse, Task
-from nixbot.defines import Thread, Time, Utils, Workdir
+from nixbot.defines import Boot, Main, Message, Method, Mods
+from nixbot.defines import Parse, Time, Workdir
 
 
-Main.debug = True
-Main.name = "tinder"
-Main.path = ".test"
-Workdir.wdr = Main.path
-
-
-Mods.dir("modules", Utils.moddir())
+Workdir.wdr = ".test"
 Mods.dir("mods", "mods")
-Mods.scanner()
 
 
-Logging.level("debug")
+class Vars:
 
-
-class CLI(Engine, Buffer):
-
-    def __init__(self):
-        Buffer.__init__(self)
-        Engine.__init__(self)
-        self.register("command", Commands.command)
-
-    def raw(self, text):
-        if Main.verbose and not self.block.is_set():
-            print(text.encode('utf-8', 'replace').decode("utf-8"))
-            sys.stdout.flush()
-
-
-class Pool:
-
-    clients = []
-    lock = threading.RLock()
-    last = 0
     nrevents = 0
-    nrcpu = 1
-
-    @classmethod
-    def add(cls, client):
-        cls.clients.append(client)
-
-    @classmethod
-    def init(cls, nr, client):
-        with cls.lock:
-            cls.nrcpu = nr
-            for _x in range(Pool.nrcpu):
-                clt = client()
-                clt.start()
-                cls.add(clt)
-
-    @classmethod
-    def put(cls, *args):
-        with cls.lock:
-            if cls.last >= cls.nrcpu:
-                cls.last = 0
-            cls.clients[cls.last].put(*args)
-            cls.last += 1
-            cls.nrevents += 1
-
-    @classmethod
-    def shutdown(cls):
-        for client in cls.clients:
-            client.wait()
-        time.sleep(0.01)
-        for client in cls.clients:
-            client.stop()
-        time.sleep(0.01)
+    starttime = 0
 
 
-class Kernel(Boot):
-
-    nrs = 0
-
-    @classmethod
-    def banner(cls):
-        print(Boot.banner())
+def raw(text):
+    if "v" in Main.opts:
+        print(text.encode('utf-8', 'replace').decode("utf-8"))
         sys.stdout.flush()
 
-    @staticmethod
-    def check(opts):
-        "check for command line options."
-        for arg in sys.argv:
-            if not arg.startswith("-"):
-                continue
-            for opt in opts:
-                if opt in arg:
-                    return True
-        return False
 
-    @staticmethod
-    def payload(todo):
-        for cmd, example in todo.items():
-            for ex in example:
-                evt = Message()
-                evt.kind = "command"
-                evt.text = f"{cmd} {ex}"
-                Pool.put(evt)
-
-    @classmethod
-    def wrap(cls, function, *args, dofinal=None):
-        "restore console."
-        import termios
-        oldie = None
-        try:
-            oldie = termios.tcgetattr(sys.stdin.fileno())
-        except termios.error:
-            pass
-        try:
-            cls.wrapped(function, *args)
-        except (KeyboardInterrupt, EOFError):
-            pass
-        if oldie:
-            termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, oldie)
-        if dofinal:
-            final()
+def payload(todo):
+    for cmd, example in todo.items():
+        for ex in example:
+            Vars.nrevents += 1
+            evt = Message()
+            evt.text = f"{cmd} {ex}"
+            Mods.command(evt)
+            for text in evt.result:
+                raw(text)
 
 
 def final():
-    if not Main.verbose:
+    if "v" not in Main.opts:
         return
-    total = Pool.nrevents
+    total = Vars.nrevents
     endtime = time.time()
-    lap = Time.elapsed(endtime-Time.starttime)
-    percall = (endtime-Time.starttime)/total
+    lap = Time.elapsed(endtime-Vars.starttime)
+    percall = (endtime-Vars.starttime)/total
     print(f"{Method.fmt(Main, skip='otxt,txt')}")
-    print(f"cores: {Pool.nrcpu} events: {total}")
-    print(f"total: {lap} nrs: {Pool.nrevents - total} call: %.6fs" % percall)
-    res = ""
-    for client in Pool.clients:
-        res += str(client.queue.qsize()) + " "
-    print(res.strip())
+    print(f"events: {total}")
+    print(f"total: {lap} nrs: {Vars.nrevents} call: %.6fs" % percall)
     print(threading.enumerate())
 
 
 def main():
-    if os.path.exists(Main.wdr):
-        shutil.rmtree(Main.wdr)
-    if Kernel.check("v"):
-        Main.verbose = True
-        Kernel.banner()
-    if Kernel.check("t"):
-        Main.threaded = True
     Parse.parse(Main, " ".join(sys.argv[1:]))
-    if Main.threaded:
-        Pool.init(os.cpu_count(), CLI)
-    else:
-        Pool.init(1, CLI)
-    Kernel.nrs = Main.index or 1
-    thrs = []
-    for _x in range(Kernel.nrs):
-        thrs.append(Thread.launch(Kernel.payload, pre))
-    for thr in thrs:
-        thr.join()
-    thrs = []
-    for _x in range(Kernel.nrs):
-        thrs.append(Thread.launch(Kernel.payload, examples))
-    for thr in thrs:
-        thr.join()
-    thrs = []
-    for _x in range(Kernel.nrs):
-        thrs.append(Thread.launch(Kernel.payload, post))
-    for thr in thrs:
-        thr.join()
-    Clients.shutdown()
-    while 1:
-        if len(threading.enumerate()) == 1:
-            break
-        time.sleep(0.01)
+    Mods.configure()
+    Mods.scanner()
+    if os.path.exists(Workdir.wdr):
+        shutil.rmtree(Workdir.wdr)
+    Vars.starttime = time.time()
+    nrs = Main.index or 1
+    for _x in range(nrs):
+        payload(pre)
+    for _x in range(nrs):
+        payload(examples)
+    for _x in range(nrs):
+        payload(post)
 
 
 examples = {
@@ -251,4 +137,4 @@ post = {
 
 
 if __name__ == "__main__":
-    Kernel.wrap(main, dofinal=final)
+    Boot.wrap(main, dofinal=final)

@@ -4,7 +4,9 @@
 "configuration"
 
 
-from nixbot.defines import Object, Disk, Method, Mods
+from nixbot.objects import Method, Object
+from nixbot.package import Mods
+from nixbot.persist import Disk
 
 
 def cfg(event):

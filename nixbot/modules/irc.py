@@ -14,8 +14,8 @@ import time
 import _thread
 
 
-from nixbot.defines import Object, Broker, Buffered, Commands, Disk, Main
-from nixbot.defines import Message, Mods, Method, Thread, Utils
+from nixbot.defines import Object, Broker, Buffer, Disk, Engine, Main, Message
+from nixbot.defines import Mods, Method, Thread, Utils
 
 
 def init():
@@ -98,10 +98,11 @@ class TextWrap(textwrap.TextWrapper):
 wrapper = TextWrap()
 
 
-class IRC(Buffered):
+class IRC(Engine, Buffer):
 
     def __init__(self):
-        Buffered.__init__(self)
+        Engine.__init__(self)
+        Buffer.__init__(self)
         self.buffer = []
         self.cfg = Config()
         self.channels = []
@@ -489,7 +490,8 @@ class IRC(Buffered):
         self.events.ready.clear()
         self.events.connected.clear()
         self.events.joined.clear()
-        Buffered.start(self)
+        Engine.start(self)
+        Buffer.start(self)
         if not self.state.keeprunning:
             Thread.launch(self.keep, daemon=daemon)
         Thread.launch(
@@ -503,7 +505,8 @@ class IRC(Buffered):
     def stop(self):
         "stop client."
         self.state.stopkeep = True
-        Buffered.stop(self)
+        Engine.stop(self)
+        Buffer.stop(self)
 
     def wait(self):
         "wait for client to join."
@@ -597,7 +600,7 @@ def cb_privmsg(evt):
             evt.text = evt.text[0].lower() + evt.text[1:]
         if evt.text:
             name = evt.text and evt.text.split()[0]
-            Thread.launch(Commands.command, evt, name=name)
+            Thread.launch(Mods.command, evt, name=name)
 
 
 def cb_quit(evt):

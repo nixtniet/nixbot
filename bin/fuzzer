@@ -198,7 +198,7 @@ arguments = [
              "nick=mekker",
              "http://hnrss.org/newest",
              "22:00 test",
-             "nixbot nixtniet@gmail.com Nixt Niet",
+             "nixbot nixbotniet@gmail.com Nixt Niet",
              '10',
              10,
              Object,

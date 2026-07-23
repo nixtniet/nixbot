@@ -4,7 +4,7 @@
 "show fields on an object"
 
 
-from nixbot.defines import Locate, Workdir
+from nixbot.persist import Locate, Workdir
 
 
 def fie(event):
