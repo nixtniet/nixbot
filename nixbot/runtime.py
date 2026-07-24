@@ -59,9 +59,9 @@ class Scripts:
         "background script."
         Main.sets.default = "irc,rss"
         Kernel.daemon()
-        Kernel.boot()
         Kernel.privileges()
         Kernel.pid()
+        Kernel.boot(False)
         Kernel.init()
         Kernel.forever()
 
@@ -82,13 +82,13 @@ class Scripts:
     def control():
         "cli script."
         Kernel.parse(Main, " ".join(sys.argv[1:]))
-        Kernel.add(Cmd.srv, Cmd.tbl)
         Kernel.boot(False)
         cli = CLI()
         cli.silent = False
         evt = Message()
         evt.orig = repr(cli)
         evt.text = Main.otxt
+        Kernel.add(Cmd.srv, Cmd.tbl)
         Kernel.command(evt)
 
     @staticmethod

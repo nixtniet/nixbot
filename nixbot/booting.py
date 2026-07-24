@@ -29,6 +29,7 @@ class Boot:
     parse = Parse.parse
     pid = Workdir.pid
     scanner = Mods.scanner
+    table = Mods.table
 
     @classmethod
     def boot(cls, banner=True):
@@ -60,7 +61,7 @@ class Boot:
         pid2 = os.fork()
         if pid2 != 0:
             os._exit(0)
-        if "v" in Main.opts:
+        if "v" not in Main.opts:
             cls.null(sys.stdin)
             cls.null(sys.stdout)
             cls.null(sys.stderr)
@@ -113,11 +114,6 @@ class Boot:
         pwnam2 = pwd.getpwnam(getpass.getuser())
         os.setgid(pwnam2.pw_gid)
         os.setuid(pwnam2.pw_uid)
-
-    @classmethod
-    def table(cls):
-        Mods.statics()
-        Md5.check(Mods.core)
 
     @classmethod
     def wrap(cls, func, *args, dofinal=None):

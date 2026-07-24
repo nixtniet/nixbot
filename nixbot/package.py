@@ -148,6 +148,15 @@ class Mods:
         except (ImportError, SyntaxError, ValueError):
             pass
 
+    @classmethod
+    def table(cls):
+        "read static tables."
+        cls.statics()
+        if not cls.names:
+            cls.scanner()
+        if cls.core:
+            Md5.check(cls.core)
+
 
 def __dir__():
     return (
