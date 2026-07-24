@@ -18,6 +18,14 @@ class Kernel(Boot):
         print(Boot.banner())
         sys.stdout.flush()
 
+    @classmethod
+    def boot(cls, banner=True):
+        cls.configure()
+        if banner:
+            cls.banner()
+        cls.table()
+        Mods.add(Cmd.cmd)
+
 
 class CLI(Engine, Client):
 
@@ -88,7 +96,9 @@ class Scripts:
         evt = Message()
         evt.orig = repr(cli)
         evt.text = Main.otxt
-        Kernel.add(Cmd.srv, Cmd.tbl)
+        if "admin" in Main.opts:
+            mod = Mods.get("adm")
+            Mods.scan(mod)
         Kernel.command(evt)
 
     @staticmethod
@@ -104,7 +114,11 @@ class Scripts:
 
 
 def main():
-    if "-s" in sys.argv:
+    if "-s" in sys.argv or "--service" in sys.argv:
         Kernel.wrap(Scripts.service)
-    else:
+    elif "--console" in sys.argv:
         Kernel.wrap(Scripts.console)
+    elif "--daemon" in sys.argv:
+        Kernel.wrap(Scripts.console)
+    else:
+        Kernel.wrap(Scripts.control)

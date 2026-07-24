@@ -12,9 +12,18 @@ import os
 from .clients import Clients
 from .configs import Main
 from .loggers import Logging
+from .md5sums import Md5
 from .parsers import Parse
 from .persist import Workdir
-from .utility import Md5, Utils
+from .utility import Utils
+
+
+class Cmd:
+
+    @staticmethod
+    def cmd(event):
+        "list available commands."
+        event.reply(",".join(sorted(Mods.names or Mods.cmds)))
 
 
 class Mods:
@@ -31,7 +40,6 @@ class Mods:
         "register a command."
         for func in funcs:
             cls.cmds[func.__name__] = func
-            cls.names[func.__name__] = func.__module__.split(".")[-1]
 
     @classmethod
     def command(cls, evt):
@@ -40,11 +48,13 @@ class Mods:
         func = cls.cmds.get(evt.cmd, None)
         if not func:
             modname = cls.names.get(evt.cmd, None)
-            if modname:
-                mod = Mods.get(modname)
-                if mod:
-                    logging.debug(f"load {modname}")
-                    cls.scan(mod)
+            if not modname:
+                return evt.ready()
+            mod = Mods.get(modname)
+            if not mod:
+                return evt.ready()
+            logging.debug(f"load {modname}")
+            cls.scan(mod)
             func = cls.cmds.get(evt.cmd, None)
         if func:
             func(evt)
@@ -57,11 +67,12 @@ class Mods:
         Workdir.wdr = Workdir.wdr or Workdir.home(Main.name)
         Workdir.skel()
         cls.dir("modules", Workdir.moddir())
-        cls.dir("modulez", Utils.moddir())
+        cls.dir(f"{Main.name}.modules", Utils.moddir())
         if "u" in Main.opts:
             cls.dir("mods", "mods")
         Logging.size(len(Main.name))
         Logging.level(Main.sets.level or "warning")
+        cls.add(Cmd.cmd)
 
     @classmethod
     def dir(cls, pkgname, path):
@@ -119,9 +130,12 @@ class Mods:
     @classmethod
     def scan(cls, mod):
         "scan module for commands."
+        result = []
         for nme, func in inspect.getmembers(mod, inspect.isfunction):
             if 'event' in inspect.signature(func).parameters:
                 cls.add(func)
+                result.append(func)
+        return result
 
     @classmethod
     def scanner(cls):

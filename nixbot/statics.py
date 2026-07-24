@@ -5,23 +5,23 @@
 
 
 CORE = {
-    "booting": "6c4c0458aca15c45707dde09f1b0eaa6",
+    "booting": "f6ef7d1c48bf2402e29789df66efc0c0",
     "clients": "4fc69c25873fcccec2efb6f3c7b52857",
-    "command": "0d740e4bde23f625bc5f9273221344a6",
     "configs": "8d6fd1c295af5e8d906803dcd0dad611",
-    "defines": "8f505bfe9c583a9496352c17ca674665",
+    "defines": "3e221429c9bb2263e53f31884aed0788",
     "encoder": "442b637a07a3611696a06d1f2c8211f5",
     "engines": "767e741a9e84f56cdb1b68c979a6b584",
     "loggers": "78c56197540c80307d12887e22ba7e05",
+    "md5sums": "6e0fe1a05169d016bf3a9f7286e7d68e",
     "message": "e8732b08af0edccbbae0543f445cfa74",
     "objects": "d1719008f8c1211790f8fcd0880dbfeb",
-    "package": "9c6c09cd59bc2aaa3f217caaa41b0d71",
-    "parsers": "1f23b17d7d34996176aa3a72477fbc0e",
+    "package": "2374fa327911b96dd67f7357b74f250f",
+    "parsers": "e72d2ad41806637fae85d96fc13a6dfd",
     "persist": "e0aeb11a054b39944f92a8ce7d959e99",
     "repeats": "1d3ead9599a5ebd6aa58344ba9bd8218",
-    "runtime": "e295baad2d9bc63002000ebb21245173",
+    "runtime": "de1286e51a58f9718888a37b5a220f85",
     "threads": "2fcb5ceb0fa336dd7208297fc23e17b0",
-    "utility": "069ed8eeb33782850a5c476883b8cef5"
+    "utility": "98d5bd9037932d619ab1d2fa409cd3eb"
 }
 
 
@@ -55,7 +55,6 @@ MODULES = {
 NAMES = {
     "atr": "rss",
     "cfg": "cfg",
-    "cmd": "command",
     "dis": "mdl",
     "dne": "tdo",
     "dpl": "rss",
@@ -80,9 +79,7 @@ NAMES = {
     "rss": "rss",
     "sil": "sil",
     "slg": "slg",
-    "srv": "command",
     "syn": "rss",
-    "tbl": "command",
     "tdo": "tdo",
     "thr": "thr",
     "tmr": "tmr",

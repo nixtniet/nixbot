@@ -12,13 +12,13 @@ import _thread
 
 
 from .clients import Client
-from .command import Cmd
 from .configs import Main
+from .md5sums import Md5
 from .threads import Task, Thread
-from .package import Mods
+from .package import Cmd, Mods
 from .parsers import Parse
 from .persist import Workdir
-from .utility import Md5, Utils
+from .utility import Utils
 
 
 class Boot:
@@ -30,14 +30,6 @@ class Boot:
     pid = Workdir.pid
     scanner = Mods.scanner
     table = Mods.table
-
-    @classmethod
-    def boot(cls, banner=True):
-        cls.configure()
-        if banner:
-            cls.banner()
-        cls.table()
-        Mods.add(Cmd.cmd)
 
     @classmethod
     def banner(cls):
