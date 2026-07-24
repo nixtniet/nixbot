@@ -214,6 +214,11 @@ class Utils:
         return [x for x in result if x and x not in ignores]
 
     @staticmethod
+    def strip(path, nr=3):
+        "strip filename from path."
+        return os.path.join(*path.split(os.sep)[-nr:])
+
+    @staticmethod
     def where(obj):
         "path where object is defined."
         return os.path.dirname(inspect.getfile(obj))

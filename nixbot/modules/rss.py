@@ -97,6 +97,7 @@ class Fetcher:
         nrs = 0
         for fnm, feed in Locate.find(Method.fqn(Rss)):
             if "skip" in feed and feed.skip:
+                logging.debug(f"skip {Utils.strip(fnm)}")
                 continue
             Runners.put((fnm, feed, silent))
             nrs += 1
