@@ -62,8 +62,6 @@ class Mods:
             cls.dir("mods", "mods")
         Logging.size(len(Main.name))
         Logging.level(Main.sets.level or "warning")
-        cls.statics()
-        Md5.check(cls.core)
 
     @classmethod
     def dir(cls, pkgname, path):

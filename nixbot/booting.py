@@ -12,6 +12,7 @@ import _thread
 
 
 from .clients import Client
+from .command import Cmd
 from .configs import Main
 from .threads import Task, Thread
 from .package import Mods
@@ -28,6 +29,14 @@ class Boot:
     parse = Parse.parse
     pid = Workdir.pid
     scanner = Mods.scanner
+
+    @classmethod
+    def boot(cls, banner=True):
+        cls.configure()
+        if banner:
+            cls.banner()
+        cls.table()
+        Mods.add(Cmd.cmd)
 
     @classmethod
     def banner(cls):
@@ -104,6 +113,11 @@ class Boot:
         pwnam2 = pwd.getpwnam(getpass.getuser())
         os.setgid(pwnam2.pw_gid)
         os.setuid(pwnam2.pw_uid)
+
+    @classmethod
+    def table(cls):
+        Mods.statics()
+        Md5.check(Mods.core)
 
     @classmethod
     def wrap(cls, func, *args, dofinal=None):

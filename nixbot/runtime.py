@@ -11,6 +11,14 @@ import sys
 from .defines import Boot, Client, Cmd, Engine, Main, Message, Mods
 
 
+class Kernel(Boot):
+
+    @classmethod
+    def banner(cls):
+        print(Boot.banner())
+        sys.stdout.flush()
+
+
 class CLI(Engine, Client):
 
     def __init__(self):
@@ -44,14 +52,6 @@ class Console(CLI):
         return evt
 
 
-class Kernel(Boot):
-
-    @classmethod
-    def banner(cls):
-        print(Boot.banner())
-        sys.stdout.flush()
-
-
 class Scripts:
 
     @staticmethod
@@ -59,8 +59,7 @@ class Scripts:
         "background script."
         Main.sets.default = "irc,rss"
         Kernel.daemon()
-        Kernel.add(Cmd.cmd)
-        Kernel.configure()
+        Kernel.boot()
         Kernel.privileges()
         Kernel.pid()
         Kernel.init()
@@ -71,9 +70,7 @@ class Scripts:
         "console script."
         readline.redisplay()
         Kernel.parse(Main, " ".join(sys.argv[1:]))
-        Kernel.add(Cmd.cmd)
-        Kernel.configure()
-        Kernel.banner()
+        Kernel.boot()
         if "a" in Main.opts:
             Main.sets.mods = ",".join(Mods.list())
         Kernel.init(True)
@@ -85,8 +82,8 @@ class Scripts:
     def control():
         "cli script."
         Kernel.parse(Main, " ".join(sys.argv[1:]))
-        Kernel.add(Cmd.cmd, Cmd.srv, Cmd.tbl)
-        Kernel.configure()
+        Kernel.add(Cmd.srv, Cmd.tbl)
+        Kernel.boot(False)
         cli = CLI()
         cli.silent = False
         evt = Message()
@@ -99,11 +96,9 @@ class Scripts:
         "service script."
         Kernel.parse(Main, " ".join(sys.argv[1:]))
         Main.sets.default = "irc,mdl,rss,wsd"
-        Kernel.add(Cmd.cmd)
+        Kernel.boot()
         Kernel.privileges()
-        Kernel.configure()
         Kernel.pid()
-        Kernel.banner()
         Kernel.init()
         Kernel.forever()
 

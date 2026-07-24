@@ -25,6 +25,8 @@ classifiers=[
 
 [project.scripts]
 "nixbot" = "nixbot.runtime:main"
+"nixbotctl" = "nixbot.runtime:Scripts.control"
+"nixbotd" = "nixbot.runtime:Scripts.background"
 
 
 [project.urls]
