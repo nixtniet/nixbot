@@ -13,35 +13,12 @@ import _thread
 
 from .clients import Client
 from .configs import Main
-from .hashing import Md5
 from .threads import Task, Thread
 from .package import Mods
-from .parsers import Parse
-from .persist import Workdir
 from .utility import Utils
 
 
 class Boot:
-
-    add = Mods.add
-    command = Mods.command
-    configure = Mods.configure
-    parse = Parse.parse
-    pid = Workdir.pid
-    scanner = Mods.scanner
-    table = Mods.table
-
-    @classmethod
-    def banner(cls):
-        "hello."
-        tmr = time.ctime(time.time()).replace("  ", " ")
-        txt = "%s since %s %s (%s)" % (
-            Main.name.upper(),
-            tmr,
-            Main.sets.level.upper() or "WARNING",
-            Md5.core()
-        )
-        return txt.replace("  ", " ")
 
     @classmethod
     def daemon(cls):

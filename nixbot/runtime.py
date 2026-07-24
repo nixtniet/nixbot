@@ -6,16 +6,34 @@
 
 import readline
 import sys
+import time
 
 
-from .defines import Boot, Client, Cmd, Engine, Main, Message, Mods
+from .defines import Boot, Client, Cmd, Engine, Main, Md5, Message
+from .defines import Mods, Parse, Workdir
 
 
 class Kernel(Boot):
 
+    add = Mods.add
+    command = Mods.command
+    configure = Mods.configure
+    parse = Parse.parse
+    pid = Workdir.pid
+    scanner = Mods.scanner
+    table = Mods.table
+
     @classmethod
     def banner(cls):
-        print(Boot.banner())
+        "hello."
+        tmr = time.ctime(time.time()).replace("  ", " ")
+        txt = "%s since %s %s (%s)" % (
+            Main.name.upper(),
+            tmr,
+            Main.sets.level.upper() or "WARNING",
+            Md5.core()
+        )
+        print(txt.replace("  ", " "))
         sys.stdout.flush()
 
     @classmethod
@@ -119,6 +137,6 @@ def main():
     elif "--console" in sys.argv:
         Kernel.wrap(Scripts.console)
     elif "--daemon" in sys.argv:
-        Kernel.wrap(Scripts.console)
+        Kernel.wrap(Scripts.background)
     else:
         Kernel.wrap(Scripts.control)
