@@ -8,7 +8,6 @@ import logging
 import os
 
 
-
 from .utility import Utils
 
 

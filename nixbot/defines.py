@@ -10,8 +10,8 @@ from .clients import Broker, Buffer, Client, Clients
 from .configs import Config, Main
 from .encoder import Json
 from .engines import Engine
+from .hashing import Md5
 from .loggers import Logging
-from .md5sums import Md5
 from .message import Message
 from .objects import Default, Method, Object
 from .package import Cmd, Mods

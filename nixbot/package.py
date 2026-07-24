@@ -11,8 +11,8 @@ import os
 
 from .clients import Clients
 from .configs import Main
+from .hashing import Md5
 from .loggers import Logging
-from .md5sums import Md5
 from .parsers import Parse
 from .persist import Workdir
 from .utility import Utils

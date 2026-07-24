@@ -5,17 +5,17 @@
 
 
 CORE = {
-    "booting": "f6ef7d1c48bf2402e29789df66efc0c0",
+    "booting": "e95c6b9a971ef4e90c454f9758c56487",
     "clients": "4fc69c25873fcccec2efb6f3c7b52857",
     "configs": "8d6fd1c295af5e8d906803dcd0dad611",
-    "defines": "3e221429c9bb2263e53f31884aed0788",
+    "defines": "6e0a82baf6e209cba711e65a402e3e78",
     "encoder": "442b637a07a3611696a06d1f2c8211f5",
     "engines": "767e741a9e84f56cdb1b68c979a6b584",
+    "hashing": "02f9d78a7aef9d72a230dac7c666d351",
     "loggers": "78c56197540c80307d12887e22ba7e05",
-    "md5sums": "6e0fe1a05169d016bf3a9f7286e7d68e",
     "message": "e8732b08af0edccbbae0543f445cfa74",
     "objects": "d1719008f8c1211790f8fcd0880dbfeb",
-    "package": "2374fa327911b96dd67f7357b74f250f",
+    "package": "983c591a3601a0cacf4529217724bc99",
     "parsers": "e72d2ad41806637fae85d96fc13a6dfd",
     "persist": "e0aeb11a054b39944f92a8ce7d959e99",
     "repeats": "1d3ead9599a5ebd6aa58344ba9bd8218",
