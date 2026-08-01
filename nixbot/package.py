@@ -30,7 +30,7 @@ class Mods:
     md5s = {}
     mods = {}
     names = {}
-    
+
     @classmethod
     def add(cls, *funcs):
         "register a command."
