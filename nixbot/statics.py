@@ -15,7 +15,7 @@ CORE = {
     "loggers": "0c75c9b5df26dc5f023257711f140754",
     "message": "e8732b08af0edccbbae0543f445cfa74",
     "objects": "43974134fa9d0803a4670e89ddfae099",
-    "package": "0c3ff193dec818762a2a2b1a6f7ff886",
+    "package": "337e1046644b817cb3a40924b28466a6",
     "parsers": "e72d2ad41806637fae85d96fc13a6dfd",
     "persist": "04b27f94df36e7f1d375649cea821e9e",
     "repeats": "1d3ead9599a5ebd6aa58344ba9bd8218",
