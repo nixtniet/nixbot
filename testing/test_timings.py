@@ -7,7 +7,7 @@
 import unittest
 
 
-from nixbot.utility import Time
+from nixbot.defines import Time
 
 
 class TestTime(unittest.TestCase):

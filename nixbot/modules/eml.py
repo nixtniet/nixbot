@@ -9,9 +9,7 @@ import os
 import time
 
 
-from nixbot.objects import Default, Method
-from nixbot.persist import Disk, Locate
-from nixbot.utility import Time
+from nixbot.defines import Default, Disk, Locate, Method, Time
 
 
 class Email(Default):
@@ -88,6 +86,6 @@ def mbx(event):
             Disk.write(obj)
             nrs += 1
         if nrs:
-            event.reply("ok %s" % nrs)
+            event.ok(nrs)
     except FileNotFoundError as ex:
         event.reply(str(ex))

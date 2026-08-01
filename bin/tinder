@@ -15,8 +15,8 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from nixbot.defines import Boot, Main, Message, Method, Mods
-from nixbot.defines import Parse, Time, Workdir
+from nixbot.defines import Boot, Client, Main, Message, Method
+from nixbot.defines import Mods, Parse, Time, Workdir
 
 
 Workdir.wdr = ".test"
@@ -27,6 +27,73 @@ class Vars:
 
     nrevents = 0
     starttime = 0
+
+
+class Kernel(Boot):
+
+    @classmethod
+    def wrap(cls, func, *args, dofinal=None):
+        "restore console."
+        import termios
+        try:
+            old = termios.tcgetattr(sys.stdin.fileno())
+        except termios.error:
+            old = False
+        try:
+            cls.wrapped(func, *args)
+        except (KeyboardInterrupt, EOFError):
+            pass
+        if old:
+            termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old)
+        if dofinal:
+            dofinal()
+
+
+class CLI(Client):
+
+    def __init__(self):
+        Client.__init__(self)
+        self.register("command", Mods.command)
+
+    def raw(self, text):
+        "write to console."
+        if "v" in Main.opts:
+            print(text.encode('utf-8', 'replace').decode("utf-8"))
+            sys.stdout.flush()
+
+
+class Runners:
+
+    runners = []
+    lock = threading.RLock()
+    nrcpu = 1
+    nrlast = 0
+
+    @staticmethod
+    def add(client):
+        "add a runner."
+        Runners.runners.append(client)
+
+    @staticmethod
+    def init(nrcpu, cls):
+        "initialize a runner."
+        Runners.nrcpu = nrcpu
+        for _x in range(Runners.nrcpu):
+            clt = cls()
+            clt.start()
+            Runners.add(clt)
+
+    @staticmethod
+    def put(*args):
+        "push job to a runner."
+        if not Runners.runners:
+            Runners.init(Runners.nrcpu, CLI)
+        with Runners.lock:
+            if Runners.nrlast >= Runners.nrcpu-1:
+                Runners.nrlast = 0
+            clt = Runners.runners[Runners.nrlast]
+            clt.put(*args)
+            Runners.nrlast += 1
 
 
 def raw(text):
@@ -40,10 +107,9 @@ def payload(todo):
         for ex in example:
             Vars.nrevents += 1
             evt = Message()
+            evt.kind = "command"
             evt.text = f"{cmd} {ex}"
-            Mods.command(evt)
-            for text in evt.result:
-                raw(text)
+            Runners.put(evt)
 
 
 def final():
@@ -61,10 +127,14 @@ def final():
 
 def main():
     Parse.parse(Main, " ".join(sys.argv[1:]))
-    Mods.configure()
-    Mods.scanner()
+    Kernel.configure()
     if os.path.exists(Workdir.wdr):
         shutil.rmtree(Workdir.wdr)
+    if "t" in Main.opts:
+        nrcpu = os.cpu_count()
+    else:
+        nrcpu = 1
+    Runners.init(nrcpu, CLI)
     Vars.starttime = time.time()
     nrs = Main.index or 1
     for _x in range(nrs):
@@ -73,6 +143,7 @@ def main():
         payload(examples)
     for _x in range(nrs):
         payload(post)
+    Kernel.shutdown()
 
 
 examples = {
@@ -123,10 +194,11 @@ pre = {
         "testing/opml/feeds.opml",
     ],
     "log": ["", "test"],
-    "rss": ["", "http://hnrss.org/newest"],
+    "rss": ["", "http://hnrss.org/newest", "https://www.icc-cpi.int/rss/records/all"],
     "tdo": ["", "test2"],
     "tmr": ["", "22:00 test"]
 }
+
 
 post = {
     "dbg": [""],
@@ -137,4 +209,4 @@ post = {
 
 
 if __name__ == "__main__":
-    Boot.wrap(main, dofinal=final)
+    Kernel.wrap(main, dofinal=final)
