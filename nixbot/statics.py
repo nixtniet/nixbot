@@ -5,7 +5,7 @@
 
 
 CORE = {
-    "booting": "aa2bbaecae34c27ee5e58694be5459af",
+    "booting": "65967ac30e21197c72f7b96db06ab3b4",
     "brokers": "bf614fd92d3268216c853bbb08a57b03",
     "clients": "04e78280804354fe91541e6c6e4d7bf0",
     "configs": "8d6fd1c295af5e8d906803dcd0dad611",
@@ -16,10 +16,10 @@ CORE = {
     "message": "e8732b08af0edccbbae0543f445cfa74",
     "objects": "43974134fa9d0803a4670e89ddfae099",
     "package": "337e1046644b817cb3a40924b28466a6",
-    "parsers": "e72d2ad41806637fae85d96fc13a6dfd",
+    "parsers": "9eb7fad48abec8b430b5f66d85d6320c",
     "persist": "04b27f94df36e7f1d375649cea821e9e",
     "repeats": "1d3ead9599a5ebd6aa58344ba9bd8218",
-    "runtime": "c90109d47eac19000122cbe34df7b876",
+    "runtime": "caa182fa029badf0ecd33629d21a7867",
     "threads": "2fcb5ceb0fa336dd7208297fc23e17b0",
     "utility": "5e81aecdaa39a3c4bbc42d3672728eb9"
 }
@@ -31,6 +31,7 @@ MODULES = {
     "fie": "0872ed6a02dd678870f502267d9367c6",
     "flt": "1fa811bc0ab9cb5b5b6613ca046f9c3f",
     "fnd": "a33eb8f575e9b24524edc02743c7df1a",
+    "hlp": "a4cc783451e71457c81eb47c7fc34f17",
     "irc": "696ff885dc1f3a398a403a828621f2f2",
     "log": "8aff5461d6b7bdb00514ad48036aea1c",
     "man": "920599410f7739c9503e0eea9e4e5885",
@@ -64,6 +65,7 @@ NAMES = {
     "fie": "fie",
     "flt": "flt",
     "fnd": "fnd",
+    "hlp": "hlp",
     "imp": "rss",
     "log": "log",
     "lou": "sil",

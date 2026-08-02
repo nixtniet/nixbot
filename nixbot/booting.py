@@ -33,11 +33,18 @@ class Boot:
         Mods.dir(f"{Main.name}.modules", Utils.moddir())
         Logging.size(len(Main.name))
         Logging.level(Main.sets.level or "warning")
-        if Main.sets.user:
+        if cls.check("user"):
             Mods.dir("mods", "mods")
-        if Main.sets.all:
+        if cls.check("all"):
             Main.sets.mods = ",".join(Mods.list())
         Mods.table()
+
+    @classmethod
+    def check(cls, options):
+        for option in Utils.spl(options):
+            if option in Utils.spl(Main.opts):
+                return True
+        return False
 
     @classmethod
     def forever(cls):
@@ -61,7 +68,7 @@ class Boot:
             if not mod or "init" not in dir(mod):
                 continue
             thrs.append(Thread.launch(mod.init))
-        if thrs and Main.sets.wait:
+        if thrs and cls.check("wait"):
             for thr in thrs:
                 try:
                     thr.join()

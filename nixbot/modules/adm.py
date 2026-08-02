@@ -63,7 +63,7 @@ After=multi-user.target
 Type=simple
 User=%s
 Group=%s
-ExecStart=/home/%s/.local/bin/%s -s
+ExecStart=/home/%s/.local/bin/%s --service
 
 [Install]
 WantedBy=multi-user.target"""
