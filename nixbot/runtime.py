@@ -4,7 +4,6 @@
 "main"
 
 
-import argparse
 import os
 import readline
 import sys
@@ -12,10 +11,19 @@ import time
 
 
 from .defines import Boot, Client, Cmd, Main, Md5, Message
-from .defines import Method, Mods, Parse, Utils
+from .defines import Mods, Parse
 
 
 class Kernel(Boot):
+
+    @classmethod
+    def admin(cls):
+        if Kernel.check("admin"):
+            mod = Mods.get("adm")
+            Mods.scan(mod)
+            cls.cmd(Main.otxt)
+            return True
+        return False
 
     @classmethod
     def banner(cls):
@@ -65,6 +73,15 @@ class Kernel(Boot):
         if Main.sets.nochdir:
             os.chdir("/")
         os.nice(10)
+
+    @classmethod
+    def help(cls):
+        if Kernel.check("h,help"):
+            mod = Mods.get("hlp")
+            Mods.scan(mod)
+            cls.cmd("hlp")
+            return True
+        return False
 
     @classmethod
     def wrap(cls, func, *args, dofinal=None):
@@ -139,14 +156,10 @@ class Scripts:
     def control():
         "cli script."
         Kernel.boot(False)
-        if Kernel.check("h,help"):
-            mod = Mods.get("hlp")
-            Mods.scan(mod)
-            Kernel.cmd("hlp")
+        if Kernel.help():
             return
-        if Kernel.check("admin"):
-            mod = Mods.get("adm")
-            Mods.scan(mod)
+        if Kernel.admin():
+            return
         Kernel.cmd(Main.otxt)
 
     @staticmethod

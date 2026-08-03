@@ -5,7 +5,6 @@
 
 
 from .objects import Default, Method
-from .utility import Utils
 
 
 class Parse:
