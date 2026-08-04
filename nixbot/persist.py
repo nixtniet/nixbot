@@ -13,9 +13,7 @@ import threading
 
 
 from .configs import Main
-from .encoder import Json
-from .objects import Default, Method
-from .utility import Time, Utils
+from .library import Default, Json, Method, Time, Utils
 
 
 class Cache:

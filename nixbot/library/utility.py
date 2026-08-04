@@ -215,7 +215,7 @@ class Utils:
     @staticmethod
     def moddir():
         "return modules directory."
-        return os.path.join(os.path.dirname(__spec__.loader.path), "modules")
+        return os.path.join(os.path.dirname(os.path.dirname(__spec__.loader.path)), "modules")
 
     @staticmethod
     def modname(obj):

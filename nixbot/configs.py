@@ -4,8 +4,7 @@
 "one config to rule them all"
 
 
-from .objects import Default, Method
-from .utility import Utils
+from .library import Default, Method, Utils
 
 
 class Config(type):

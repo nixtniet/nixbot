@@ -9,10 +9,10 @@
 >>> b = Broker()
 >>> o = Object()
 >>> repr(o) # doctest: +ELLIPSIS
-'<nixbot.objects.Object object at ...'
+'<nixbot.library.objects.Object object at ...'
 >>> id = b.add(o)
 >>> print(id) # doctest: +ELLIPSIS
-<nixbot.objects.Object object at ...>
+<nixbot.library.objects.Object object at ...>
 >>> obj = b.get(id)
 >>> repr(obj) == id
 True
