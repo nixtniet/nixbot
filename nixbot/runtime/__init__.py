@@ -7,7 +7,12 @@
 
 from .booting import Boot
 from .configs import Config, Main
+from .loggers import Logging
+from .message import Message
 from .package import Cmd, Md5, Mods
+from .parsers import Parse
+from .timings import Time
+from .utility import Utils
 
 
 def __dir__():
@@ -15,9 +20,14 @@ def __dir__():
        'Boot',
        'Cmd',
        'Config',
+       'Logging',
        'Main',
        'Md5',
-       'Mods'
+       'Message',
+       'Mods',
+       'Parse',
+       'Time',
+       'Utils'
     )
 
 

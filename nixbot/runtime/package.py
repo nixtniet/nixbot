@@ -9,11 +9,11 @@ import logging
 import os
 
 
-from ..objects import Parse
-from ..utility import Utils
-
-
 from ..library import Clients
+
+
+from .parsers import Parse
+from .utility import Utils
 
 
 class Cmd:
@@ -58,6 +58,11 @@ class Mods:
             func(evt)
             Clients.display(evt)
         evt.ready()
+
+    @classmethod
+    def configure(cls, name):
+        cls.dir(f"{name}.modules", cls.moddir())
+        cls.table()
 
     @classmethod
     def dir(cls, pkgname, path):

@@ -11,13 +11,14 @@ import time
 
 
 from ..library import Client
-from ..objects.message import Message
-from ..objects.parsers import Parse
+from ..persist import Workdir
 
 
 from .booting import Boot
 from .configs import Main
+from .message import Message
 from .package import Cmd, Md5, Mods
+from .parsers import Parse
 
 
 class Kernel(Boot):
@@ -47,10 +48,12 @@ class Kernel(Boot):
     @classmethod
     def boot(cls, banner=True):
         "starting."
-        if banner:
-            cls.banner()
+        Workdir.configure(Main.name)
+        Mods.configure(Main.name)
         cls.configure()
         Mods.add(Cmd.cmd)
+        if banner:
+            cls.banner()
 
     @classmethod
     def cmd(cls, txt):

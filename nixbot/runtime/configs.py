@@ -5,7 +5,9 @@
 
 
 from ..objects import Default, Method
-from ..utility import Utils
+
+
+from .utility import Utils
 
 
 class Config(type):

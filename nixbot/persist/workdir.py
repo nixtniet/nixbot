@@ -13,6 +13,11 @@ class Workdir:
     wdr = ""
 
     @classmethod
+    def configure(cls, name):
+        cls.wdr = cls.wdr or Workdir.home(name)
+        cls.skel()
+
+    @classmethod
     def cdir(cls, path):
         "create directory."
         if os.path.exists(path):
@@ -57,9 +62,15 @@ class Workdir:
     @classmethod
     def pid(cls, name):
         "return path to pid file."
-        if not Workdir.wdr:
+        if not cls.wdr:
             return 
-        return os.path.join(Workdir.wdr, f"{name}.pid")
+        filename =  os.path.join(cls.wdr, f"{name}.pid")
+        if os.path.exists(filename):
+            os.unlink(filename)
+        path2 = pathlib.Path(filename)
+        path2.parent.mkdir(parents=True, exist_ok=True)
+        with open(filename, "w", encoding="utf-8") as fds:
+            fds.write(str(os.getpid()))
 
     @classmethod
     def skel(cls):

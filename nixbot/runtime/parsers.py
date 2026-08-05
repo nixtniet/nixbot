@@ -4,7 +4,7 @@
 "command parsing"
 
 
-from . import Default, Method
+from ..objects import Default, Method
 
 
 class Parse:

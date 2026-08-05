@@ -94,13 +94,8 @@ class Utils:
         return os.path.dirname(inspect.getfile(obj))
 
 
-from .loggers import Logging as Logging
-from .timings import Time as Time
-
 
 def __dir__():
     return (
-        'Logging',
-        'Time',
-        'Utils'
+        'Utils',
     )
