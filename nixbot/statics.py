@@ -5,11 +5,12 @@
 
 
 CORE = {
-    "booting": "5179f6a70762149a79a95cf8c5a772f1",
-    "configs": "7797a6aad8bbc5f53a12190dca7ba7b3",
-    "defines": "c3cc25ca6cbfa6dfc9cea9708bd385b0",
-    "package": "ac021fd3aa2d762349cab05fe5025f2d",
-    "persist": "8c69ac69707c26d18d5c496723069f95",
+    "booting": "2c28b0616e5dd6b84598099d7d1b958e",
+    "configs": "8d6fd1c295af5e8d906803dcd0dad611",
+    "defines": "cc9bde7a77fc6b28b31a3c41072fafbb",
+    "package": "12f2bbc2fefbcf1cde9990ab30fbd5c4",
+    "persist": "c8d21fe284951194a8656f2f36127b12",
+    "repeats": "4440be8f46043b19a66345f9d24e06d4",
     "runtime": "11cd6a21d788dc794dd7d5945f601d26"
 }
 
@@ -20,7 +21,7 @@ MODULES = {
     "fie": "0872ed6a02dd678870f502267d9367c6",
     "flt": "1fa811bc0ab9cb5b5b6613ca046f9c3f",
     "fnd": "a33eb8f575e9b24524edc02743c7df1a",
-    "hlp": "a4cc783451e71457c81eb47c7fc34f17",
+    "hlp": "eae0798c461d0e32fb62c1a83830fb89",
     "irc": "696ff885dc1f3a398a403a828621f2f2",
     "log": "7d422bf556336c9ece28893b9a0b8356",
     "man": "920599410f7739c9503e0eea9e4e5885",

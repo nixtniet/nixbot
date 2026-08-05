@@ -287,9 +287,16 @@ class Method:
         return obj.__dict__.values()
 
 
+from .encoder import Json
+from .message import Message
+from .parsers import Parse
+
+
 def __dir__():
     return (
         'Default',
+        'Message',
         'Method',
-        'Object'
+        'Object',
+        'Parse'
     )

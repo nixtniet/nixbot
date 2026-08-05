@@ -10,7 +10,14 @@ import sys
 import time
 
 
-from .defines import Boot, Client, Cmd, Main, Md5, Message, Mods, Parse
+from ..objects.message import Message
+from ..objects.parsers import Parse
+
+
+from .booting import Boot
+from .configs import Main
+from .engines import Client
+from .package import Cmd, Md5, Mods
 
 
 class Kernel(Boot):

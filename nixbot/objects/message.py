@@ -7,7 +7,7 @@
 import threading
 
 
-from .objects import Default
+from . import Default
 
 
 class Message(Default):

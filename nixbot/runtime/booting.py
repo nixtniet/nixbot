@@ -13,9 +13,10 @@ import _thread
 
 
 from .configs import Main
-from .library import Client, Clients, Logging, Task, Thread, Utils
 from .package import Mods
-from .persist import Workdir
+from .engines import Client, Clients, Task, Thread
+from ..persist import Workdir
+from ..utility import Logging, Utils
 
 
 class Boot:
