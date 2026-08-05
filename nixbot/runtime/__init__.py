@@ -10,7 +10,7 @@ from .brokers import Broker, Clients
 from .clients import Buffer, Buffered, Client, Output
 from .configs import Config, Main
 from .engines import Engine
-from .package import Md5, Mods
+from .package import Cmd, Md5, Mods
 from .repeats import Repeater
 from .threads import Task, Thread
 

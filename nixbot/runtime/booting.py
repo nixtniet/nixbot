@@ -35,6 +35,7 @@ class Boot:
         if cls.check("all"):
             Main.sets.mods = ",".join(Mods.list())
         Mods.table()
+        print(Mods.dirs)
 
     @classmethod
     def check(cls, options):

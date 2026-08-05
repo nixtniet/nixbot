@@ -1,3 +1,4 @@
+{'modules': '/home/bart/.nixbot/mods', 'nixbot.modules': '/home/bart/nixbot/nixbot/modules'}
 # This file is placed in the Public Domain.
 
 
@@ -5,13 +6,15 @@
 
 
 CORE = {
-    "booting": "2c28b0616e5dd6b84598099d7d1b958e",
-    "configs": "8d6fd1c295af5e8d906803dcd0dad611",
-    "defines": "cc9bde7a77fc6b28b31a3c41072fafbb",
-    "package": "12f2bbc2fefbcf1cde9990ab30fbd5c4",
-    "persist": "c8d21fe284951194a8656f2f36127b12",
+    "booting": "c530abeadeabb5fd732fb88801065214",
+    "brokers": "bf614fd92d3268216c853bbb08a57b03",
+    "clients": "338d3b3d2a1e1bbfe058b2633b315c65",
+    "configs": "a2d3c2594cbc87c93d5bd70813ebe370",
+    "engines": "f45ef4e83cc5247b1ed9c8a6c149cdc3",
+    "package": "8cb24834b22e6837f4233588650c20d3",
+    "program": "e7509194f4fd70125fd02988308fcb5e",
     "repeats": "4440be8f46043b19a66345f9d24e06d4",
-    "runtime": "11cd6a21d788dc794dd7d5945f601d26"
+    "threads": "2fcb5ceb0fa336dd7208297fc23e17b0"
 }
 
 

@@ -9,9 +9,11 @@ import logging
 import os
 
 
-from .engines import Clients
 from ..objects import Parse
 from ..utility import Utils
+
+
+from .engines import Clients
 
 
 class Cmd:
@@ -103,7 +105,7 @@ class Mods:
     @classmethod
     def moddir(cls):
         "return modules directory."
-        return os.path.join(os.path.dirname(__spec__.loader.path), "modules")
+        return os.path.join(os.path.dirname(os.path.dirname(__spec__.loader.path)), "modules")
 
     @classmethod
     def list(cls, ignore=""):
