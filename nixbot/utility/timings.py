@@ -5,10 +5,6 @@
 
 
 import datetime
-import inspect
-import logging
-import os
-import pathlib
 import time
 
 
@@ -99,20 +95,6 @@ class Time:
             if res:
                 break
         return res
-
-    @classmethod
-    def fntime(cls, daystr):
-        "time from path."
-        datestr = " ".join(daystr.split(os.sep)[-2:])
-        datestr = datestr.replace("_", " ")
-        if "." in datestr:
-            datestr, rest = datestr.rsplit(".", 1)
-        else:
-            rest = ""
-        timd = time.mktime(time.strptime(datestr, "%Y-%m-%d %H:%M:%S"))
-        if rest:
-            timd += float("." + rest)
-        return float(timd)
 
     @classmethod
     def timed(cls, datestr):

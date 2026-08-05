@@ -12,11 +12,13 @@ import time
 import _thread
 
 
-from .configs import Main
-from .package import Mods
-from .engines import Client, Clients, Task, Thread
+from ..library import Client, Clients, Task, Thread
 from ..persist import Workdir
 from ..utility import Logging, Utils
+
+
+from .configs import Main
+from .package import Mods
 
 
 class Boot:
@@ -35,7 +37,6 @@ class Boot:
         if cls.check("all"):
             Main.sets.mods = ",".join(Mods.list())
         Mods.table()
-        print(Mods.dirs)
 
     @classmethod
     def check(cls, options):

@@ -13,7 +13,6 @@ import threading
 
 
 from ..objects import Default, Json, Method
-from ..utility import Time, Utils
 
 
 class Cache:
@@ -42,6 +41,16 @@ class Cache:
 class Disk:
 
     lock = threading.RLock()
+
+    @classmethod
+    def cdir(cls, path):
+        "create directory."
+        if os.path.exists(path):
+            return
+        pth = pathlib.Path(path)
+        if not os.path.exists(pth.parent):
+            pth.parent.mkdir(parents=True, exist_ok=True)
+
 
     @classmethod
     def ident(cls, obj):
@@ -74,7 +83,7 @@ class Disk:
             pth = os.path.join(Workdir.wdr, base, path)
             if not os.path.exists(pth):
                 Workdir.skel()
-            Utils.cdir(pth)
+            cls.cdir(pth)
             with open(pth, "w", encoding="utf-8") as fpt:
                 Json.dump(obj, fpt, indent=4)
             Cache.sync(path, obj)
@@ -125,7 +134,7 @@ class Locate:
         "return first object of a kind."
         result = sorted(
                         cls.find(Method.fqn(obj), selector),
-                        key=lambda x: Time.fntime(x[0])
+                        key=lambda x: cls.fntime(x[0])
                        )
         res = ""
         if result:
@@ -147,11 +156,25 @@ class Locate:
                     yield cls.strip(os.path.join(ddd, fll))
 
     @classmethod
+    def fntime(cls, daystr):
+        "time from path."
+        datestr = " ".join(daystr.split(os.sep)[-2:])
+        datestr = datestr.replace("_", " ")
+        if "." in datestr:
+            datestr, rest = datestr.rsplit(".", 1)
+        else:
+            rest = ""
+        timd = time.mktime(time.strptime(datestr, "%Y-%m-%d %H:%M:%S"))
+        if rest:
+            timd += float("." + rest)
+        return float(timd)
+
+    @classmethod
     def last(cls, obj, selector={}):
         "last saved version."
         result = sorted(
                         cls.find(Method.fqn(obj), selector),
-                        key=lambda x: Time.fntime(x[0])
+                        key=lambda x: cls.fntime(x[0])
                        )
         res = ""
         if result:
@@ -216,7 +239,7 @@ class Workdir:
         if not cls.wdr:
             return
         if not os.path.exists(cls.wdr):
-            Utils.cdir(cls.wdr)
+            Disk.cdir(cls.wdr)
         path = os.path.abspath(cls.wdr)
         for wpth in ["config", "mods", "store"]:
             pth = pathlib.Path(os.path.join(path, wpth))

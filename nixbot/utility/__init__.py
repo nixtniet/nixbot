@@ -4,24 +4,11 @@
 "usefulness"
 
 
-import datetime
 import inspect
-import logging
 import os
-import pathlib
-import time
 
 
 class Utils:
-
-    @staticmethod
-    def cdir(path):
-        "create directory."
-        if os.path.exists(path):
-            return
-        pth = pathlib.Path(path)
-        if not os.path.exists(pth.parent):
-            pth.parent.mkdir(parents=True, exist_ok=True)
 
     @staticmethod
     def clsname(obj):
@@ -107,8 +94,8 @@ class Utils:
         return os.path.dirname(inspect.getfile(obj))
 
 
-from .loggers import Logging
-from .timings import Time
+from .loggers import Logging as Logging
+from .timings import Time as Time
 
 
 def __dir__():

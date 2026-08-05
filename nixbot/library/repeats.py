@@ -8,7 +8,7 @@ import threading
 import time
 
 
-from .engines import Thread
+from .threads import Thread
 
 
 class Repeater:

@@ -23,9 +23,9 @@ def fnd(event):
     nmr = 0
     for fnm, obj in sorted(
                            Locate.find(otype, event.gets),
-                           key=lambda x: Time.fntime(x[0])
+                           key=lambda x: Locate.fntime(x[0])
                           ):
-        diff = time.time()-Time.fntime(fnm)
+        diff = time.time()-Locate.fntime(fnm)
         event.reply(f"{nmr} {Method.fmt(obj)} {Time.elapsed(diff)}")
         nmr += 1
     if not nmr:

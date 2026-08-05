@@ -287,9 +287,9 @@ class Method:
         return obj.__dict__.values()
 
 
-from .encoder import Json
-from .message import Message
-from .parsers import Parse
+from .encoder import Json as Json
+from .message import Message as Message
+from .parsers import Parse as Parse
 
 
 def __dir__():
