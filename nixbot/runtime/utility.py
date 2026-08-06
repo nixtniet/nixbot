@@ -94,7 +94,6 @@ class Utils:
         return os.path.dirname(inspect.getfile(obj))
 
 
-
 def __dir__():
     return (
         'Utils',

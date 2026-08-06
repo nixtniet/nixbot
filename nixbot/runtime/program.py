@@ -23,6 +23,8 @@ from .parsers import Parse
 
 class Kernel(Boot):
 
+    pid = Workdir.pid
+
     @classmethod
     def admin(cls):
         if Kernel.check("admin"):

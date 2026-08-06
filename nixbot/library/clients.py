@@ -15,8 +15,6 @@ from .engines import Engine
 from .threads import Thread
 
 
-
-
 class Output:
 
     block = threading.Event()

@@ -63,8 +63,8 @@ class Workdir:
     def pid(cls, name):
         "return path to pid file."
         if not cls.wdr:
-            return 
-        filename =  os.path.join(cls.wdr, f"{name}.pid")
+            return
+        filename = os.path.join(cls.wdr, f"{name}.pid")
         if os.path.exists(filename):
             os.unlink(filename)
         path2 = pathlib.Path(filename)
@@ -78,7 +78,7 @@ class Workdir:
         if not cls.wdr:
             return
         if not os.path.exists(cls.wdr):
-             cls.cdir(cls.wdr)
+            cls.cdir(cls.wdr)
         path = os.path.abspath(cls.wdr)
         for wpth in ["config", "mods", "store"]:
             pth = pathlib.Path(os.path.join(path, wpth))

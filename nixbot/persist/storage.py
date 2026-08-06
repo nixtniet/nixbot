@@ -40,6 +40,7 @@ class Cache:
         except KeyError:
             cls.add(path, obj)
 
+
 class Disk:
 
     lock = threading.RLock()
@@ -52,7 +53,6 @@ class Disk:
         pth = pathlib.Path(path)
         if not os.path.exists(pth.parent):
             pth.parent.mkdir(parents=True, exist_ok=True)
-
 
     @classmethod
     def ident(cls, obj):
