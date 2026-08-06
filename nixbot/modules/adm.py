@@ -24,6 +24,17 @@ def srv(event):
                           ))
 
 
+corelist = ["library",  "objects",  "persist", "runtime"]
+
+
+def createmd5(path, data):
+    for pth in os.listdir(path):
+        if pth.startswith("__") or not pth.endswith(".py") or "statics" in pth:
+            continue
+        name = pth[:-3]
+        data[name] = Md5.md5(os.path.join(path, pth))
+
+
 def tbl(event):
     "create table."
     core = {}
@@ -38,12 +49,10 @@ def tbl(event):
             if cmd in ["srv", "tbl"]:
                 continue
             Mods.names[cmd.__name__] = cmd.__module__.split(".")[-1]
-    corepath = os.path.dirname(inspect.getsourcefile(Mods))
-    for path in os.listdir(corepath):
-        if path.startswith("__") or not path.endswith(".py") or "statics" in path:
-            continue
-        name = path[:-3]
-        core[name] = Md5.md5(os.path.join(corepath, path))
+    corepath = os.path.dirname(os.path.dirname(inspect.getsourcefile(Mods)))
+    for path in corelist:
+         pth = os.path.join(corepath, path)
+         createmd5(pth, core)
     event.reply("# This file is placed in the Public Domain.")
     event.reply("\n")
     event.reply('"static tables"')

@@ -1,4 +1,3 @@
-{'modules': '/home/bart/.nixbot/mods', 'nixbot.modules': '/home/bart/nixbot/nixbot/modules'}
 # This file is placed in the Public Domain.
 
 
@@ -6,15 +5,24 @@
 
 
 CORE = {
-    "booting": "c530abeadeabb5fd732fb88801065214",
+    "booting": "682e4afcc7bd692aa84e3eae3c202649",
     "brokers": "bf614fd92d3268216c853bbb08a57b03",
-    "clients": "338d3b3d2a1e1bbfe058b2633b315c65",
-    "configs": "a2d3c2594cbc87c93d5bd70813ebe370",
-    "engines": "f45ef4e83cc5247b1ed9c8a6c149cdc3",
-    "package": "8cb24834b22e6837f4233588650c20d3",
-    "program": "e7509194f4fd70125fd02988308fcb5e",
-    "repeats": "4440be8f46043b19a66345f9d24e06d4",
-    "threads": "2fcb5ceb0fa336dd7208297fc23e17b0"
+    "clients": "04e78280804354fe91541e6c6e4d7bf0",
+    "configs": "2007a29ce6df5a021c0754e83511b815",
+    "engines": "767e741a9e84f56cdb1b68c979a6b584",
+    "locater": "ec5a7fd7fb8d987cffc35ccf960afb7a",
+    "loggers": "0c75c9b5df26dc5f023257711f140754",
+    "message": "9ef972ef96042a973c45040e08be7084",
+    "methods": "6aea4b7fefcff1fdff946bd9f5234312",
+    "package": "8702d0b14a7e39173070fe3d50ecb500",
+    "parsers": "81a94f835ebc0990aa94a7303db2b1f8",
+    "program": "6f36058a56861ffefd43f953899674e6",
+    "repeats": "eaec4feccb68aea97288b5729d710454",
+    "storage": "1d166d02e3d10e405da04aae032aab29",
+    "threads": "2fcb5ceb0fa336dd7208297fc23e17b0",
+    "timings": "be552a5c0321cb8c29514cf122661bdf",
+    "utility": "18f8e7685ef8cbcaf43217f56ea73da5",
+    "workdir": "33368e4d881f283841b420d5f4679616"
 }
 
 
@@ -23,7 +31,7 @@ MODULES = {
     "eml": "ea447a1b0755df71b11ef9fd21b87be9",
     "fie": "0872ed6a02dd678870f502267d9367c6",
     "flt": "1fa811bc0ab9cb5b5b6613ca046f9c3f",
-    "fnd": "a33eb8f575e9b24524edc02743c7df1a",
+    "fnd": "bb0c19487eee868e39c82ec965b8923d",
     "hlp": "eae0798c461d0e32fb62c1a83830fb89",
     "irc": "696ff885dc1f3a398a403a828621f2f2",
     "log": "7d422bf556336c9ece28893b9a0b8356",

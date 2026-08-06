@@ -27,6 +27,7 @@ class Cmd:
 class Mods:
 
     cmds = {}
+
     core = {}
     dirs = {}
     md5s = {}
@@ -190,7 +191,7 @@ class Md5:
     def core(cls):
         "calculate md5 of the statics module."
         try:
-            from . import statics
+            from .. import statics
         except (ModuleNotFoundError, ImportError, SyntaxError):
             return ""
         return cls.source(Utils.source(statics))[:7].upper()
