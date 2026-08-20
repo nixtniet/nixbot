@@ -9,10 +9,10 @@ import os
 import time
 
 
-from nixbot.defines import Default, Disk, Locate, Method, Time
+from nixbot.defines import Data, Disk, Locate, Method, Time
 
 
-class Email(Default):
+class Email(Data):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
