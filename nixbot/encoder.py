@@ -1,44 +1,12 @@
 # This file is placed in the Public Domain.
 
 
-"a clean namespace"
+"encoder/decoder"
 
 
 import json
-import types
 import threading
-
-
-class Object:
-
-    def __contains__(self, key):
-        return key in dir(self)
-
-    def __delitem__(self, key):
-        del self.__dict__[key]
-
-    def __getitem__(self, key):
-        return self.__dict__.get(key)
-
-    def __iter__(self):
-        return iter(self.__dict__)
-
-    def __len__(self):
-        return len(self.__dict__)
-
-    def __setitem__(self, key, value):
-        self.__dict__[key] = value
-
-    def __str__(self):
-        return str(self.__dict__)
-
-
-class Default(Object):
-
-    def __getattr__(self, key):
-        if key in dir(self):
-            return self.__getattribute__(self, key)
-        return ""
+import types
 
 
 class Encoder(json.JSONEncoder):
@@ -49,7 +17,7 @@ class Encoder(json.JSONEncoder):
         "generate serializable versions."
         with Encoder.lock:
             if isinstance(o, type):
-                return Method.skip(o)
+                return self.skip(o)
             if isinstance(o, dict):
                 return o.items()
             if isinstance(o, list):
@@ -63,6 +31,15 @@ class Encoder(json.JSONEncoder):
                     return vars(o)
                 except TypeError:
                     return repr(o)
+
+    def skip(self, obj):
+        "yield values without underscored keys."
+        o = {}
+        for key in dir(obj):
+            if key.startswith("_"):
+                continue
+            o[key] = getattr(obj, key)
+        return o
 
 
 class Json:
@@ -90,13 +67,7 @@ class Json:
         return json.loads(s, *args, **kw)
 
 
-from .methods import Method 
-
-
 def __dir__():
     return (
-        'Default',
         'Json',
-        'Method',
-        'Object'
     )

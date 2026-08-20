@@ -5,39 +5,34 @@
 
 
 import logging
-import os
 import threading
 import time
 import _thread
 
 
-from ..library import Client, Clients, Task, Thread
-
-
-from .configs import Main
+from .brokers import Clients
+from .clients import Client
 from .loggers import Logging
 from .package import Mods
+from .persist import Workdir
+from .threads import Task, Thread
 from .utility import Utils
 
 
 class Boot:
 
     @classmethod
-    def configure(cls):
-        "configure program."
-        Logging.size(len(Main.name))
-        Logging.level(Main.sets.level or "warning")
-        if cls.check("user"):
-            Mods.dir("mods", "mods")
-        if cls.check("all"):
-            Main.sets.mods = ",".join(Mods.list())
+    def banner(cls):
+        "greetings."
 
     @classmethod
-    def check(cls, options):
-        for option in Utils.spl(options):
-            if option in Utils.spl(Main.opts):
-                return True
-        return False
+    def configure(cls, cfg):
+        "setup basic variables"
+        Logging.size(len(cfg.name))
+        Logging.level(cfg.sets.level or "warning")
+        Workdir.wdr = cfg.sets.wdr or Workdir.wdr or Workdir.home(cfg.name)
+        Workdir.skel()
+        Mods.dir(cfg.sets.path)
 
     @classmethod
     def forever(cls):
@@ -49,40 +44,21 @@ class Boot:
                 break
 
     @classmethod
-    def init(cls, blank=False):
+    def init(cls, names, wait=False):
         "call init of modules that have an init function."
         thrs = []
-        if not Main.sets.mods and blank:
-            names = ""
-        else:
-            names = Main.sets.mods or Main.sets.default
         for name in Utils.spl(names):
             mod = Mods.get(name)
             if not mod or "init" not in dir(mod):
                 continue
             thrs.append(Thread.launch(mod.init))
-        if thrs and cls.check("wait"):
+        if thrs and wait:
             for thr in thrs:
                 try:
                     thr.join()
                 except (KeyboardInterrupt, EOFError):
                     return False
         return True
-
-    @classmethod
-    def null(cls, io):
-        "route to dev/null."
-        with open('/dev/null', 'r', encoding="utf-8") as sis:
-            os.dup2(sis.fileno(), io.fileno())
-
-    @classmethod
-    def privileges(cls):
-        "drop privileges."
-        import getpass
-        import pwd
-        pwnam2 = pwd.getpwnam(getpass.getuser())
-        os.setgid(pwnam2.pw_gid)
-        os.setuid(pwnam2.pw_uid)
 
     @classmethod
     def shutdown(cls):

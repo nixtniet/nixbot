@@ -1,29 +1,30 @@
 # This file is placed in the Public Domain.
 
 
-"command parsing"
+"a clean namespace"
 
 
-from ..objects import Default, Method
+from .methods import Method
+from .objects import Data
 
 
 class Parse:
 
-    @staticmethod
-    def parse(obj, text, clean=False):
+    @classmethod
+    def parse(cls, obj, text, clean=False):
         "parse text for command and arguments."
         data = {
             "args": [],
             "cmd": "",
-            "gets": Default(),
+            "gets": Data(),
             "index": None,
             "init": "",
             "mod": "",
             "opts": "",
             "otxt": text,
             "rest": "",
-            "silent": Default(),
-            "sets": Default(),
+            "silent": Data(),
+            "sets": Data(),
             "text": text
         }
         for k, v in data.items():

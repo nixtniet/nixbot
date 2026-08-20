@@ -4,10 +4,7 @@
 "one config to rule them all"
 
 
-from ..objects import Default, Method
-
-
-from .utility import Utils
+from .methods import Method
 
 
 class Config(type):
@@ -23,10 +20,7 @@ class Config(type):
 
 class Main(metaclass=Config):
 
-    gets = Default()
-    level = "warning"
-    name = Utils.pkgname(Method)
-    sets = Default()
+    name = Method.pkgname(Config)
 
 
 def __dir__():

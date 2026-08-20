@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"usefulness"
+"time related functions"
 
 
 import datetime

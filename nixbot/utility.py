@@ -5,15 +5,31 @@
 
 
 import inspect
+import logging
 import os
+import pathlib
 
 
 class Utils:
+
+    @classmethod
+    def cdir(cls, path):
+        "create directory."
+        if os.path.exists(path):
+            return
+        pth = pathlib.Path(path)
+        if not os.path.exists(pth.parent):
+            pth.parent.mkdir(parents=True, exist_ok=True)
 
     @staticmethod
     def clsname(obj):
         "return classname of an object."
         return obj.__class__.__name__
+
+    @staticmethod
+    def home(name):
+        "return home working directory."
+        return os.path.expanduser(f"~/.{name}")
 
     @staticmethod
     def listdir(path, ignore=""):
@@ -26,33 +42,8 @@ class Utils:
                ]
 
     @staticmethod
-    def moddir():
-        "return modules directory."
-        return os.path.join(os.path.dirname(os.path.dirname(__spec__.loader.path)), "modules")
-
-    @staticmethod
-    def modname(obj):
-        "return package name of an object."
-        return obj.__module__.split(".")[-1]
-
-    @staticmethod
-    def pkgdir(obj):
-        "return directory in which a module is defined."
-        return os.path.dirname((inspect.getfile(obj)))
-
-    @staticmethod
-    def pkgname(obj):
-        "return package name of an object."
-        return obj.__module__.split(".", maxsplit=1)[0]
-
-    @staticmethod
-    def pipxdir(name):
-        "return examples directory."
-        return f"~/.local/share/pipx/venvs/{name}/share/{name}/"
-
-    @staticmethod
     def skip(obj):
-        "skip underscore keys."
+        "skip underscored keys."
         result = []
         for x in dir(obj):
             if x.startswith("_"):

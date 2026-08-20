@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"logging"
+"usefulness"
 
 
 import logging
@@ -49,6 +49,5 @@ class Logging:
 
 def __dir__():
     return (
-        'Format',
-        'Logging'
+        'Logging',
     )

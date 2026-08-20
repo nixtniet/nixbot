@@ -1,7 +1,7 @@
 # This file is placed in the Public Domain.
 
 
-"clients"
+"output"
 
 
 import logging
@@ -11,7 +11,6 @@ import _thread
 
 
 from .brokers import Broker
-from .engines import Engine
 from .threads import Thread
 
 
@@ -94,42 +93,8 @@ class Buffer(Output):
             _thread.interrupt_main()
 
 
-class Buffered(Engine, Buffer):
-
-    def __init__(self):
-        Engine.__init__(self)
-        Buffer.__init__(self)
-
-    def raw(self, text):
-        "raw output."
-        raise NotImplementedError
-
-    def start(self, daemon=True):
-        "start output loop."
-        Engine.start(self)
-        Buffer.start(self, daemon=daemon)
-
-    def stop(self):
-        "stop output loop."
-        Engine.stop(self)
-        Buffer.stop(self)
-
-
-class Client(Engine, Output):
-
-    def __init__(self):
-        Engine.__init__(self)
-        Output.__init__(self)
-
-    def raw(self, text):
-        "raw output."
-        raise NotImplementedError
-
-
 def __dir__():
     return (
         'Buffer',
-        'Buffered',
-        'Client',
         'Output'
     )
