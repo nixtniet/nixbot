@@ -13,6 +13,10 @@ from nixbot.defines import Utils
 
 class TestUtils(unittest.TestCase):
 
+    def test_where(self):
+        path = Utils.where(Utils)
+        self.assertTrue("nixbot" in path)
+
     def test_strptime(self):
         date = time.strptime("2019-3-4 22:22", "%Y-%m-%d %H:%M")
         self.assertTrue(date is not None)
