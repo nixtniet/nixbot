@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # This file is placed in the Public Domain.
 
 
@@ -5,11 +6,16 @@
 
 
 import argparse
+import os
 import sys
+import time
 
 
-from .defines import Boot, Client, Cmd, Commands, Data, Main, Message
-from .defines import Method, Mods, Workdir
+sys.path.insert(0, os.getcwd())
+
+
+from nixbot.defines import Boot, Client, Cmd, Commands, Data, Main, Md5
+from nixbot.defines import Mods, Message, Method, Workdir
 
 
 class Arguments:
@@ -24,14 +30,21 @@ class Arguments:
             epilog='use "%(prog)s cmd" for a list of commands.',
             formatter_class=argparse.RawDescriptionHelpFormatter,
         )
+        group = theparser.add_mutually_exclusive_group()
+        group.add_argument("-d", "--daemon", action="store_true", help="run as background daemon.")
+        group.add_argument("-s", "--service", action="store_true", help="run as service.")
+        parser = theparser.add_argument_group()
+        parser.add_argument("-a", "--all", action="store_true", help="load all modules.")
+        parser.add_argument("-v", "--verbose", action='store_true', help='enable verbose.')
+        parser.add_argument("-w", "--wait", action='store_true', help='wait for services to start.')
         optionparser = theparser.add_argument_group()
         optionparser.add_argument("-l", "--level", default="warning", help='set loglevel.', metavar="level")
         optionparser.add_argument("-m", "--mods", default="", help='modules to load.', metavar="m1,m2")
-        optionparser.add_argument("-n", "--name", default="nixbot", help="name of the program.")
-        optionparser.add_argument("-p", "--path", default="", help='path to modules directory.', metavar="path")
-        optionparser.add_argument("-v", "--verbose", action='store_true', help='enable verbose.')
+        optionparser.add_argument("-p", "--path", default='', help='path to modules directory.', metavar="path")
         optparser = theparser.add_argument_group()
-        optparser.add_argument("--admin", action='store_true', help="enable admin mode.")
+        optparser.add_argument("--admin", action="store_true", help="enable admin mode.")
+        optparser.add_argument("--default", default="irc,mdl,rss,wsd", help=argparse.SUPPRESS)
+        optparser.add_argument("--nochdir", action="store_true", help=argparse.SUPPRESS)
         optparser.add_argument("--scanner", action="store_true", help="do full modules scan on boot.")
         optparser.add_argument("--wdr", default="", help="set modules directory.")
         args, arguments = theparser.parse_known_args()
@@ -43,11 +56,26 @@ class Arguments:
 class Kernel(Boot):
 
     @classmethod
+    def banner(cls, force=False):
+        "hello."
+        if not force and not Main.sets.verbose:
+            return
+        tmr = time.ctime(time.time()).replace("  ", " ")
+        txt = "%s since %s %s (%s)" % (
+            Main.name.upper(),
+            tmr,
+            Main.sets.level.upper() or "WARNING",
+            Md5.core()
+        )
+        print(txt.replace("  ", " "))
+        sys.stdout.flush()
+
+    @classmethod
     def boot(cls):
         Arguments.getargs()
         cls.configure(Main)
-        Mods.dir(Mods.moddir())
         Mods.dir(Workdir.moddir())
+        Mods.dir(Mods.moddir())
         Commands.add(Cmd.cmd)
         if Main.sets.all:
             Main.sets.mods = ",".join(Mods.list())
@@ -59,11 +87,67 @@ class Kernel(Boot):
             Commands.table()
         Mods.table()
 
+    @classmethod
+    def daemon(cls):
+        "run in the background."
+        pid = os.fork()
+        if pid != 0:
+            os._exit(0)
+        os.setsid()
+        pid2 = os.fork()
+        if pid2 != 0:
+            os._exit(0)
+        if not Main.sets.verbose:
+            cls.null(sys.stdin)
+            cls.null(sys.stdout)
+            cls.null(sys.stderr)
+        os.umask(0o077)
+        os.chdir("/")
+        os.nice(10)
+
+    @classmethod
+    def null(cls, io):
+        "route to dev/null."
+        with open('/dev/null', 'r', encoding="utf-8") as sis:
+            os.dup2(sis.fileno(), io.fileno())
+
+    @classmethod
+    def pid(cls):
+        return Workdir.pid(Main.name)
+
+    @classmethod
+    def privileges(cls):
+        "drop privileges."
+        import getpass
+        import pwd
+        pwnam2 = pwd.getpwnam(getpass.getuser())
+        os.setgid(pwnam2.pw_gid)
+        os.setuid(pwnam2.pw_uid)
+
+    @classmethod
+    def wrap(cls, func, *args, dofinal=None):
+        "restore console."
+        import termios
+        try:
+            old = termios.tcgetattr(sys.stdin.fileno())
+        except termios.error:
+            old = False
+        cls.wrapped(func, *args)
+        if old:
+            termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old)
+        if dofinal:
+            dofinal()
+
 
 class CLI(Client):
 
     def __init__(self):
         Client.__init__(self)
+        self.register("command", Commands.command)
+
+    def after(self, event):
+        "wait for event to finish"
+        event.wait()
 
     def raw(self, text):
         "write to console."
@@ -71,21 +155,51 @@ class CLI(Client):
         sys.stdout.flush()
 
 
+class Scripts:
+
+    @staticmethod
+    def background():
+        "background script."
+        Kernel.daemon()
+        Kernel.privileges()
+        Kernel.pid()
+        Main.sets.mods = ",".join(Mods.list())
+        Kernel.init(Main.sets.mods)
+        Kernel.forever()
+
+    @staticmethod
+    def control():
+        "cli script."
+        Kernel.boot()
+        cli = CLI()
+        evt = Message()
+        evt.orig = repr(cli)
+        evt.text = " ".join(sys.argv[1:])
+        Commands.command(evt)
+        evt.wait()
+
+    @staticmethod
+    def service():
+        "service script."
+        Kernel.privileges()
+        Kernel.pid()
+        if not Main.sets.verbose:
+            Kernel.banner(True)
+        Main.sets.mods = ",".join(Mods.list())
+        Kernel.init(Main.sets.mods)
+        Kernel.forever()
+
+
 def main():
-    "cli script."
+    "main"
     Kernel.boot()
-    cli = CLI()
-    evt = Message()
-    evt.orig = repr(cli)
-    evt.text = " ".join(sys.argv[1:])
-    Commands.command(evt)
-    evt.wait()
+    if Main.sets.daemon:
+        Kernel.wrap(Scripts.background)
+    if Main.sets.service:
+        Kernel.wrap(Scripts.service)
+    else:
+        Kernel.wrap(Scripts.control)
 
 
-def __dir__():
-    return (
-        'Arguments',
-        'Kernel',
-        'CLI',
-        'main'
-    )
+if __name__ == "__main__":
+    main()

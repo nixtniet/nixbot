@@ -19,7 +19,6 @@ from nixbot.defines import Object, Main, Thread, Utils
 def init():
     "initialize web server."
     path = os.path.dirname(Utils.where(Object))
-    print(path)
     if not os.path.exists(os.path.join(path, "numbers", 'index.html')):
         logging.warning("no index.html")
         return

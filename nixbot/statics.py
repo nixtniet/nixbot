@@ -24,7 +24,7 @@ CORE = {
     "persist": "49e11f383821f99816f40c5bf2e304d6",
     "repeats": "eaec4feccb68aea97288b5729d710454",
     "require": "53ae8d308fceff8dab77fc89f86f7eef",
-    "runtime": "0bcce3de89a3f84694c86b7f3054a797",
+    "runtime": "8653e541a5a163c7b5d8379d3d9323cd",
     "threads": "2fcb5ceb0fa336dd7208297fc23e17b0",
     "timings": "3779158dd2a2f280d403717c7ea75886",
     "utility": "973787cf63dccce61d10b16722c08355"
@@ -48,13 +48,14 @@ MODULES = {
     "rst": "524608311cb71e686ab34b65adaf4d17",
     "sil": "942af5ebcf27fc2deb6bbe2d6ca0104c",
     "slg": "e68f11973ddc2e3edeb0de0e16e9fe7a",
+    "srv": "490c50351e775de688076e59bb37d4e5",
     "tdo": "94d259bf3c32c43c3a8667cdf59701ce",
     "thr": "a59544c0c0026efd975cf75e210caeb6",
     "tmr": "74df1496d1c3eec1b65b3641a2456750",
     "udp": "e9a4f41e0f29382335ff6d3d57f980ec",
     "upt": "847a09522abd97a7799a5f5474182064",
     "ver": "e43d64ec467f26dcb0549eaa4d7f5794",
-    "web": "fe483635228970a1d51f85f80f0abd26",
+    "web": "b5c3a6a2ec0974f56b08f2a86b176898",
     "wsd": "f160d4246e688fba633ae35bd45c7788"
 }
 
@@ -87,6 +88,7 @@ NAMES = {
     "rss": "rss",
     "sil": "sil",
     "slg": "slg",
+    "srv": "srv",
     "syn": "rss",
     "tdo": "tdo",
     "thr": "thr",
