@@ -18,7 +18,7 @@ from nixbot.defines import Object, Main, Thread, Utils
 
 def init():
     "initialize web server."
-    path = os.path.dirname(Utils.where(Object))
+    path = Utils.where(Object)
     if not os.path.exists(os.path.join(path, "numbers", 'index.html')):
         logging.warning("no index.html")
         return
@@ -78,7 +78,7 @@ class HTTPHandler(BaseHTTPRequestHandler):
     def setup(self):
         "setup handler."
         BaseHTTPRequestHandler.setup(self)
-        self._path = os.path.join(os.path.dirname(Utils.where(Main)), "numbers")
+        self._path = os.path.join(Utils.where(Main), "numbers")
         self._size = 0
         self._ip = self.client_address[0]
 
