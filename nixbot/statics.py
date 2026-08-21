@@ -55,7 +55,7 @@ MODULES = {
     "udp": "e9a4f41e0f29382335ff6d3d57f980ec",
     "upt": "847a09522abd97a7799a5f5474182064",
     "ver": "e43d64ec467f26dcb0549eaa4d7f5794",
-    "web": "b5c3a6a2ec0974f56b08f2a86b176898",
+    "web": "5360d781a8539acf51f28b604ea97a36",
     "wsd": "f160d4246e688fba633ae35bd45c7788"
 }
 
