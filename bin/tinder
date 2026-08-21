@@ -15,22 +15,27 @@ import time
 sys.path.insert(0, os.getcwd())
 
 
-from nixbot.defines import Boot, Client, Main, Message, Method
-from nixbot.defines import Mods, Parse, Time, Workdir
+from nixbot.defines import Boot, Client, Commands, Main, Message
+from nixbot.defines import Method, Mods, Parse, Time, Workdir
 
 
 Workdir.wdr = ".test"
-Mods.dir("mods", "mods")
-
-
-class Vars:
-
-    nrevents = 0
-    starttime = 0
 
 
 class Kernel(Boot):
 
+    nrevents = 0
+    starttime = 0
+
+    @classmethod
+    def boot(cls):
+        Parse.parse(Main, " ".join(sys.argv[1:]))
+        cls.configure(Main)
+        Mods.dir(Mods.moddir())
+        Commands.scanner()
+        if os.path.exists(Workdir.wdr):
+            shutil.rmtree(Workdir.wdr)
+        
     @classmethod
     def wrap(cls, func, *args, dofinal=None):
         "restore console."
@@ -39,10 +44,7 @@ class Kernel(Boot):
             old = termios.tcgetattr(sys.stdin.fileno())
         except termios.error:
             old = False
-        try:
-            cls.wrapped(func, *args)
-        except (KeyboardInterrupt, EOFError):
-            pass
+        cls.wrapped(func, *args)
         if old:
             termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old)
         if dofinal:
@@ -53,7 +55,7 @@ class CLI(Client):
 
     def __init__(self):
         Client.__init__(self)
-        self.register("command", Mods.command)
+        self.register("command", Commands.command)
 
     def raw(self, text):
         "write to console."
@@ -96,16 +98,10 @@ class Runners:
             Runners.nrlast += 1
 
 
-def raw(text):
-    if "v" in Main.opts:
-        print(text.encode('utf-8', 'replace').decode("utf-8"))
-        sys.stdout.flush()
-
-
 def payload(todo):
     for cmd, example in todo.items():
         for ex in example:
-            Vars.nrevents += 1
+            Kernel.nrevents += 1
             evt = Message()
             evt.kind = "command"
             evt.text = f"{cmd} {ex}"
@@ -115,27 +111,24 @@ def payload(todo):
 def final():
     if "v" not in Main.opts:
         return
-    total = Vars.nrevents
+    total = Kernel.nrevents
     endtime = time.time()
-    lap = Time.elapsed(endtime-Vars.starttime)
-    percall = (endtime-Vars.starttime)/total
+    lap = Time.elapsed(endtime-Kernel.starttime)
+    percall = (endtime-Kernel.starttime)/total
     print(f"{Method.fmt(Main, skip='otxt,txt')}")
     print(f"events: {total}")
-    print(f"total: {lap} nrs: {Vars.nrevents} call: %.6fs" % percall)
+    print(f"total: {lap} nrs: {Kernel.nrevents} call: %.6fs" % percall)
     print(threading.enumerate())
 
 
 def main():
-    Parse.parse(Main, " ".join(sys.argv[1:]))
-    Kernel.configure()
-    if os.path.exists(Workdir.wdr):
-        shutil.rmtree(Workdir.wdr)
+    Kernel.boot()
     if "t" in Main.opts:
         nrcpu = os.cpu_count()
     else:
         nrcpu = 1
     Runners.init(nrcpu, CLI)
-    Vars.starttime = time.time()
+    Kernel.starttime = time.time()
     nrs = Main.index or 1
     for _x in range(nrs):
         payload(pre)
