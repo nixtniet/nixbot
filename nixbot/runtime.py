@@ -4,7 +4,6 @@
 "runtime"
 
 
-import os
 import sys
 import time
 
@@ -12,7 +11,7 @@ import time
 from argparse import SUPPRESS, ArgumentParser, RawTextHelpFormatter
 
 
-from nixbot.defines import MD5, Dict, Message, Screen
+from nixbot.defines import MD5, Daemon, Dict, Message, Screen
 from nixbot.defines import Boot, Commands, Main, Method, Mods, Workdir
 from nixbot.require import Cmd
 
@@ -59,48 +58,6 @@ class Arguments:
             usage="%(prog)s [options] [cmd] [key=val] [key==val] [key-=val] [arguments]"
         )
 
-
-class Daemon:
-
-    "detach from console"
-
-    @classmethod
-    def daemon(cls):
-        "run in the background."
-        pid = os.fork()
-        if pid != 0:
-            os._exit(0)
-        os.setsid()
-        pid2 = os.fork()
-        if pid2 != 0:
-            os._exit(0)
-        if not Main.verbose:
-            cls.null(sys.stdin)
-            cls.null(sys.stdout)
-            cls.null(sys.stderr)
-        os.umask(0o077)
-        os.chdir("/")
-        os.nice(10)
-
-    @classmethod
-    def null(cls, iostream):
-        "route to /dev/null."
-        with open('/dev/null', 'r', encoding="utf-8") as sis:
-            os.dup2(sis.fileno(), iostream.fileno())
-
-    @classmethod
-    def pid(cls):
-        "return pid path."
-        return Workdir.pid(Main.name)
-
-    @classmethod
-    def privileges(cls):
-        "drop privileges."
-        import getpass
-        import pwd
-        pwnam2 = pwd.getpwnam(getpass.getuser())
-        os.setgid(pwnam2.pw_gid)
-        os.setuid(pwnam2.pw_uid)
 
 
 class Kernel(Boot, Daemon):

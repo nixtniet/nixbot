@@ -4,8 +4,7 @@
 "todo"
 
 
-from nixbot.defines import Object
-from nixbot.defines import Disk, Locater
+from nixbot.defines import Dict, Disk, Locater, Object
 
 
 class Todo(Object):
@@ -26,10 +25,10 @@ def dne(msg):
     nmr = 0
     for fnm, obj in Locater.find('todo', selector):
         nmr += 1
-        tdo = Todo()
-        Dict.update(tdo, obj)
-        tdo.__deleted__ = True
-        Disk.write(tdo, fnm)
+        todo = Todo()
+        Dict.update(todo, obj)
+        todo.__deleted__ = True
+        Disk.write(todo, fnm)
         msg.ok()
         break
     if not nmr:

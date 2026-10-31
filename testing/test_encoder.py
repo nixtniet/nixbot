@@ -1,5 +1,4 @@
 # This file is placed in the Public Domain.
-# type: ignore
 
 
 "encoder/decoder"

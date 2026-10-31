@@ -33,6 +33,6 @@ def popen(txt):
 
 popen(f"ruff check {NAME} bin/tinder testing")
 popen(f"pylint {NAME} bin/tinder testing")
-popen(f"mypy -p {NAME}-p testing")
-popen("ty check nixt testing")
+popen(f"mypy -p {NAME} -p testing")
+popen(f"ty check {NAME} testing")
 popen("bin/tinder")

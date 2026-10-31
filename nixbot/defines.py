@@ -8,6 +8,7 @@ from .booting import Boot
 from .clients import Broker, Buffer, Clients, Display, Output, Screen
 from .command import Commands, Parser
 from .configs import Cfg, Config, Main
+from .daemons import Daemon
 from .encoder import JSON, JSONL
 from .excepts import Errors
 from .fetcher import Fetcher
@@ -39,6 +40,7 @@ __all__ = (
     'Cmd',
     'Commands',
     'Config',
+    'Daemon',
     'Data',
     'Dict',
     'Disk',

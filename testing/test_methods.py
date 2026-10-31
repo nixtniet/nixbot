@@ -7,10 +7,10 @@
 import unittest
 
 
-from nixbot.defines import Data, Object, Method
+from nixbot.defines import Data, Method
 
 
-class Mine(Object):
+class Mine(Data):
 
     "custom object"
 

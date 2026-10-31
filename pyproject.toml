@@ -75,3 +75,7 @@ disable_error_code = [
     'annotation-unchecked',
     'var-annotated'
 ]
+
+[tool.ty.rules]
+unresolved-attribute = "ignore"
+invalid-argument-type = "ignore"

@@ -8,7 +8,7 @@ import threading
 import time
 
 
-from nixbot.defines import Time
+from nixbot.defines import Time, Worker
 
 
 def tsk(msg):
@@ -16,6 +16,8 @@ def tsk(msg):
     result = []
     for thread in sorted(threading.enumerate(), key=lambda x: x.name):
         if str(thread).startswith("<_"):
+            continue
+        if isinstance(thread, Worker):
             continue
         if getattr(thread, "sleep", None):
             uptime = float(thread.sleep) - float(time.time() - float(thread.state["latest"]))

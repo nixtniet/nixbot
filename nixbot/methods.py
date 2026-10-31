@@ -9,7 +9,7 @@ import os.path
 
 
 from .objects import Dict
-from .typings import MappingProxyType, MethodType
+from .typings import MethodType
 
 
 class Method:
