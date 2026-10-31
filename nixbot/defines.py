@@ -8,7 +8,6 @@ from .booting import Boot
 from .clients import Broker, Buffer, Clients, Display, Output, Screen
 from .command import Commands, Parser
 from .configs import Cfg, Config, Main
-from .default import Log
 from .encoder import JSON, JSONL
 from .excepts import Errors
 from .fetcher import Fetcher
@@ -20,8 +19,11 @@ from .package import Mods
 from .persist import Disk, Locater, Workdir
 from .pooling import Pool, Runner
 from .repeats import Repeater
+from .require import Cmd
 from .tasking import Task, Worker
-from .utility import Format, Logging, MD5, Time, Utils
+from .utility import Event, Format, Log, Logging, MD5, StreamHandler
+from .utility import Time, TimedRotatingFileHandler, Path, Queue, RLock, Utils
+from .utility import Thread, basicConfig
 from .watcher import Watcher
 
 
@@ -34,6 +36,7 @@ __all__ = (
     'Buffer',
     'Cfg',
     'Clients',
+    'Cmd',
     'Commands',
     'Config',
     'Data',
@@ -41,6 +44,7 @@ __all__ = (
     'Disk',
     'Display',
     'Errors',
+    'Event',
     'Fetcher',
     'Format',
     'Handler',
@@ -55,16 +59,23 @@ __all__ = (
     'Object',
     'Output',
     'Parser',
+    'Path',
     'Pool',
+    'Queue',
+    'RLock',
     'Repeater',
     'Runner',
     'Screen',
+    'StreamHandler',
     'Task',
+    'Thread',
     'Time',
+    'TimedRotatingFileHandler',
     'Utils',
     'Watcher',
     'Workdir',
-    'Worker'
+    'Worker',
+    'basicConfig'
     )
 
 

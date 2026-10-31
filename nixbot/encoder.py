@@ -8,8 +8,8 @@ import json
 import types
 
 
-from .default import RLock
 from .typings import MappingProxyType
+from .utility import RLock
 
 
 class Encoder(json.JSONEncoder):

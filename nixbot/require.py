@@ -8,7 +8,12 @@ import inspect
 import os
 
 
-from .defines import JSON, MD5, Commands, Main, Mods, Utils, Worker
+from .command import Commands
+from .configs import Main
+from .encoder import JSON
+from .package import Mods
+from .tasking import Worker
+from .utility import MD5, Utils
 
 
 class Cmd:

@@ -7,11 +7,14 @@
 import unittest
 
 
-from nixbot.defines import Locate
+from nixbot.defines import Locater
 
 
 class TestLocater(unittest.TestCase):
 
+    "locater unittests"
+
     def test_construct(self):
-        lct = Locate()
-        self.assertTrue(lct)
+        "test locater construction."
+        locater = Locater()
+        self.assertTrue(locater)

@@ -10,7 +10,10 @@ import unittest
 from nixbot.statics import CORE
 
 
-class TestStatic(unittest.TestCase):
+class TestStatics(unittest.TestCase):
 
-    def test_names(self):
+    "statics unittests"
+
+    def test_core(self):
+        "test for core definitions."
         self.assertTrue(CORE)

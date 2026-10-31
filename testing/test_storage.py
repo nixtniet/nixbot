@@ -12,6 +12,9 @@ from nixbot.defines import Disk
 
 class TestStorage(unittest.TestCase):
 
-    def test_disk(self):
+    "disk read/write"
+
+    def test_construct(self):
+        "create a disk."
         disk = Disk()
         self.assertTrue(disk)

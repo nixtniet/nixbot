@@ -12,11 +12,10 @@ import _thread
 
 from .clients import Broker, Screen
 from .configs import Main
-from .default import Event, Log
 from .package import Mods
 from .persist import Workdir
 from .tasking import Task, Worker
-from .utility import Logging, Utils
+from .utility import Event, Log, Logging, Utils
 
 
 logger = Log(__name__)
@@ -37,6 +36,7 @@ class Boot:
         Main.level = Main.level or "warning"
         Logging.size(len(Main.name))
         Logging.level(Main.level)
+        Mods.dir(f"{Main.name}.modules", Mods.moddir())
         if Main.path:
             Main.path = os.path.normpath(Main.path)
             pkgname = Main.path.rsplit(os.sep, maxsplit=1)[-1]

@@ -12,9 +12,9 @@ import time
 from argparse import SUPPRESS, ArgumentParser, RawTextHelpFormatter
 
 
-from .defines import MD5, Boot, Commands, Dict, Main, Message
-from .defines import Method, Mods, Screen, Workdir
-from .require import Cmd
+from nixbot.defines import MD5, Dict, Message, Screen
+from nixbot.defines import Boot, Commands, Main, Method, Mods, Workdir
+from nixbot.require import Cmd
 
 
 class Arguments:

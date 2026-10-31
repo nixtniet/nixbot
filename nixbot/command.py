@@ -9,6 +9,7 @@ import inspect
 
 from .clients import Clients
 from .methods import Method
+from .objects import Data
 from .package import Mods
 from .utility import Utils
 
@@ -105,19 +106,19 @@ class Parser:
 
     @classmethod
     def init(cls, obj, text, clean=False):
-        "set default values."
+        "set defines values."
         data = {
             "args": [],
             "cmd": "",
-            "gets": {},
+            "gets": Data(),
             "index": None,
             "init": "",
             "mod": "",
             "opts": "",
             "otxt": text,
             "rest": "",
-            "silent": {},
-            "sets": {},
+            "silent": Data(),
+            "sets": Data(),
             "text": text
         }
         for k, v in data.items():

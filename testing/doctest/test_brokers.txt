@@ -6,13 +6,11 @@
 
 
 >>> from nixbot.defines import Broker, Object
->>> b = Broker()
 >>> o = Object()
->>> repr(o) # doctest: +ELLIPSIS
-'<nixbot.objects.Object object at ...'
->>> id = b.add(o)
->>> print(id) # doctest: +ELLIPSIS
-<nixbot.objects.Object object at ...>
->>> obj = b.get(id)
->>> repr(obj) == id
+>>> o.a = "b"
+>>> Broker.add(o)
+>>> obj = Broker.get(repr(o))
+>>> repr(obj) # doctest: +ELLIPSIS
+'<nixbot.objects.Object object at ...>'
+>>> repr(o) == repr(obj)
 True

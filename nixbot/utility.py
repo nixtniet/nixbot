@@ -4,17 +4,23 @@
 "usefulness"
 
 
+import logging
 import os
 import time
 import uuid
 
 
 from datetime import datetime
+from queue    import Queue
 
 
-from .default import Log, Path
-from .default import Formatter, StreamHandler
-from .default import TimedRotatingFileHandler, basicConfig
+from logging          import basicConfig, Formatter, StreamHandler
+from logging.handlers import TimedRotatingFileHandler
+from pathlib          import Path
+from threading        import Event, RLock, Thread
+
+
+Log = logging.getLogger
 
 
 logger = Log(__name__)
@@ -319,11 +325,24 @@ class Utils:
         return os.path.join(*path.split(os.sep)[-nrchar:])
 
 
+__all__ = (
+    'MD5',
+    'Event',
+    'Format',
+    'Formatter',
+    'Log',
+    'Logging',
+    'Path',
+    'Queue',
+    'RLock',
+    'StreamHandler',
+    'Thread',
+    'Time',
+    'TimedRotatingFileHandler',
+    'Utils',
+    'basicConfig'
+)
+
+
 def __dir__():
-    return (
-        'Format',
-        'Logging',
-        'MD5',
-        'Time',
-        'Utils'
-    )
+    return __all__

@@ -4,5 +4,11 @@
 "debug"
 
 
-def dbg(event):
-    raise Exception("yo!")
+class Test(Exception):
+
+    "custom exception"
+
+
+def dbg(msg):
+    "raise exception."
+    raise Test("Test")

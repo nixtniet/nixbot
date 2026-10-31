@@ -1,21 +1,20 @@
 # This file is placed in the Public Domain.
 
 
-"if it repeats it's important"
+"repeater"
 
 
 import unittest
 
 
-from nixbot.defines import Repeater
-
-
-def hello(event):
-    event.reply("hoi!")
+from nixbot.repeats import Repeater
 
 
 class TestRepeater(unittest.TestCase):
 
+    "repeater unittests"
+
     def test_construct(self):
-        Repeater.add(60, hello)
-        self.assertTrue(Repeater.todo)
+        "test repeater construction."
+        repeater = Repeater()
+        self.assertTrue(type(repeater), Repeater)

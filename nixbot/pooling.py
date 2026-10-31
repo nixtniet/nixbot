@@ -7,9 +7,9 @@
 import os
 
 
-from .default import RLock
 from .looping import Loop
 from .tasking import Task
+from .utility import RLock
 
 
 class Runner(Loop):

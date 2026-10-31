@@ -162,25 +162,23 @@ class Method:
         "assign proper types."
         if obj is None or not val:
             return
-        if isinstance(obj, MappingProxyType):
-            obj = dict(obj)
         if val in ["True", "true", True]:
-            obj[key] = True
+            setattr(obj, key, True)
             return
         if val in ["False", "false", False]:
-            obj[key] = False
+            setattr(obj, key, False)
             return
         try:
-            obj[key] = int(val)
+            setattr(obj, key, int(val))
             return
         except ValueError:
             pass
         try:
-            obj[key] = float(val)
+            setattr(obj, key, float(val))
             return
         except ValueError:
             pass
-        obj[key] = val
+        setattr(obj, key, val)
 
     @classmethod
     def where(cls, obj):

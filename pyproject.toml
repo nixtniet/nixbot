@@ -35,28 +35,43 @@ classifiers=[
 
 [tool.setuptools]
 packages = [
-    'nixbot',
-    'nixbot.minimal',
-    'nixbot.modules',
-    'nixbot.network',
-    'nixbot.numbers',
-    'nixbot.numbers.pdf',
-    'nixbot.numbers._images',
-    'nixbot.numbers._static'
+    'nixbot', 
+    'nixbot.modules'
 ]
-include-package-data = true
-
-
-[tool.setuptools.package-data]
-"nixbot.numbers" = ["*"]
-"nixbot.numbers.pdf" = ["*"]
-"nixbot.numbers._images" = ["*"]
-"nixbot.numbers._static" = ["*"]
 
 
 [tool.pylint."messages control"]
-disable = ["C,R,W,E0401,E0402"]
+disable = [
+    'R',
+    'attribute-defined-outside-init',
+    'broad-exception-caught',
+    'invalid-name',
+    'import-outside-toplevel',
+    'line-too-long',
+    'protected-access',
+    'relative-beyond-top-level',
+    'unused-argument',
+    'wrong-import-position'
+]
 
 
 [tool.ruff.lint]
-ignore = ["E501", "E701", "E702"]
+preview = true
+ignore = [
+    'DTZ',
+    'deprecated-import',
+    'blind-except',
+    'invalid-all-format',
+    'mutable-class-default',
+    'non-pep585-annotation',
+    'non-pep604-annotation-union',
+    'unsorted-imports',
+    'verbose-log-message'
+]
+
+
+[tool.mypy]
+disable_error_code = [
+    'annotation-unchecked',
+    'var-annotated'
+]

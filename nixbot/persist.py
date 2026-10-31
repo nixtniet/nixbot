@@ -12,11 +12,10 @@ import time
 from datetime import datetime
 
 
-from .default import Log, Path, RLock
 from .encoder import JSON
-from .methods import Method
 from .objects import Dict
-from .utility import Utils
+from .methods import Method
+from .utility import Log, Path, RLock, Utils
 
 
 logger = Log(__name__)
@@ -25,6 +24,11 @@ logger = Log(__name__)
 class DecodeError(Exception):
 
     "could not parse input"
+
+
+class MissingPath(Exception):
+
+    "don't know where to write."
 
 
 class Cache:
@@ -46,8 +50,8 @@ class Cache:
     @classmethod
     def sync(cls, path, obj):
         "update cached object."
-        if not isinstance(obj, dict):
-            raise TypeError(type(obj))
+        #if not isinstance(obj, dict):
+        #    raise TypeError(type(obj))
         try:
             cls.paths[path].update(obj)
         except (KeyError, AttributeError):
@@ -80,8 +84,15 @@ class Disk:
                     raise DecodeError(Utils.strip(pth)) from ex
 
     @classmethod
-    def write(cls, obj, path, base="store"):
+    def write(cls, obj, path=None, base="store"):
         "write object to disk."
+        if not path:
+            try:
+                path = cls.ident(Method.fqn(obj))
+            except TypeError:
+                pass
+        if not path:
+            raise MissingPath
         try:
             obj = vars(obj)
         except TypeError:

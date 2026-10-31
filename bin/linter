@@ -12,7 +12,7 @@ import sys
 NAME = "nixbot"
 
 
-SKIP = ["--", "Your", "All"]
+SKIP = ["---", "Your", "All", "Success"]
 
 
 def doskip(line):
@@ -31,6 +31,8 @@ def popen(txt):
         sys.stdout.flush()
 
 
-popen(f"ruff check {NAME} bin testing")
-popen(f"pylint {NAME} bin testing")
-popen(f"flake8 {NAME} bin testing")
+popen(f"ruff check {NAME} bin/tinder testing")
+popen(f"pylint {NAME} bin/tinder testing")
+popen(f"mypy -p {NAME}-p testing")
+popen("ty check nixt testing")
+popen("bin/tinder")

@@ -8,8 +8,8 @@ import inspect
 import time
 
 
-from .default import Event, Log, Queue, RLock, Thread
 from .excepts import Errors
+from .utility import Event, Log, Queue, RLock, Thread
 
 
 logger = Log(__name__)

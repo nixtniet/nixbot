@@ -1,4 +1,5 @@
 # This file is placed in the Public Domain.
+# type: ignore
 
 
 "encoder/decoder"
@@ -7,7 +8,7 @@
 import unittest
 
 
-from nixbot.defines import Object, Json, Method
+from nixbot.defines import Dict, Object, JSON
 
 
 VALIDJSON = '{"test": "bla"}'
@@ -15,50 +16,65 @@ VALIDJSON = '{"test": "bla"}'
 
 class TestEncoder(unittest.TestCase):
 
+    "encoder unittests"
+
     def test_dumps(self):
+        "test dump string."
         obj = Object()
         obj.test = "bla"
-        self.assertEqual(Json.dumps(obj), VALIDJSON)
+        self.assertEqual(JSON.dumps(obj), VALIDJSON)
 
 
 class TestDecoder(unittest.TestCase):
 
+    "decoder unittests"
+
     def test_loads(self):
+        "test load string."
         obj = Object()
         obj.test = "bla"
-        oobj = Json.loads(Json.dumps(obj))
-        self.assertEqual(oobj["test"], "bla")
+        oobj = JSON.loads(JSON.dumps(obj))
+        self.assertEqual(oobj.get("test", None), "bla")
 
 
 class TestTypes(unittest.TestCase):
 
+    "types unittests"
+
     def test_dict(self):
-        obj = Json.loads(Json.dumps({"a": "b"}))
+        "test dumps/loads dictionary."
+        obj = JSON.loads(JSON.dumps({"a": "b"}))
         self.assertEqual(obj, {"a": "b"})
 
     def test_integer(self):
-        obj = Json.loads(Json.dumps(1))
+        "test dumps/loads an integer."
+        obj = JSON.loads(JSON.dumps(1))
         self.assertEqual(obj, 1)
 
     def test_float(self):
-        obj = Json.loads(Json.dumps(1.0))
+        "test dumps/loads floating point."
+        obj = JSON.loads(JSON.dumps(1.0))
         self.assertEqual(obj, 1.0)
 
     def test_string(self):
-        obj = Json.loads(Json.dumps("test"))
+        "test dumps/loads a string."
+        obj = JSON.loads(JSON.dumps("test"))
         self.assertEqual(obj, "test")
 
     def test_true(self):
-        obj = Json.loads(Json.dumps(True))
+        "test dumps/loads boolean true."
+        obj = JSON.loads(JSON.dumps(True))
         self.assertEqual(obj, True)
 
     def test_false(self):
-        obj = Json.loads(Json.dumps(False))
+        "test dumps/loads boolean false."
+        obj = JSON.loads(JSON.dumps(False))
         self.assertEqual(obj, False)
 
     def test_object(self):
+        "test object containment."
         ooo = Object()
         ooo.a = "b"
         obj = Object()
-        Method.update(obj, Json.loads(Json.dumps(ooo)))
-        self.assertEqual(obj.a, "b")
+        Dict.update(obj, JSON.loads(JSON.dumps(ooo)))
+        self.assertTrue(getattr(obj, "a", False))

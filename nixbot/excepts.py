@@ -1,15 +1,16 @@
 # This file is placed in the Public Domain.
 
 
-"default exception handler"
+"defines exception handler"
 
 
+import os
 import traceback
 import _thread
 
 
-from .default import Log
 from .message import Message
+from .utility import Log
 
 
 logger = Log(__name__)
@@ -19,6 +20,7 @@ class Errors:
 
     "error management"
 
+    bork = True
     errors = []
 
     @classmethod
@@ -40,7 +42,8 @@ class Errors:
         "log the exception and interrupt main loop."
         logger.exception(exc)
         _thread.interrupt_main()
-
+        if cls.bork:
+            os._exit(1)
 
 def __dir__():
     return (

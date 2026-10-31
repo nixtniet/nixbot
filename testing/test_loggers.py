@@ -1,16 +1,30 @@
 # This file is placed in the Public Domain.
 
 
-"logging tests"
+"logging"
 
 
 import unittest
 
 
-from nixbot.defines import Logging
+from nixbot.defines import Format, Logging
 
 
-class TestLoggers(unittest.TestCase):
+class TestFormat(unittest.TestCase):
 
-    def test_dateformat(self):
-        self.assertTrue(Logging.datefmt)
+    "format unittests"
+
+    def test_construct(self):
+        "test format construction."
+        fmt = Format()
+        self.assertTrue(type(fmt), Format)
+
+
+class TestLogging(unittest.TestCase):
+
+    "logging unittests"
+
+    def test_construct(self):
+        "test logging construction."
+        logger = Logging()
+        self.assertTrue(type(logger), Logging)

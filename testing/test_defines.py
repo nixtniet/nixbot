@@ -12,5 +12,8 @@ import nixbot.defines as dev
 
 class TestDefines(unittest.TestCase):
 
+    "defines unittest"
+
     def test_dir(self):
-        self.assertTrue(len(dir(dev)), 22)
+        "internal interface check."
+        self.assertEqual(len(dir(dev)), 48)
