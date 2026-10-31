@@ -4,15 +4,20 @@
 "module management"
 
 
-import logging
 import os
 
 
-from .hashing import Md5
-from .utility import Utils
+from .default import Log
+from .methods import Method
+from .utility import MD5, Utils
+
+
+logger = Log(__name__)
 
 
 class Mods:
+
+    "modules"
 
     core = {}
     dirs = {}
@@ -20,18 +25,12 @@ class Mods:
     mods = {}
 
     @classmethod
-    def dir(cls, pkgname, path=None):
-        "add module/patgh."
-        if not pkgname:
-            return
-        pkgn = pkgname
-        if path is None:
-            path = pkgname
-            pkgn = pkgname.split(os.sep)[-1]
-        cls.dirs[pkgn] = path
+    def dir(cls, pkgname, path):
+        "add module/path."
+        cls.dirs[pkgname] = path
 
     @classmethod
-    def get(cls, name):
+    def get(cls, name, force=False):
         "return module from cache or import module."
         for pkgname, path in cls.dirs.items():
             modname = f"{pkgname}.{name}"
@@ -41,19 +40,22 @@ class Mods:
             fnm = os.path.join(path, name + ".py")
             if not os.path.exists(fnm):
                 continue
-            if cls.md5s:
-                md5 = Md5.md5(fnm)
+            if not force and cls.md5s:
+                md5 = MD5.md5(fnm)
                 md5s = cls.md5s.get(name)
                 if md5s and md5 != md5s:
-                    logging.warning("mismatch %s", modname)
+                    logger.info("mismatch %s", name)
             return cls.importer(modname, fnm)
+        return None
 
     @classmethod
     def has(cls, attr):
-        "return list of modules containing an attribute."
+        "return comma seperated string of module names containing an attribute."
         result = []
         for modname in cls.list():
             mod = cls.get(modname)
+            if not mod:
+                continue
             if not getattr(mod, attr, False):
                 continue
             result.append(mod.__name__.split(".")[-1])
@@ -71,19 +73,21 @@ class Mods:
         return cls.mods[name]
 
     @classmethod
-    def list(cls):
+    def list(cls, skip=""):
         "comma seperated list of available modules."
         mods = []
-        for pkgname, path in cls.dirs.items():
+        for name, path in cls.dirs.items():
+            if name in skip:
+                continue
             if not os.path.exists(path):
                 continue
             mods.extend(Utils.listdir(path))
         return sorted(set(mods))
 
     @classmethod
-    def moddir(cls):
+    def moddir(cls, name="modules"):
         "return package modules path."
-        return os.path.join(Utils.where(Mods), "modules")
+        return os.path.join(Method.where(Mods), name)
 
     @classmethod
     def statics(cls):
@@ -104,7 +108,7 @@ class Mods:
         "read static tables."
         cls.statics()
         if cls.core:
-            Md5.check(cls.core)
+            MD5.check(cls.core)
 
 
 def __dir__():

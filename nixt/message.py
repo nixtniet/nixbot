@@ -1,37 +1,43 @@
-# This file is placed in the Public Domain.
+ # This file is placed in the Public Domain.
 
 
 "only the message"
 
 
-import threading
-
-
+from .default import Event
 from .objects import Data
 
 
 class Message(Data):
 
+    "message as an event"
+
     def __init__(self):
         super().__init__()
-        self._ready = threading.Event()
+        self._ready = Event()
         self._thr = None
         self.args = []
+        self.cmd = ""
         self.index = 0
         self.kind = "message"
+        self.orig = ""
+        self.rest = ""
         self.result = []
+        self.text = ""
 
-    def iface(self, txt):
+    def __iter__(self):
+        return iter(self.__dict__)
+
+    def iface(self, text):
         "show interface."
-        txt = f"{self.cmd} {txt}"
-        self.reply(txt)
+        self.reply(f"{self.cmd} {text}")
 
-    def ok(self, txt=""):
+    def ok(self, text=""):
         "print ok response."
-        self.reply(f"ok {txt}".strip())
+        self.reply(f"ok {text}".strip())
 
     def ready(self):
-        "flag message as ready."
+        "flag msg as ready."
         self._ready.set()
 
     def reply(self, text):
@@ -40,9 +46,9 @@ class Message(Data):
 
     def wait(self, timeout=0.0):
         "wait for completion."
-        self._ready.wait(timeout or None)
         if self._thr:
             self._thr.join(timeout or None)
+        self._ready.wait(timeout or None)
 
 
 def __dir__():
