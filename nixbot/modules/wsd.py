@@ -7,7 +7,7 @@
 import random
 
 
-from nixbot.defines import Clients, Disk, Locater, Log, Repeater, Stated
+from nixbot.defines import Clients, Log, Repeater, Stated
 
 
 logger = Log(__name__)

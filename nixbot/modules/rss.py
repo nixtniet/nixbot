@@ -20,7 +20,7 @@ from urllib.error   import HTTPError, URLError
 from nixbot.defines import Log, RLock
 from nixbot.defines import Clients, Data, Dict, Format
 from nixbot.defines import JSON, JSONL, Logging, MD5
-from nixbot.defines import Object, Pool, Repeater, Runner, Stated, Utils
+from nixbot.defines import Pool, Repeater, Runner, Stated, Utils
 from nixbot.defines import Cfg, Disk, Fetcher, Locater, Main, Method, Watcher
 from nixbot.defines import Workdir
 
@@ -55,6 +55,13 @@ class Config(Cfg):
 class Feed(Data):
 
     "feed data"
+
+
+class State(Stated):
+
+    "rss state"
+
+    index = 0
 
 
 class Rss(Data):

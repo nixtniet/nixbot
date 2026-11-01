@@ -243,15 +243,17 @@ class Stated:
         super().__init__()
         self.fnm = ""
 
-    def dump(self):
+    @classmethod
+    def dump(cls):
         "dump state to disk."
-        if not self.fnm:
-            self.fnm = Locater.first(self)
-        Disk.write(self, self.fnm)
+        if not cls.fnm:
+            cls.fnm = Locater.first(cls)
+        Disk.write(cls, cls.fnm)
 
-    def load(self):
+    @classmethod
+    def load(cls):
         "load from disk."
-        Locater.first(self)
+        Locater.first(cls)
 
 
 class Workdir:
