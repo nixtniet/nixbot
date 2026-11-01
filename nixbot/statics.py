@@ -5,7 +5,7 @@
 
 
 CORE = {
-    "booting": "bd48df1ae7128f0bd61ec63f5e2d7114",
+    "booting": "4cfd75e2a5247862c706a1e0227afeea",
     "clients": "e50a026c991ff3ef970d06997424e30e",
     "command": "5a244459810dfa89aa5d59dc040bb1e1",
     "configs": "0984d1a7a76781e86b06df0ccde950ea",
@@ -15,7 +15,7 @@ CORE = {
     "excepts": "ada2714bd64174e585246fc292da7780",
     "fetcher": "222a748b7bc49bf63d495f59686bed03",
     "looping": "2e1d6e3b2f9319931d1fb73380f9d198",
-    "message": "39b019c0ee74db75aa8a22c82f40a4d8",
+    "message": "f1ae7304290d5eb11f222b85f416edf5",
     "methods": "890238e023d87b301da2ccc9998d95ae",
     "objects": "98850fa62cdf7e221340e75f848860b3",
     "package": "a59de0c22fc08bb9dc0baf21bb621aa7",
@@ -24,7 +24,7 @@ CORE = {
     "repeats": "378ebfe10317d39b041af841843ff8f2",
     "require": "f20d5e1d210dd1ef74c9ed1919806e1e",
     "runtime": "007c14df9bbb2a2bf6b735635bbfca22",
-    "tasking": "aa0fd8f6794329b7b3a6335dad1152db",
+    "tasking": "eae0d05c675c42f897b66ab934a7fca6",
     "typings": "6c5b6ff2333247550bc2177d4ab8fc59",
     "utility": "fdc092dfb22384621a5222383c57674f",
     "watcher": "d73309d79d054699eca0e90d0558e6d2"
@@ -32,13 +32,13 @@ CORE = {
 
 
 MODULES = {
-    "cfg": "c4106218e2d31f4a13175796b17a9e5f",
+    "cfg": "1b1e3b09259fd1b48bfc4bfef48f6a8b",
     "fie": "fe292b7ecc00c59eafbb847e67b65a9b",
     "flt": "6bdc5aef479163ef7358d3dda0e4d676",
     "fnd": "85d45a1f3de9308e10dbca727a29ce96",
     "hlp": "f68a38699867bc4dcfd840229bfb2246",
     "irc": "d32bcbc5444c14e8f21f3a7b385605e5",
-    "log": "8a359fbd0ff3398457b7fde92a5c3931",
+    "log": "cd672f74875e9e3466136c789d472f57",
     "mdl": "86e546532bf90d44d01072c11792ded6",
     "pth": "6b88f46385d9de50d6ee2be4957ccbb9",
     "req": "619556083bb7657227ee0f9a96b62588",

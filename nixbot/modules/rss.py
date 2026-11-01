@@ -311,13 +311,12 @@ class Fetching(Runner):
             counter += 1
             if obj is None:
                 continue
-            if Method.isempty(feed):
+            if Method.isempty(fed):
                 continue
-            Dict.update(feed, obj)
             if Config.save:
-                Run.log(JSON.dumps(feed))
+                Run.log(JSON.dumps(fed))
             if not silent:
-                txt = Run.display(vars(feed))
+                txt = Run.display(vars(fed))
                 if not Run.got(txt, feed):
                     Clients.announce(txt)
                     gotcha += 1
@@ -585,9 +584,10 @@ def res(msg):
         if msg.args and msg.args[0] not in fed.get("rss", ""):
             continue
         nrs += 1
-        fed["__deleted__"] = False
-        fed["skip"] = False
-        Disk.write(fed, fnm)
+        feed = Rss(fed)
+        feed.__deleted__ = False
+        feed.skip = False
+        Disk.write(feed, fnm)
     msg.reply(f"{nrs} feeds restored.")
 
 

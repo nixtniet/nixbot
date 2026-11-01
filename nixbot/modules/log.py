@@ -24,5 +24,5 @@ def log(msg):
         return
     obj = Log()
     obj.txt = msg.rest
-    Disk.write(vars(obj), Disk.ident("log"))
+    Disk.write(obj)
     msg.ok()
