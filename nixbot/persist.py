@@ -15,6 +15,7 @@ from datetime import datetime
 from .encoder import JSON
 from .objects import Dict
 from .methods import Method
+from .typings import MappingProxyType
 from .utility import Log, Path, RLock, Utils
 
 
@@ -50,7 +51,7 @@ class Cache:
     @classmethod
     def sync(cls, path, obj):
         "update cached object."
-        if not isinstance(obj, dict):
+        if not isinstance(obj, (dict, MappingProxyType)):
             raise TypeError(type(obj))
         try:
             cls.paths[path].update(obj)
