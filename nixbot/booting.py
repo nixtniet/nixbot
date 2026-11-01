@@ -14,7 +14,7 @@ from .clients import Broker, Screen
 from .configs import Main
 from .package import Mods
 from .persist import Workdir
-from .tasking import Task, Worker
+from .tasking import Task
 from .utility import Event, Log, Logging, Utils
 
 
@@ -99,7 +99,6 @@ class Boot:
             func(*args)
         except (KeyboardInterrupt, EOFError):
             Screen.block.set()
-            Worker.block.set()
             _thread.interrupt_main()
 
 

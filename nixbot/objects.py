@@ -32,7 +32,7 @@ class Object:
 
 class Data(Object):
 
-    "definesing to string"
+    "defaulting to string"
 
     def __init__(self, *args, **kwargs):
         super().__init__()
@@ -52,9 +52,9 @@ class Dict:
     "dictionary like operations on an object"
 
     @classmethod
-    def get(cls, obj, key, defines=""):
+    def get(cls, obj, key, default=""):
         "get attribute from object."
-        return vars(obj).get(key, defines)
+        return vars(obj).get(key, default)
 
     @classmethod
     def items(cls, obj):

@@ -43,6 +43,7 @@ class Worker(Thread):
             super().join(timeout or None)
             return self.result
         except Exception as ex:
+            Worker.block.set()
             Errors.throw(ex)
 
     @classmethod
@@ -69,6 +70,7 @@ class Worker(Thread):
         try:
             self.result = func(*args)
         except Exception as ex:
+            Worker.block.set()
             Errors.throw(ex, *args)
 
 

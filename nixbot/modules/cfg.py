@@ -4,7 +4,10 @@
 "configuration"
 
 
-from nixbot.defines import Disk, Main, Method, Mods
+from nixbot.configs import Main
+from nixbot.methods import Method
+from nixbot.package import Mods
+from nixbot.persist import Disk
 
 
 def cfg(msg):

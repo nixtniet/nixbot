@@ -8,7 +8,8 @@ import os
 import time
 
 
-from .defines import Event, Task
+from .tasking import Task
+from .utility import Event
 
 
 class Watcher:

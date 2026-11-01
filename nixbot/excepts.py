@@ -4,7 +4,6 @@
 "defines exception handler"
 
 
-import os
 import traceback
 import _thread
 
@@ -20,7 +19,6 @@ class Errors:
 
     "error management"
 
-    bork = True
     errors = []
 
     @classmethod
@@ -42,8 +40,7 @@ class Errors:
         "log the exception and interrupt main loop."
         logger.exception(exc)
         _thread.interrupt_main()
-        if cls.bork:
-            os._exit(1)
+
 
 def __dir__():
     return (

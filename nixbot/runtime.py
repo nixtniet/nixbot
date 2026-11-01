@@ -11,9 +11,18 @@ import time
 from argparse import SUPPRESS, ArgumentParser, RawTextHelpFormatter
 
 
-from nixbot.defines import MD5, Daemon, Dict, Message, Screen
-from nixbot.defines import Boot, Commands, Main, Method, Mods, Workdir
-from nixbot.require import Cmd
+from .booting import Boot
+from .clients import Screen
+from .configs import Main
+from .command import Commands
+from .daemons import Daemon
+from .message import Message
+from .methods import Method
+from .objects import Dict
+from .package import Mods
+from .persist import Workdir
+from .require import Cmd
+from .utility import MD5
 
 
 class Arguments:
