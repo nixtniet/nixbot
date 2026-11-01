@@ -7,8 +7,7 @@
 import random
 
 
-from nixbot.defines import Clients, Log, Repeater
-from nixbot.defines import Disk, Locater
+from nixbot.defines import Clients, Disk, Locater, Log, Repeater, Stated
 
 
 logger = Log(__name__)
@@ -22,24 +21,13 @@ def init():
     logger.info("%s wise", len(TXTLIST))
 
 
-class State:
+class State(Stated):
 
-    "state of wisdom"
+    "stateful rss"
 
     def __init__(self):
         super().__init__()
-        self.fnm = ""
-        self.seen  = []
-
-    def dump(self):
-        "dump state to disk."
-        if not self.fnm:
-            self.fnm = Locater.first(self)
-        Disk.write(self.__dict__, self.fnm)
-
-    def load(self):
-        "load from disk."
-        Locater.first(State)
+        self.seen = []
 
 
 state = State()
@@ -59,6 +47,7 @@ def get_msg():
         txt = "* reset"
     state.dump()
     return txt.strip()[2:]
+
 
 def cb_wsd():
     "show a wisdom quote."

@@ -11,10 +11,7 @@ from .clients import Clients
 from .methods import Method
 from .objects import Data
 from .package import Mods
-from .utility import Log, Utils
-
-
-logger = Log(__name__)
+from .utility import Utils
 
 
 class Commands:
@@ -68,7 +65,6 @@ class Commands:
     def scan(cls, mod, skip=False):
         "scan module for commands."
         result = []
-        logger.debug(f"scan {mod}")
         for nme, func in inspect.getmembers(mod, inspect.isfunction):
             if "cb_" in nme:
                 continue

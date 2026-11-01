@@ -13,13 +13,14 @@ import urllib.parse
 
 
 from http.client    import RemoteDisconnected
+from ssl            import SSLError
 from urllib.error   import HTTPError, URLError
 
 
 from nixbot.defines import Log, RLock
 from nixbot.defines import Clients, Data, Dict, Format
 from nixbot.defines import JSON, JSONL, Logging, MD5
-from nixbot.defines import Object, Pool, Repeater, Runner, Utils
+from nixbot.defines import Object, Pool, Repeater, Runner, Stated, Utils
 from nixbot.defines import Cfg, Disk, Fetcher, Locater, Main, Method, Watcher
 from nixbot.defines import Workdir
 
@@ -72,14 +73,7 @@ class Rss(Data):
         self.seen = []
         self.size = 0
         self.skip = False
-        self.status = 0
-
-
-class State(Object):
-
-    "keeping state"
-
-    index = 0
+        self.status = 600
 
 
 class Locks:
@@ -118,7 +112,6 @@ class Run:
                 if not Run.got(txt, feed):
                     Clients.announce(txt)
             State.index = cls.file.tell()
-        Disk.write(State, cls.statefn)
         gc.collect(0)
 
     @classmethod
@@ -212,7 +205,6 @@ class Run:
             cls.enable(cls.path)
             Watcher.add(cls.path, cls.callback)
             Watcher.start()
-        cls.statefn = Locater.last(State)
         Pool.init(2, Fetching)
         if not once:
             Repeater.add(Config.polltime, cls.run)
@@ -229,7 +221,7 @@ class Run:
         "sync state to disk."
         if cls.index > State.index:
             State.index = cls.index
-            Disk.write(State, cls.statefn)
+            State.dump()
 
 
 class Fetching(Runner):
@@ -244,7 +236,6 @@ class Fetching(Runner):
     skiptxt = (
         'not known',
         'not valid',
-        'timed out',
         'Connection refused',
         'No address associated',
         'has expired',
@@ -267,24 +258,22 @@ class Fetching(Runner):
         "fetch a feed."
         errr = None
         try:
-            logger.debug("fetching %s", feed.rss)
             return Fetcher.geturl(feed.rss)
         except (ConnectionResetError, RemoteDisconnected, TimeoutError) as ex:
             errr = ex
-        except (HTTPError, URLError) as ex:
+        except (SSLError, HTTPError, URLError) as ex:
             errr = ex
         error = Data(vars(errr))
         error.type = str(type(errr))
         if error.code == 304:
+            logger.debug("%s %s", feed.rss, error.code)
             return
+        feed.status = error.code or error.errno or error.status or 0
+        feed.error = str(error.msg or error.reason) or "none"
         if self.doskip(error):
-            feed.status = error.code or error.status
-            feed.error = str(error.msg or error.reason)
             feed.skip = True
-            Disk.write(feed, fnm)
-            logger.debug("skipt %s %s %s", feed.rss, feed.status, error.reason)
-        else:
-            logger.debug("missed  %s %s", feed.rss, error)
+        logger.debug("%s %s %s", feed.rss, feed.status, feed.error)
+        Disk.write(feed, fnm)
 
     def getfeed(self, fnm, feed):
         "fetch a feed."
@@ -300,8 +289,6 @@ class Fetching(Runner):
         "poll all feeds."
         counter = 0
         fnm, feed, silent = args
-        if not feed.seen:
-            feed.seen = []
         has = False
         gotcha = 0
         for obj in self.getfeed(fnm, feed):
@@ -584,7 +571,8 @@ def res(msg):
         if msg.args and msg.args[0] not in fed.get("rss", ""):
             continue
         nrs += 1
-        feed = Rss(fed)
+        feed = Rss()
+        Dict.update(feed, fed)
         feed.__deleted__ = False
         feed.skip = False
         Disk.write(feed, fnm)

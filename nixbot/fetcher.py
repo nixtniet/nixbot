@@ -12,6 +12,7 @@ from urllib.parse   import unquote, urlparse, urlunparse
 from urllib.request import Request, urlopen
 
 
+from .configs import Main
 from .utility import MD5
 
 
@@ -20,7 +21,6 @@ class Fetcher:
     "fetch urls"
 
     modified = {}
-    name = "nixt"
 
     @classmethod
     def cdata(cls, line):
@@ -37,11 +37,11 @@ class Fetcher:
         "fetch an url."
         url = urlunparse(urlparse(url))
         req = Request(str(url))
-        req.add_header("User-Agent", cls.useragent(f"{cls.name.upper()} {MD5.core()}"))
+        req.add_header("User-Agent", cls.useragent(f"{Main.name.upper()} {MD5.core()}"))
         since = cls.modified.get(url, "")
         if since:
             req.add_header('If-Modified-Since', since)
-        with urlopen(req, timeout=10) as response:  # nosec
+        with urlopen(req, timeout=20) as response:  # nosec
             modi = response.headers.get('Last-Modified', "")
             if modi:
                 cls.modified[req.get_full_url()] = modi

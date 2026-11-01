@@ -17,7 +17,7 @@ from .message import Message
 from .methods import Method
 from .objects import Data, Dict, Object
 from .package import Mods
-from .persist import Disk, Locater, Workdir
+from .persist import Disk, Locater, Stated, Workdir
 from .pooling import Pool, Runner
 from .repeats import Repeater
 from .require import Cmd
@@ -68,6 +68,7 @@ __all__ = (
     'Repeater',
     'Runner',
     'Screen',
+    'Stated',
     'StreamHandler',
     'Task',
     'Thread',

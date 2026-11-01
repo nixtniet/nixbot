@@ -50,8 +50,8 @@ class Cache:
     @classmethod
     def sync(cls, path, obj):
         "update cached object."
-        #if not isinstance(obj, dict):
-        #    raise TypeError(type(obj))
+        if not isinstance(obj, dict):
+            raise TypeError(type(obj))
         try:
             cls.paths[path].update(obj)
         except (KeyError, AttributeError):
@@ -74,9 +74,9 @@ class Disk:
         "read object from path."
         with cls.lock:
             pth = os.path.join(Workdir.wdr, base, path)
+            logger.debug("read %s", path)
             if not os.path.exists(pth):
                 return {}
-            logger.debug("read %s", path)
             with open(pth, "r", encoding="utf-8") as fpt:
                 try:
                     return JSON.load(fpt)
@@ -234,6 +234,25 @@ class Locater:
         return path.rsplit('store', maxsplit=1)[-1][1:]
 
 
+class Stated:
+
+    "state of wisdom"
+
+    def __init__(self):
+        super().__init__()
+        self.fnm = ""
+
+    def dump(self):
+        "dump state to disk."
+        if not self.fnm:
+            self.fnm = Locater.first(self)
+        Disk.write(self, self.fnm)
+
+    def load(self):
+        "load from disk."
+        Locater.first(self)
+
+
 class Workdir:
 
     "the store everything directory"
@@ -292,19 +311,13 @@ class Workdir:
             fds.write(str(os.getpid()))
 
     @classmethod
-    def runpath(cls, name):
-        "return path in run directory."
-        assert cls.wdr
-        return os.path.join(cls.wdr, "run", name)
-
-    @classmethod
     def skel(cls):
         "create directories."
         assert cls.wdr
         if not os.path.exists(cls.wdr):
             Utils.cdir(cls.wdr)
         path = os.path.abspath(cls.wdr)
-        for wpth in ["config", "logs", "mods", "run", "store"]:
+        for wpth in ["config", "logs", "mods", "store"]:
             pth = Path(os.path.join(path, wpth))
             pth.mkdir(parents=True, exist_ok=True)
 
@@ -314,5 +327,6 @@ def __dir__():
         'Disk',
         'Locater',
         'Selector',
+        'Stated',
         'Workdir'
     )
