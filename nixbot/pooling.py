@@ -8,7 +8,6 @@ import os
 
 
 from .looping import Loop
-from .tasking import Task
 from .utility import RLock
 
 

@@ -8,7 +8,7 @@ import threading
 import time
 
 
-from nixbot.defines import Time, Worker
+from nixbot.defines import Time
 
 
 def tsk(msg):

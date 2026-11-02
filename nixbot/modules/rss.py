@@ -99,6 +99,7 @@ class Run:
     lock = RLock()
     configfn = ""
     modifiedfn = ""
+    state = State()
     statefn = ""
     index = 0
 
@@ -108,7 +109,7 @@ class Run:
         if cls.file is None:
             return
         with cls.lock:
-            cls.file.seek(State.index, 0)
+            cls.file.seek(self.state.index, 0)
             while True:
                 line = cls.file.readline()
                 if not line:
@@ -118,7 +119,7 @@ class Run:
                 txt = cls.display(vars(feed))
                 if not Run.got(txt, feed):
                     Clients.announce(txt)
-            State.index = cls.file.tell()
+            self.state.index = cls.file.tell()
         gc.collect(0)
 
     @classmethod
@@ -138,6 +139,10 @@ class Run:
     def display(cls, obj, name=None):
         "display feed."
         displaylist = ""
+        try:
+            obj = vars(obj)
+        except TypeError:
+            pass
         if name in obj:
             result = f"[{obj.name}] "
         else:
@@ -212,6 +217,7 @@ class Run:
             cls.enable(cls.path)
             Watcher.add(cls.path, cls.callback)
             Watcher.start()
+        cls.state.load()
         Pool.init(2, Fetching)
         if not once:
             Repeater.add(Config.polltime, cls.run)
@@ -226,9 +232,9 @@ class Run:
     @classmethod
     def sync(cls):
         "sync state to disk."
-        if cls.index > State.index:
-            State.index = cls.index
-            State.dump()
+        if cls.index > cls.state.index:
+            cls.state.index = cls.index
+            cls.state.dump()
 
 
 class Fetching(Runner):
@@ -301,7 +307,7 @@ class Fetching(Runner):
         for obj in self.getfeed(fnm, feed):
             fed = Feed()
             Dict.update(fed, obj)
-            Dict.update(fed, vars(feed))
+            Dict.update(fed, feed)
             counter += 1
             if obj is None:
                 continue
@@ -504,16 +510,14 @@ def imp(msg):
         insertid = Utils.shortid()
         skipped = []
         for obj in prs.parse(txt, "outline", "name,xmlUrl"):
+            feed = Rss()
+            Dict.update(feed, obj)
             url = obj["xmlUrl"]
             if url in skipped:
                 continue
             if not url.startswith("http"):
                 continue
-            has = list(Locater.find(
-                                   Method.fqn(OPML),
-                                   {'rss': url},
-                                   matching=True
-                                  ))
+            has = list(Locater.find("rss", {'rss': url}, matching=True))
             if has:
                 skipped.append(url)
                 nrskip += 1

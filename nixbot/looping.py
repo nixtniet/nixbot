@@ -51,7 +51,7 @@ class Loop:
         "start callback loop."
         self.done.clear()
         self.stopped.clear()
-        Task.start(self.loop, daemon=daemon, **{"name": name})
+        Task.start(self.loop, daemon=daemon, name=name)
 
     def stop(self):
         "stop xallback loop."

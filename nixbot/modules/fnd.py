@@ -23,9 +23,9 @@ def fnd(msg):
     otype = msg.args[0]
     nmr = 0
     for fnm, obj in sorted(
-                           Locater.find(otype, msg.gets),
-                           key=lambda x: Locater.fntime(x[0])
-                          ):
+        Locater.find(otype, msg.gets),
+        key=lambda x: Locater.fntime(x[0])
+    ):
         diff = time.time()-Locater.fntime(fnm)
         msg.reply(f"{nmr} {Method.fmt(Data(obj))} {Time.elapsed(diff)}")
         nmr += 1
