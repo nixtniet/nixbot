@@ -110,6 +110,7 @@ class Kernel(Boot, Daemon):
             cls.wrapped(func, *args)
         except (KeyboardInterrupt, EOFError):
             pass
+        print()
         if old and old[0]:
             termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old)
         if dofinal:
