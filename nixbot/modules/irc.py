@@ -504,7 +504,7 @@ class IRC(Buffer):
             self.buffer.append(line)
         self.state.lastline = splitted[-1]
 
-    def start(self, daemon=True):
+    def start(self, daemon=True, name=None):
         "start client."
         cfg = Disk.read("irc", "config") or {}
         Dict.update(self.cfg, cfg)
@@ -515,8 +515,8 @@ class IRC(Buffer):
         self.msgs.ready.clear()
         Buffer.start(self)
         if not self.state.keeprunning:
-            Task.start(self.keep, daemon=daemon)
-        Task.start(self.doconnect)
+            Task.start(self.keep, daemon=daemon, name=name)
+        Task.start(self.doconnect, name=name)
 
     def stop(self):
         "stop client."

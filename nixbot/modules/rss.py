@@ -109,7 +109,7 @@ class Run:
         if cls.file is None:
             return
         with cls.lock:
-            cls.file.seek(self.state.index, 0)
+            cls.file.seek(cls.state.index, 0)
             while True:
                 line = cls.file.readline()
                 if not line:
@@ -119,7 +119,7 @@ class Run:
                 txt = cls.display(vars(feed))
                 if not Run.got(txt, feed):
                     Clients.announce(txt)
-            self.state.index = cls.file.tell()
+            cls.state.index = cls.file.tell()
         gc.collect(0)
 
     @classmethod

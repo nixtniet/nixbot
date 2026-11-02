@@ -166,7 +166,7 @@ class Buffer(Handler, Output):
         "raw output."
         raise NotImplementedError
 
-    def start(self, daemon=True):
+    def start(self, daemon=True, name=None):
         "start output loop."
         Handler.start(self)
         Output.start(self, daemon=daemon)

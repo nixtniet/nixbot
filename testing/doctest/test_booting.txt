@@ -1,0 +1,11 @@
+# This file is placed in the Public Domain.
+# doctest: +ELLIPSIS
+
+
+"brokers"
+
+
+>>> from nixbot.defines import Boot
+>>> boot = Boot()
+>>> boot
+<nixbot.booting.Boot object at ...>

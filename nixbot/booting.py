@@ -120,6 +120,14 @@ class Boot:
             dofinal()
 
 
+TESTS = """
+    >>> boot = Boot()
+    >>> boot
+    True
+
+"""
+
+
 def __dir__():
     return (
         'Boot',

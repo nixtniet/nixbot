@@ -83,6 +83,10 @@ class Dict:
     @classmethod
     def update(cls, obj, data):
         "update an object."
+        try:
+            data = vars(data)
+        except TypeError:
+            pass
         for key, value in data.items():
             setattr(obj, key, value)
 
