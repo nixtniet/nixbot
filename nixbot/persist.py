@@ -141,6 +141,10 @@ class Locater:
         "locate objects by matching atributes."
         if selector is None:
             selector = {}
+        try:
+            selector = vars(selector)
+        except TypeError:
+            pass
         nrs = 0
         for pth in cls.fns(Workdir.long(kind)):
             obj = Cache.get(pth)
@@ -243,17 +247,15 @@ class Stated:
         super().__init__()
         self.fnm = ""
 
-    @classmethod
-    def dump(cls):
+    def dump(self):
         "dump state to disk."
-        if not cls.fnm:
-            cls.fnm = Locater.first(cls)
-        Disk.write(cls, cls.fnm)
+        if not self.fnm:
+            self.fnm = Locater.first(self)
+        Disk.write(self, self.fnm)
 
-    @classmethod
-    def load(cls):
+    def load(self):
         "load from disk."
-        Locater.first(cls)
+        Locater.first(self)
 
 
 class Workdir:

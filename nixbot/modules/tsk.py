@@ -17,8 +17,6 @@ def tsk(msg):
     for thread in sorted(threading.enumerate(), key=lambda x: x.name):
         if str(thread).startswith("<_"):
             continue
-        if isinstance(thread, Worker):
-            continue
         if getattr(thread, "sleep", None):
             uptime = float(thread.sleep) - float(time.time() - float(thread.state["latest"]))
         elif getattr(thread, "starttime", None):

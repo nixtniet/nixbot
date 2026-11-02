@@ -518,13 +518,13 @@ def imp(msg):
                 skipped.append(url)
                 nrskip += 1
                 continue
-            feed = {}
-            feed["rss"] = obj["xmlUrl"]
+            feed = Rss()
+            feed.rss = obj["xmlUrl"]
             del obj["xmlUrl"]
-            feed.update(obj)
+            Dict.update(feed, obj)
             uri = urllib.parse.urlparse(feed["rss"])
-            feed["name"] = str(max(uri.netloc.split("."), key=len))
-            feed["insertid"] = insertid
+            feed.name = str(max(uri.netloc.split("."), key=len))
+            feed.insertid = insertid
             Disk.write(feed)
             nrs += 1
     if nrskip:

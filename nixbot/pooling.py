@@ -27,13 +27,7 @@ class Runner(Loop):
             if job is None:
                 break
             self.run(*job)
-
-    def start(self, daemon=True):
-        "start callback loop."
-        self.done.clear()
-        self.stopped.clear()
-        Task.start(self.loop, daemon=daemon, name="Runner.loop")
-
+        self.stopped.set()
 
 class Pool:
 

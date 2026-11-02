@@ -5,22 +5,22 @@
 
 
 CORE = {
-    "booting": "4cfd75e2a5247862c706a1e0227afeea",
+    "booting": "227d37d6efb39013134086bff5210bbb",
     "clients": "e50a026c991ff3ef970d06997424e30e",
     "command": "e22b7d1e8cb20570d9713ce8101f0109",
     "configs": "0984d1a7a76781e86b06df0ccde950ea",
     "daemons": "e91d483b19eb96b5cf2aface5e10fa71",
-    "defines": "4ffc69381d9e4f493596f9a81bf6196c",
+    "defines": "263649b7325e268b51c94428b15a0b20",
     "encoder": "87bdd995c39d95c4f9b2991cc9705a7c",
     "excepts": "ada2714bd64174e585246fc292da7780",
-    "fetcher": "222a748b7bc49bf63d495f59686bed03",
-    "looping": "2e1d6e3b2f9319931d1fb73380f9d198",
+    "fetcher": "5c10522a4280d0e93ea8a10a47b6fc1b",
+    "looping": "170fa3373c69a1830cfbfed2c0c4898d",
     "message": "f1ae7304290d5eb11f222b85f416edf5",
     "methods": "890238e023d87b301da2ccc9998d95ae",
     "objects": "98850fa62cdf7e221340e75f848860b3",
     "package": "a59de0c22fc08bb9dc0baf21bb621aa7",
-    "persist": "6ce1fa217ba345bdf51c4643deb192d0",
-    "pooling": "d624e98c10e8c6a65b03810b739952b9",
+    "persist": "3b87caa22af6fd585769a11f1cc378fd",
+    "pooling": "901536ac8c63268e73bdc69d4e812113",
     "repeats": "378ebfe10317d39b041af841843ff8f2",
     "require": "f20d5e1d210dd1ef74c9ed1919806e1e",
     "runtime": "007c14df9bbb2a2bf6b735635bbfca22",
@@ -42,7 +42,7 @@ MODULES = {
     "mdl": "86e546532bf90d44d01072c11792ded6",
     "pth": "6b88f46385d9de50d6ee2be4957ccbb9",
     "req": "619556083bb7657227ee0f9a96b62588",
-    "rss": "71ee3435b84aebba93c62bf291ca1780",
+    "rss": "b1a54a677b3738e2db96388be46eaafc",
     "sil": "34d3768c2622babe4a6f96e54a075f96",
     "slg": "a3fa59a370d28f5cca787e2fba6032f3",
     "srv": "8f256c0a784eeb6062e4575298d89b78",
@@ -51,7 +51,7 @@ MODULES = {
     "tsk": "167fec2624bcd5fa413e37265f975c66",
     "upt": "28012d8d5b538787e5271ffefa45b1bc",
     "ver": "1e305b7635e9c3efa91d47a078f8bae7",
-    "wsd": "dbc49b5f0e19b01b0df357a4ef67a5c2"
+    "wsd": "23bca20cbccd0c948e8f2fad2e69339d"
 }
 
 
