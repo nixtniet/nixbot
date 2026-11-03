@@ -9,7 +9,7 @@ CORE = {
     "clients": "a34a2aed62d6ee54e4afba32f8879c1e",
     "command": "e22b7d1e8cb20570d9713ce8101f0109",
     "configs": "0984d1a7a76781e86b06df0ccde950ea",
-    "daemons": "e91d483b19eb96b5cf2aface5e10fa71",
+    "daemons": "c2743cad3c56fd2eb3040784e6ba4332",
     "defines": "263649b7325e268b51c94428b15a0b20",
     "encoder": "87bdd995c39d95c4f9b2991cc9705a7c",
     "excepts": "ada2714bd64174e585246fc292da7780",
@@ -23,7 +23,7 @@ CORE = {
     "pooling": "f42fcf5ba26dc7d67c5a3bed001bbbf8",
     "repeats": "378ebfe10317d39b041af841843ff8f2",
     "require": "f20d5e1d210dd1ef74c9ed1919806e1e",
-    "runtime": "6c84ed76a5c173e743dd6de5aafa5c24",
+    "runtime": "fe15e38c33e5dd9af4d07b29b97096bc",
     "tasking": "eae0d05c675c42f897b66ab934a7fca6",
     "typings": "6c5b6ff2333247550bc2177d4ab8fc59",
     "utility": "fdc092dfb22384621a5222383c57674f",
@@ -96,4 +96,3 @@ def __dir__():
         'MODULES',
         'NAMES'
     )
-
