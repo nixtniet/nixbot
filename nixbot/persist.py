@@ -207,9 +207,9 @@ class Locater:
     def last(cls, obj, selector=None):
         "last saved version."
         result = sorted(
-                        cls.find(Method.fqn(obj), selector),
-                        key=lambda x: cls.fntime(x[0])
-                       )
+            cls.find(Method.fqn(obj), selector),
+            key=lambda x: cls.fntime(x[0])
+        )
         res = ""
         if result:
             inp = result[-1]
@@ -227,11 +227,13 @@ class Locater:
         nritems=0
         ):
         "return objects by matching atributes."
-        yield from [x[1] for x in cls.find(kind,
-                                           selector,
-                                           removed,
-                                           matching,
-                                           nritems)]
+        yield from [x[1] for x in cls.find(
+            kind,
+            selector,
+            removed,
+            matching,
+            nritems
+        )]
 
     @classmethod
     def strip(cls, path):

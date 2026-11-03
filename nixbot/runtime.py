@@ -79,7 +79,7 @@ class Kernel(Boot, Daemon):
         if not force and not Main.verbose:
             return
         tmr = time.ctime(time.time()).replace("  ", " ")
-        print(f"{Main.name.upper()} {tmr} {Main.level.upper() or 'INFO'} ({MD5.core()})")
+        print(f"{Main.name.upper()} {tmr} {Main.level.upper() or 'INFO'} ({MD5.coremd5})")
         sys.stdout.flush()
 
     @classmethod
@@ -91,6 +91,7 @@ class Kernel(Boot, Daemon):
         Mods.dir(f"{Main.name}.modules", Mods.moddir())
         if Main.all:
             Main.mods = ",".join(Mods.list())
+        MD5.core()
         if Main.verbose:
             cls.banner()
         Commands.table()

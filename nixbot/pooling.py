@@ -28,6 +28,7 @@ class Runner(Loop):
             self.run(*job)
         self.stopped.set()
 
+
 class Pool:
 
     "multiple runners"

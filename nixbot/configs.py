@@ -20,11 +20,6 @@ class Config(type):
         return str(Method.skip(dict(cls.__dict__)))
 
 
-class Cfg(metaclass=Config):
-
-    "inheritable config"
-
-
 class Main(metaclass=Config):
 
     "main config"
@@ -34,6 +29,11 @@ class Main(metaclass=Config):
     name = Method.pkgname(Config)
     otxt = ""
     path = ""
+
+
+class Cfg(metaclass=Config):
+
+    "inheritable config"
 
 
 def __dir__():

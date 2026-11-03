@@ -77,7 +77,7 @@ class Cmd:
     @staticmethod
     def ver(msg):
         "show verson."
-        msg.reply(f"{Main.name.upper()} {MD5.core()}")
+        msg.reply(f"{Main.name.upper()} {MD5.coremd5}")
 
 
 SYSTEMD = """[Unit]

@@ -37,7 +37,7 @@ class Fetcher:
         "fetch an url."
         url = urlunparse(urlparse(url))
         req = Request(str(url))
-        req.add_header("User-Agent", cls.useragent(f"{Main.name.upper()} {MD5.core()}"))
+        req.add_header("User-Agent", cls.useragent(f"{Main.name.upper()} {MD5.coremd5}"))
         since = cls.modified.get(url, "")
         if since:
             req.add_header('If-Modified-Since', since)

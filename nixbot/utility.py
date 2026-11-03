@@ -10,14 +10,14 @@ import time
 import uuid
 
 
-from datetime import datetime
-from queue    import Queue
+from datetime  import datetime
+from pathlib   import Path
+from queue     import Queue
+from threading import Event, RLock, Thread
 
 
 from logging          import basicConfig, Formatter, StreamHandler
 from logging.handlers import TimedRotatingFileHandler
-from pathlib          import Path
-from threading        import Event, RLock, Thread
 
 
 Log = logging.getLogger
@@ -91,6 +91,8 @@ class MD5:
 
     "module md5sum"
 
+    coremd5 = None
+
     @classmethod
     def check(cls, md5s):
         "check for md5sums in a given path."
@@ -119,8 +121,8 @@ class MD5:
             return ""
         txt = Utils.source(statics)
         if txt:
-            return cls.source(txt)[:7].upper()
-        return None
+            cls.coremd5 = cls.source(txt)[:7].upper()
+        return cls.coremd5
 
     @classmethod
     def createmd5(cls, path, data):
@@ -286,11 +288,11 @@ class Utils:
     def listdir(path, ignore=""):
         "list modules in a directory."
         return [
-                x[:-3] for x in os.listdir(path)
-                if x.endswith(".py") and
-                not x.startswith("__") and
-                x[:-3] not in Utils.spl(ignore)
-               ]
+            x[:-3] for x in os.listdir(path)
+            if x.endswith(".py") and
+            not x.startswith("__") and
+            x[:-3] not in Utils.spl(ignore)
+        ]
 
     @staticmethod
     def shortid():
