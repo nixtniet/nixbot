@@ -9,6 +9,8 @@
 
 ::
 
+
+
     nixbot [-c|-d|-h|-s] [-a] [-v] [-w] [-l level] [-m m1,m2] [-p path]
     nixbot [cmd] [key=val] [key==val]
 
@@ -43,7 +45,7 @@
 
     <new terminal>
 
-    $ nixbot srv > nixbot.service
+    $ nixbot --admin srv > nixbot.service
     $ sudo mv nixbot.service /etc/systemd/system/
     $ sudo systemctl enable nixbot --now
 
@@ -68,10 +70,10 @@
       -s, --service      run as service.
 
       -a, --all          load all modules.
+      -l, --level level  set loglevel.
       -v, --verbose      enable verbose.
       -w, --wait         wait for services to start.
 
-      -l, --level level  set loglevel.
       -m, --mods m1,m2   modules to load.
       -p, --path path    path to working directory.
 
@@ -79,11 +81,6 @@
       --user             use local mods directory.
 
       use "nixbot cmd" for a list of commands.
-
-
-    $ nixbot cmd
-    cfg,cmd,dne,dpl,err,exp,imp,log,mod,mre,nme,
-    pwd,rem,req,res,rss,srv,syn,tdo,thr,upt
 
 
 **COMMANDS**

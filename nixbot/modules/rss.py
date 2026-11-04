@@ -132,6 +132,8 @@ class Run:
                 feed.skip = False
                 Disk.write(feed, fnm)
                 counter += 1
+            if counter >= 10:
+                break
         logger.debug("clear %s", counter)
         return counter
 
@@ -221,7 +223,7 @@ class Run:
         Pool.init(2, Fetching)
         if not once:
             Repeater.add(Config.polltime, cls.run)
-            Repeater.add(7200, cls.clear)
+            Repeater.add(600, cls.clear)
             Repeater.start()
 
     @classmethod

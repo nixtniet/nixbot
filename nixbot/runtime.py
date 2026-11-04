@@ -82,32 +82,6 @@ class Kernel(Boot, Daemon):
         print(f"{Main.name.upper()} {tmr} {Main.level.upper() or 'INFO'} ({MD5.coremd5})")
         sys.stdout.flush()
 
-    @classmethod
-    def boot(cls):
-        "configure runtime."
-        cls.configure()
-        Mods.dir("modules", Workdir.moddir())
-        Mods.dir(f"{Main.name}.minimal", Mods.moddir("minimal"))
-        if Main.all:
-            Main.mods = ",".join(Mods.list())
-
-    @classmethod
-    def wrap(cls, func, *args, dofinal=None):
-        "restore console."
-        import termios
-        try:
-            old = termios.tcgetattr(sys.stdin.fileno())
-        except termios.error:
-            old = None
-        try:
-            cls.wrapped(func, *args)
-        except (KeyboardInterrupt, EOFError):
-            print()
-        if old and old[0]:
-            termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old)
-        if dofinal:
-            dofinal()
-
 
 class CLI(Screen):
 

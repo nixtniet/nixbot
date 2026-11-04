@@ -40,6 +40,8 @@ class Boot:
         MD5.core()
         if Main.verbose:
             cls.banner()
+        if Main.all:
+            Main.mods = ",".join(Mods.list())
         Commands.table()
         Mods.table()
         if Main.scanner:
@@ -53,6 +55,7 @@ class Boot:
         Main.level = Main.level or "warning"
         Logging.size(len(Main.name))
         Logging.level(Main.level)
+        Mods.dir("modules", Workdir.moddir())
         Mods.dir(f"{Main.name}.modules", Mods.moddir())
         if Main.path:
             Main.path = os.path.normpath(Main.path)
