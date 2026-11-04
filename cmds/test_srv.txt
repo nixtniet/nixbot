@@ -1,0 +1,13 @@
+# This file is placed in the Public Domain.
+# doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
+
+
+"plugins"
+
+
+>>> from nixbot.require import Cmd
+>>> from nixbot.defines import Commands, Main, cmd
+>>> Main.admin = True
+>>> Commands.add(Cmd.srv)
+>>> cmd("srv --admin")
+['[Unit]\nDescription=NIXBOT\nAfter=multi-user.target\n\n[Service]\nType=simple\nUser=nixt\nGroup=nixt\nExecStart=/home/nixt/.local/bin/nixbot -s\n\n[Install]\nWantedBy=multi-user.target']
