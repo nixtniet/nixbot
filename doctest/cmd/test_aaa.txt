@@ -1,0 +1,16 @@
+# This file is placed in the Public Domain.
+
+
+"precursor"
+
+
+>>> import os, shutil, sys
+>>> sys.path.insert(0, os.getcwd())
+>>> from nixbot.defines import Boot, Workdir, cmd
+>>> Workdir.wdr  = ".test"
+>>> shutil.rmtree(".test")
+>>> Boot.boot()
+>>> cmd("log txt1")
+['ok']
+>>> cmd("rss http://hnrss.org/newest")
+['ok']
