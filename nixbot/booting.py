@@ -35,6 +35,7 @@ class Boot:
 
     @classmethod
     def boot(cls):
+        "prepare for runtime."
         cls.configure()
         MD5.core()
         if Main.verbose:

@@ -31,6 +31,7 @@ class Commands:
 
     @classmethod
     def cmd(cls, txt):
+        "parse single line to command and run it."
         msg = Message()
         msg.text = txt
         msg.kind = "command"
