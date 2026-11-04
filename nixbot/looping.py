@@ -92,5 +92,5 @@ class Handler(Loop):
 def __dir__():
     return (
         'Handler',
-        'Loop',
+        'Loop'
     )
