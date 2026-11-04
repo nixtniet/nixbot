@@ -10,4 +10,4 @@
 >>> Main.admin = True
 >>> Commands.add(Cmd.srv)
 >>> cmd("srv --admin")
-['[Unit]\nDescription=NIXBOT\nAfter=multi-user.target\n\n[Service]\nType=simple\nUser=nixt\nGroup=nixt\nExecStart=/home/nixt/.local/bin/nixbot -s\n\n[Install]\nWantedBy=multi-user.target']
+['[Unit]\nDescription=NIXBOT\nAfter=multi-user.target\n\n[Service]\nType=simple\nUser=...\nGroup=...\nExecStart=.../.local/bin/nixbot -s\n\n[Install]\nWantedBy=multi-user.target']
