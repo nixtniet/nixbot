@@ -446,15 +446,17 @@ def atr(msg):
         msg.iface("<stringinurl>")
         return
     for feed in Locater.objects("rss", {'rss': msg.rest}):
-        url = feed.get("rss", None)
+        fed = Rss()
+        Dict.update(fed, feed)
+        url = fed.rss
         if not url:
             continue
         data = Fetcher.geturl(url)
         if not data:
             continue
         result = list(RSS.getitems(
-                                   str(data, 'utf-8', errors='ignore'),
-                                   (feed.rss.endswith("atom") and "entry") or "item",
+                                   data,
+                                   (fed.rss.endswith("atom") and "entry") or "item",
                                    1
                                   ))
         resulting = []
@@ -466,14 +468,22 @@ def atr(msg):
 
 def dpl(msg):
     "set feed items to display."
-    if len(msg.args) < 2:
-        msg.iface("<stringinurl> <item1,item2>")
+    if len(msg.args) < 1:
+        msg.iface("<stringinurl> [<item1,item2>]")
         return
-    setter = {"display_list": msg.args[1]}
+    if len(msg.args) == 2:
+        setter = {"display_list": msg.args[1]}
+    else:
+        setter = None
     for fnm, feed in Locater.find(Method.fqn(Rss), {"rss": msg.args[0]}):
-        if feed:
-            feed.update(setter)
-            Disk.write(feed, fnm)
+        fed = Rss()
+        Dict.update(fed, feed)
+        if fed:
+            if setter is None:
+                msg.reply(fed.display_list)
+                return
+            Dict.update(fed, setter)
+            Disk.write(fed, fnm)
     msg.ok()
 
 

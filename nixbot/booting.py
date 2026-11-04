@@ -11,11 +11,12 @@ import _thread
 
 
 from .clients import Broker, Screen
+from .command import Commands
 from .configs import Main
 from .package import Mods
 from .persist import Workdir
 from .tasking import Task
-from .utility import Event, Log, Logging, Utils
+from .utility import MD5, Event, Log, Logging, Utils
 
 
 logger = Log(__name__)
@@ -29,9 +30,13 @@ class Boot:
     stopped = Event()
 
     @classmethod
-    def configure(cls):
+    def banner(cls):
+        "hi world."
+
+    @classmethod
+    def configure(cls, wdr=""):
         "setup basic variables"
-        Workdir.wdr = Main.wdr or Workdir.wdr or Workdir.home(Main.name)
+        Workdir.wdr = wdr or Main.wdr or Workdir.wdr or Workdir.home(Main.name)
         Workdir.skel()
         Main.level = Main.level or "warning"
         Logging.size(len(Main.name))
@@ -41,6 +46,13 @@ class Boot:
             Main.path = os.path.normpath(Main.path)
             pkgname = Main.path.rsplit(os.sep, maxsplit=1)[-1]
             Mods.dir(pkgname, Main.path)
+        MD5.core()
+        if Main.verbose:
+            cls.banner()
+        Commands.table()
+        Mods.table()
+        if Main.scanner:
+            Commands.scanner()
 
     @classmethod
     def forever(cls):

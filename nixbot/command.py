@@ -8,6 +8,7 @@ import inspect
 
 
 from .clients import Clients
+from .message import Message
 from .methods import Method
 from .objects import Data
 from .package import Mods
@@ -27,6 +28,14 @@ class Commands:
         for func in funcs:
             name = Utils.funcname(func)
             cls.cmds[name] = func
+
+    @classmethod
+    def cmd(cls, txt):
+        msg = Message()
+        msg.text = txt
+        msg.kind = "command"
+        cls.command(msg)
+        return msg.result
 
     @classmethod
     def command(cls, msg):
@@ -98,6 +107,9 @@ class Commands:
         cls.statics()
         if not cls.names:
             cls.scanner()
+
+
+cmd = Commands.cmd
 
 
 class Parser:
@@ -177,5 +189,6 @@ class Parser:
 def __dir__():
     return (
         'Commands',
-        'Parser'
+        'Parser',
+        'cmd'
     )

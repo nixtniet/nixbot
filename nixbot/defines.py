@@ -6,7 +6,7 @@
 
 from .booting import Boot
 from .clients import Broker, Buffer, Clients, Display, Output, Screen
-from .command import Commands, Parser
+from .command import Commands, Parser, cmd
 from .configs import Cfg, Config, Main
 from .daemons import Daemon
 from .encoder import JSON, JSONL
@@ -78,7 +78,8 @@ __all__ = (
     'Watcher',
     'Workdir',
     'Worker',
-    'basicConfig'
+    'basicConfig',
+    'cmd'
     )
 
 
