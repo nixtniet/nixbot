@@ -132,8 +132,8 @@ class Run:
                 feed.skip = False
                 Disk.write(feed, fnm)
                 counter += 1
-            if counter >= 10:
-                break
+                if counter >= 10:
+                    break
         logger.debug("clear %s", counter)
         return counter
 
@@ -287,8 +287,8 @@ class Fetching(Runner):
         feed.error = str(error.msg or error.reason) or "none"
         if self.doskip(error):
             feed.skip = True
+            Disk.write(feed, fnm)
         logger.debug("%s %s %s", feed.rss, feed.status, feed.error)
-        Disk.write(feed, fnm)
 
     def getfeed(self, fnm, feed):
         "fetch a feed."
@@ -325,6 +325,7 @@ class Fetching(Runner):
                     has = True
             del obj
         if has:
+            logger.debug("fetched %s (%s)", feed.rss, gotcha)
             feed.seen = feed.seen[:counter]
             Disk.write(feed, fnm)
         if counter:
@@ -594,12 +595,13 @@ def res(msg):
         if msg.args and msg.args[0] not in fed.get("rss", ""):
             continue
         nrs += 1
-        feed = Rss()
-        Dict.update(feed, fed)
-        feed.__deleted__ = False
-        feed.skip = False
-        Disk.write(feed, fnm)
-    msg.reply(f"{nrs} feeds restored.")
+        fed["__deleted__"] = False
+        fed["skip"] = False
+        Disk.write(fed, fnm)
+    txt = f"{nrs} feeds"
+    if nrs == 1:
+       txt = txt[:-1]
+    msg.reply(f"{txt} restored.")
 
 
 def rss(msg):

@@ -75,7 +75,7 @@ class Disk:
         "read object from path."
         with cls.lock:
             pth = os.path.join(Workdir.wdr, base, path)
-            logger.debug("read %s", path)
+            logger.debug("read %s/%s", base, path)
             if not os.path.exists(pth):
                 return {}
             with open(pth, "r", encoding="utf-8") as fpt:
@@ -100,7 +100,7 @@ class Disk:
             pass
         with cls.lock:
             pth = os.path.join(Workdir.wdr, base, path)
-            logger.debug("write %s", path)
+            logger.debug("write %s/%s", base, path)
             Utils.cdir(pth)
             with open(pth, "w", encoding="utf-8") as fpt:
                 JSON.dump(obj, fpt, indent=4)
