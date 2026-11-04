@@ -14,7 +14,7 @@ CORE = {
     "encoder": "87bdd995c39d95c4f9b2991cc9705a7c",
     "excepts": "ada2714bd64174e585246fc292da7780",
     "fetcher": "b132efa05bd95dafca9d9c5a1fbc94a6",
-    "looping": "d262df74c6beefd660d73880e5db9534",
+    "looping": "3ed933c53cf0fa0dec1ff9d231cb6ee6",
     "message": "f1ae7304290d5eb11f222b85f416edf5",
     "methods": "890238e023d87b301da2ccc9998d95ae",
     "objects": "e0b84997f48b11ee58e229b5960f0877",
