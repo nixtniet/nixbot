@@ -1,0 +1,21 @@
+# This file is placed in the Public Domain.
+# doctest: +ELLIPSIS
+
+
+"plugins"
+
+
+>>> from nixbot.defines import Boot, cmd
+>>> Boot.configure(".test")
+
+>>> cmd("log test")
+['ok']
+
+>>> cmd("fie")
+['log,rss,test']
+
+>>> cmd("fie test")
+['no attributes']
+
+>>> cmd("fie log")
+['txt']

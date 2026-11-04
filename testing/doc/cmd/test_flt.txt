@@ -1,0 +1,19 @@
+# This file is placed in the Public Domain.
+# doctest: +ELLIPSIS
+
+
+"plugins"
+
+
+>>> from nixbot.defines import Boot, Display, cmd
+>>> Boot.configure(".test")
+
+>>> cmd("flt")
+['no clients']
+
+>>> dpl = Display()
+>>> cmd("flt")
+['Display']
+
+>>> cmd("flt 0")
+['<nixbot.clients.Display object at ...']
