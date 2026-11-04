@@ -5,12 +5,12 @@
 
 
 CORE = {
-    "booting": "227d37d6efb39013134086bff5210bbb",
+    "booting": "33654531d9e941eb998002ef6f61c502",
     "clients": "a34a2aed62d6ee54e4afba32f8879c1e",
-    "command": "e22b7d1e8cb20570d9713ce8101f0109",
+    "command": "dad8f558e557ecb1b24607e7bf933ab1",
     "configs": "923bfc6abc122898b234471595fddbf1",
     "daemons": "c2743cad3c56fd2eb3040784e6ba4332",
-    "defines": "263649b7325e268b51c94428b15a0b20",
+    "defines": "deda9f9f815894597c53b2f3389ac511",
     "encoder": "87bdd995c39d95c4f9b2991cc9705a7c",
     "excepts": "ada2714bd64174e585246fc292da7780",
     "fetcher": "b132efa05bd95dafca9d9c5a1fbc94a6",
@@ -23,7 +23,7 @@ CORE = {
     "pooling": "d72280908345abc8e0f087f1d019b97c",
     "repeats": "378ebfe10317d39b041af841843ff8f2",
     "require": "d63573f492444179463be494580c5b3f",
-    "runtime": "57fbc94d37398b532f5d7e49954e9e27",
+    "runtime": "b745f89578b8c893ba31bb02c0fc7830",
     "tasking": "eae0d05c675c42f897b66ab934a7fca6",
     "typings": "6c5b6ff2333247550bc2177d4ab8fc59",
     "utility": "9cb7d3dd403e66a68adad787bc8e6800",
@@ -42,7 +42,7 @@ MODULES = {
     "mdl": "86e546532bf90d44d01072c11792ded6",
     "pth": "6b88f46385d9de50d6ee2be4957ccbb9",
     "req": "619556083bb7657227ee0f9a96b62588",
-    "rss": "b77d07e37e6b17a1c8df8e7abf7b4d5e",
+    "rss": "8eeb0d8daa33c8b705e75ab7dabb2e31",
     "sil": "34d3768c2622babe4a6f96e54a075f96",
     "slg": "a3fa59a370d28f5cca787e2fba6032f3",
     "srv": "8f256c0a784eeb6062e4575298d89b78",

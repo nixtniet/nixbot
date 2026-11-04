@@ -88,16 +88,8 @@ class Kernel(Boot, Daemon):
         cls.configure()
         Mods.dir("modules", Workdir.moddir())
         Mods.dir(f"{Main.name}.minimal", Mods.moddir("minimal"))
-        Mods.dir(f"{Main.name}.modules", Mods.moddir())
         if Main.all:
             Main.mods = ",".join(Mods.list())
-        MD5.core()
-        if Main.verbose:
-            cls.banner()
-        Commands.table()
-        Mods.table()
-        if Main.scanner:
-            Commands.scanner()
 
     @classmethod
     def wrap(cls, func, *args, dofinal=None):

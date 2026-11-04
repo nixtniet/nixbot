@@ -5,8 +5,7 @@
 "plugins"
 
 
->>> from nixbot.defines import Boot, Display, cmd
->>> Boot.configure(".test")
+>>> from nixbot.defines import Display, cmd
 
 >>> cmd("flt")
 ['no clients']

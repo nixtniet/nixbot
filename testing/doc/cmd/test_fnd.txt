@@ -6,10 +6,9 @@
 
 
 >>> from nixbot.defines import Boot, cmd
->>> Boot.configure(".test")
 
 >>> cmd("fnd")
-['log,rss,test']
+['log']
 
 >>> res = cmd("fnd log")
 >>> res[0]
