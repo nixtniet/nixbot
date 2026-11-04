@@ -6,7 +6,6 @@
 
 
 >>> from nixbot.defines import Boot, cmd
->>> Boot.configure(".test")
 
 >>> res = cmd("rss http://hnrss.org/newest")
 
@@ -23,4 +22,4 @@
 ['ok']
 
 >> cmd("dpl hnrss")
-['title.link']
+['title,link']

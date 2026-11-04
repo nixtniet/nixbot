@@ -34,6 +34,17 @@ class Boot:
         "hi world."
 
     @classmethod
+    def boot(cls):
+        cls.configure()
+        MD5.core()
+        if Main.verbose:
+            cls.banner()
+        Commands.table()
+        Mods.table()
+        if Main.scanner:
+            Commands.scanner()
+
+    @classmethod
     def configure(cls, wdr=""):
         "setup basic variables"
         Workdir.wdr = wdr or Main.wdr or Workdir.wdr or Workdir.home(Main.name)
@@ -46,13 +57,6 @@ class Boot:
             Main.path = os.path.normpath(Main.path)
             pkgname = Main.path.rsplit(os.sep, maxsplit=1)[-1]
             Mods.dir(pkgname, Main.path)
-        MD5.core()
-        if Main.verbose:
-            cls.banner()
-        Commands.table()
-        Mods.table()
-        if Main.scanner:
-            Commands.scanner()
 
     @classmethod
     def forever(cls):

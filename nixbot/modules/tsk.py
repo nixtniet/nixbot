@@ -31,4 +31,4 @@ def tsk(msg):
     if res:
         msg.reply(" ".join(res))
     else:
-        msg.reply("no threads")
+        msg.reply("no tasks")

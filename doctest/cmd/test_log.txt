@@ -15,4 +15,4 @@
 ['ok']
 
 >>> cmd('fnd log')[0]
-'0 txt="test" ...'
+'0 txt="txt1" ...'

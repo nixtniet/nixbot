@@ -1,0 +1,11 @@
+# This file is placed in the Public Domain.
+# doctest: +ELLIPSIS
+
+
+"plugins"
+
+
+>>> from nixbot.defines import cmd
+
+>>> cmd("upt")
+['...']

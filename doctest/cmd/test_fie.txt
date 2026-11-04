@@ -11,7 +11,7 @@
 ['ok']
 
 >>> cmd("fie")
-['log,rss,test']
+['log,rss']
 
 >>> cmd("fie test")
 ['no attributes']

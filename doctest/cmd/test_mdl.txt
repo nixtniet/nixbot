@@ -5,9 +5,7 @@
 "plugins"
 
 
->>> from nixbot.defines import Boot, cmd
->>> Boot.configure()
-
+>>> from nixbot.defines import cmd
 
 >>> cmd('dis')
 ['... cancer ... (11m9s) | hart ... (14m21s) | mental ... (44m59s) | breathing ... (50m2s) | externals ... (58m12s) | https://otpcr.github.io']

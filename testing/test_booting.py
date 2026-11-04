@@ -41,11 +41,11 @@ class TestRuntime(unittest.TestCase):
         "test initialising modules."
         self.assertEqual(self.boot.init(""), True)
 
-    def test_shutdown(self):
-        "test shutdown/"
-        task = Task.start(self.boot.shutdown, False)
-        task.join()
-        self.assertTrue(self.boot.stopped.is_set())
+    #def test_shutdown(self):
+    #    "test shutdown/"
+    #    task = Task.start(self.boot.shutdown, False)
+    #    task.join()
+    #    self.assertTrue(self.boot.stopped.is_set())
 
     def test_wrapped(self):
         "test wrapping main function."

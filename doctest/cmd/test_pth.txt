@@ -5,8 +5,7 @@
 "plugins"
 
 
->>> from nixbot.defines import Boot, cmd
->>> Boot.configure(".test")
+>>> from nixbot.defines import cmd
 
 >>> cmd("pth")
 ['no index.html']
