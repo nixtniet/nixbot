@@ -20,7 +20,6 @@ from .message import Message
 from .methods import Method
 from .objects import Dict
 from .package import Mods
-from .persist import Workdir
 from .require import Cmd
 from .utility import MD5
 
