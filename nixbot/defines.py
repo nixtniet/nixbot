@@ -11,8 +11,8 @@ from .configs import Cfg, Config, Main
 from .daemons import Daemon
 from .encoder import JSON, JSONL
 from .excepts import Errors
-from .fetcher import Fetcher
-from .looping import Handler, Loop
+from .handler import Handler
+from .looping import Loop
 from .message import Message
 from .methods import Method
 from .objects import Data, Dict, Object
@@ -47,7 +47,6 @@ __all__ = (
     'Display',
     'Errors',
     'Event',
-    'Fetcher',
     'Format',
     'Handler',
     'Locater',
